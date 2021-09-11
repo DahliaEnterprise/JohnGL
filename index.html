@@ -16,7 +16,18 @@
         //Solid Color Shader (useable for more than one vertex(or object))
           //allocate vertex shader within the opengl engine and make that vertex shader handled by a useable variable.
           var solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
-        
+            //Define how each vertex point color is defined through the vertex or vertices.
+              //Define the C source code to be imported into the Open GL ES engine.
+              var solid_color_vertex_shader_source_code = "";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec3 position_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "void main() { \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  //colorize position.  \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  gl_Position = vec4(position_of_vertex_to_colorize, 1.0); \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "} \n";
+                  
+              //Transfer C source code to the Open GL ES engine and associate that transfer with the solid_color_vertex_shader handle.
+              opengles.shaderSource(solid_color_vertex_shader , solid_color_vertex_shader_source_code);
+              
         //var canvas_context = 
       }
     </script>
@@ -27,3 +38,4 @@
 </html>
 
 
+ 
