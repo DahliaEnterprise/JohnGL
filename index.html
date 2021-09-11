@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Adventure Game</title>
+    <script type="text/javascript">
+      function start_adventure_game()
+      {
+        //make the dom elememt canvas handled by a useable variable.
+        var canvas_handle = document.getElementById("canvas_for_opengles");
+        
+        //Apply OpenGL ES engine to the canvas and make that engine handled by a useable variable.
+        var opengles = canvas_handle.getContext("webgl2");
+        opengles.viewportWidth = canvas_handle.width;
+        opengles.viewportHeight = canvas_handle.height;
+        
+        //Solid Color Shader (useable for more than one vertex(or object))
+          //allocate vertex shader within the opengl engine and make that vertex shader handled by a useable variable.
+          var solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
+        
+        //var canvas_context = 
+      }
+    </script>
+  </head>
+  <body onLoad="start_adventure_game();">
+    <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
+  </body>
+</html>
+
+
