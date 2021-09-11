@@ -108,7 +108,20 @@
           //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
           solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
           
-          
+        //temp positin for viewport definitions
+        opengles.clearColor(0.0, 0.0, 0.0, 1.0);
+        opengles.viewport(0, 0, opengles.viewportWidth, opengles.viewportHeight);
+        opengles.clear(opengles.COLOR_BUFFER_BIT);
+        
+        //tell the GPU data line what to get ready to transfer.
+        opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_vertex_opengles.itemSize, opengles.FLOAT, false, 0, 0);
+        
+        //tell the gpu you have decided what to transfer and that it is about to happen.
+        opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
+        
+        //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
+        opengles.drawArrays(opengles.TRIANGLES, 0, triangle_vertex_opengles.numberOfItems);
+        
         
         //var canvas_context = 
       }
