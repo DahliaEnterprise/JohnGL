@@ -13,6 +13,41 @@
         opengles.viewportWidth = canvas_handle.width;
         opengles.viewportHeight = canvas_handle.height;
         
+        /* 
+           It does not matter which order the 
+           vertex(or vertices) or shader programs
+           are defined and uploaded to the Open GL ES engine.
+           as long as the order of operations per
+           major goal(vertex data or shader program) is
+           adhered to with out interlacing other non related
+           Open GL ES commands, actions or major goals
+        */
+        
+        //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
+          //Define vertex data into motherboard' ram.
+          var triangle_vertex = [
+                                  0.0, 0.5, 0.0,
+                                  -0.5, -0.5, 0.0,
+                                  0.5, -0.5, 0.0
+                                ];
+                                
+          //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
+            //Allocate C structure within the Opem GL ES engine.
+            var triangle_vertex_opengles = opengles.createBuffer();
+        
+            //Alert Open GL ES engine on how to interpret and utilize the following data about to be uploaded to the GPU ram(as it wont also be vertex or vertices arrays).
+            opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
+            
+            //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
+            opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(triangle_vertex), opengles.STATIC_DRAW);
+             
+            //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram. A size of four is X,Y,Z,Color; Although future versions of opengl es might have different interpetations beyond the size of three.
+            triangle_vertex_opengles.itemSize = 3;
+            
+            //Alert Open GL ES engine how many groups of three are there, with out this precount it will not work but most importantly if Open GL ES engine counted for you it could stall an entire graphics application by the magnitude of seconds with only a few obiects on screen.
+            triangle_vertex_opengles.numberOfItems = 3;
+
+
         //Solid Color Shader (useable for more than one vertex(or object))
           //Allocate vertex shader within the opengl engine and make that vertex shader handled by a useable variable.
           var solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
@@ -68,11 +103,12 @@
             
         //Set the shader program to use for the following vertex or vertices and its defineable attributes.
           //Pop in a shader program to be used within the following order of operations.
-          opengles.useShader(solid_color_shader_program);
+          opengles.useProgram(solid_color_shader_program);
         
           //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+          solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
           
-        
+          
         
         //var canvas_context = 
       }
