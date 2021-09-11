@@ -14,7 +14,7 @@
         opengles.viewportHeight = canvas_handle.height;
         
         //Solid Color Shader (useable for more than one vertex(or object))
-          //allocate vertex shader within the opengl engine and make that vertex shader handled by a useable variable.
+          //Allocate vertex shader within the opengl engine and make that vertex shader handled by a useable variable.
           var solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
             //Define how each vertex point color is defined through the vertex or vertices.
               //Define the C source code to be imported into the Open GL ES engine.
@@ -28,6 +28,28 @@
               //Transfer C source code to the Open GL ES engine and associate that transfer with the solid_color_vertex_shader handle.
               opengles.shaderSource(solid_color_vertex_shader , solid_color_vertex_shader_source_code);
               
+              //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_vertex_shader handle.
+              opengles.compileShader(solid_color_vertex_shader);
+              
+          //Allocate fragment shader within the opengl engine and make that fragment shader handled by a useable variable.
+          var solid_color_fragment_shader = opengles.createShader(opengles.FRAGMENT_SHADER);
+              //Define how fragments of the vertex or vertices are filitered.
+                //Define the C source code to be imported into the Open GL ES engine.
+                var solid_color_fragment_shader_source_code = "";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "precision mediump float;  \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "void main() { \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  //Define filter \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "} \n";
+                
+              //Transfer C source code to the Open GL ES engine and associate that transfer with the solid_color_fragement_shader handle.
+              opengles.shaderSource(solid_color_fragment_shader, solid_color_fragment_shader_source_code);
+                
+              //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_fragement_shader handle.
+              opengles.compileShader(solid_color_fragment_shader);
+                
+                
+                
         //var canvas_context = 
       }
     </script>
@@ -38,4 +60,3 @@
 </html>
 
 
- 
