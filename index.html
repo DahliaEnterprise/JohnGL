@@ -48,8 +48,32 @@
               //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_fragement_shader handle.
               opengles.compileShader(solid_color_fragment_shader);
                 
-                
-                
+          //Allocate one Shader Program(C structure of memory allocated within Open GL ES memory hardware.) within the Open GL ES engine and make that shader program handled by a useable variable.
+          var solid_color_shader_program = opengles.createProgram();
+            //Append intended shaders to the shader program(not sure if this is infinite appendable or the strict definitions of vertex and fragment shaders).
+              //Flag vertex shader to be apart of the shader program intended to be recognized during the link process.
+              opengles.attachShader(solid_color_shader_program, solid_color_vertex_shader);
+          
+              //Flag fragement shader to be apart of the shader program intended to be recognized during the link process.
+              opengles.attachShader(solid_color_shader_program, solid_color_fragment_shader);
+              
+            //Link vertex shader and fragment shader which results into a handlable solid color opengl binary shader program.
+            opengles.linkProgram(solid_color_shader_program);
+      
+            //Due to the order of operations paradigm, checking if the linkage was succesfful must be determined immediately after or more precisely before an Open GL engine operation not assocated with shader program link or compliation process.
+            if(!opengles.getProgramParameter(solid_color_shader_program, opengles.LINK_STATUS))
+            {
+              alert("shader link process failed.");
+            }
+            
+        //Set the shader program to use for the following vertex or vertices and its defineable attributes.
+          //Pop in a shader program to be used within the following order of operations.
+          opengles.useShader(solid_color_shader_program);
+        
+          //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+          
+        
+        
         //var canvas_context = 
       }
     </script>
