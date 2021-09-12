@@ -33,10 +33,10 @@
                                 ];
                                 
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
-            //Allocate C structure within the Opem GL ES engine.
+            //Allocate C structure within the Open GL ES engine.
             var triangle_vertex_opengles = opengles.createBuffer();
         
-            //Alert Open GL ES engine on how to interpret and utilize the following data about to be uploaded to the GPU ram(as it wont also be vertex or vertices arrays).
+            //Alert Open GL ES engine on how to interpret and utilize the following data about to be uploaded to the GPU ram(as it wont always be vertex or vertices arrays).
             opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
             
             //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
@@ -45,15 +45,15 @@
             //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram. A size of four is X,Y,Z,Color; Although future versions of opengl es might have different interpetations beyond the size of three.
             triangle_vertex_opengles.itemSize = 3;
             
-            //Alert Open GL ES engine how many groups of three are there, with out this precount it will not work but most importantly if Open GL ES engine counted for you it could stall an entire graphics application by the magnitude of seconds with only a few obiects on screen.
+            //Alert Open GL ES engine how many groups of three there is. With out this precount it will not work but most importantly if Open GL ES engine counted for you it could stall an entire graphics application by the magnitude of seconds with only a few obiects on screen.
             triangle_vertex_opengles.numberOfItems = 3;
 
 
-        //Solid Color Shader (useable for more than one vertex(or object))
-          //Allocate vertex shader within the opengl engine and make that vertex shader handled by a useable variable.
+        //Solid Color Shader (useable for more than one vertex(or vertices)).
+          //Allocate vertex shader within the Open GL ES engine and allow that vertex shader to be handled by a useable variable.
           var solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
-            //Define how each vertex point color is defined through the vertex or vertices.
-              //Define the C source code to be imported into the Open GL ES engine.
+            //Define how each vertex is colorized by defining a color to each point.
+              //Define the C source code to be imported into the Open GL ES engine related to vertex shader.
               var solid_color_vertex_shader_source_code = "";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec3 position_of_vertex_to_colorize; \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "void main() { \n";
@@ -61,10 +61,10 @@
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  gl_Position = vec4(position_of_vertex_to_colorize, 1.0); \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "} \n";
                   
-              //Transfer C source code to the Open GL ES engine and associate that transfer with the solid_color_vertex_shader handle.
+              //Transfer C source code to the Open GL ES engine and associate that transfer with the a handleable variable named solid_color_vertex_shader.
               opengles.shaderSource(solid_color_vertex_shader , solid_color_vertex_shader_source_code);
               
-              //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_vertex_shader handle.
+              //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_vertex_shader variable.
               opengles.compileShader(solid_color_vertex_shader);
               
           //Allocate fragment shader within the opengl engine and make that fragment shader handled by a useable variable.
