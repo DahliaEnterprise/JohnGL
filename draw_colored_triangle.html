@@ -120,8 +120,10 @@
               var solid_color_vertex_shader_source_code = "";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec3 position_of_vertex_to_colorize; \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 color_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "void main() { \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  //colorize position.  \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  varying_color_of_vertex_to_colorize = color_of_vertex_to_colorize;  \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  gl_Position = vec4(position_of_vertex_to_colorize, 1.0); \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "} \n";
                   
@@ -137,9 +139,10 @@
                 //Define the C source code to be imported into the Open GL ES engine.
                 var solid_color_fragment_shader_source_code = "";
                     solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "precision mediump float;  \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
                     solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "void main() { \n";
                     solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  //Define filter \n";
-                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  gl_FragColor = varying_color_of_vertex_to_colorize; \n";
                     solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "} \n";
                 
               //Transfer C source code to the Open GL ES engine and associate that transfer with the solid_color_fragement_shader handle.
