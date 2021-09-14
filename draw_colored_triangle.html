@@ -55,7 +55,7 @@
             
               //Allocate memory accessible as colors.
               var color_view = new Uint8Array(buffer);
-          
+            /*
             //Transfer and convert(where nessecary) from triangle position and color(from motherboard ram) to Open GL ES uploadable format(motherboard ram).
             var index_of_triangle_position_or_color = 0;
             var offset_of_position = 0;
@@ -88,7 +88,7 @@
               offset_of_color = offset_of_color + total_bytes_of_xyz_and_rgba;
               index_of_triangle_position_or_color = index_of_triangle_position_or_color + 7;
             }
-            
+            */
             
           
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
