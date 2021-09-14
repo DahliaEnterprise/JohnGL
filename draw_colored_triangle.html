@@ -35,7 +35,7 @@
                                 
           //Temporary definition position, pre calculate.
             //The number of XYZ positions.
-            var number_of_positions = 3;
+           /* var number_of_positions = 3;
             
             //Determine the number of bytes of space required per combined one group of X,Y,Z and one group of R,G,B,A.
             var total_bytes_of_xyz_and_rgba = 0;
@@ -46,7 +46,7 @@
             
             //Determine the number of bytes as if it is all already float format.
             var total_bytes_of_xyz_rgba_as_floats = total_bytes_of_xyz_and_rgba / Float32Array.BYTES_PER_ELEMENT;
-       
+            */
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Allocate C structure within the Open GL ES engine.
             var triangle_vertex_opengles = opengles.createBuffer();
@@ -59,7 +59,7 @@
              
             //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram.
             triangle_vertex_opengles.positionSize = 3;
-            triangle_vertex_opengles.colorSize = 3;
+            triangle_vertex_opengles.colorSize = 4;
             
             //Alert Open GL ES engine how many groups of three there is. With out this precount it will not work but most importantly if Open GL ES engine counted for you it could stall an entire graphics application by the magnitude of seconds with only a few obiects on screen.
             triangle_vertex_opengles.numberOfItems = 3;
@@ -157,7 +157,6 @@
         opengles.drawArrays(opengles.TRIANGLES, 0, triangle_vertex_opengles.numberOfItems);
         
         
-        //var canvas_context = 
       }
     </script>
   </head>
