@@ -27,11 +27,11 @@
         //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
           //Define vertex data into motherboard' ram.
           //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
-          var triangle_and_color_vertex = [
-                                  0.0, 0.5, 0.0, 255, 0, 0, 255,
-                                  -0.5, -0.5, 0.0, 0, 250, 6, 255,
-                                  0.5, -0.5, 0.0, 0, 0, 255, 255
-                                ];
+          var triangle_and_color_vertex = new Float32Array([
+                                  0.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                  -0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 1.0,
+                                  0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
+                                ]);
                                 
           //Temporary definition position, pre calculate.
             //The number of XYZ positions.
@@ -46,51 +46,7 @@
             
             //Determine the number of bytes as if it is all already float format.
             var total_bytes_of_xyz_rgba_as_floats = total_bytes_of_xyz_and_rgba / Float32Array.BYTES_PER_ELEMENT;
-          
-            //Allocate memory within motherboard' ram.
-            var buffer = new ArrayBuffer((number_of_positions * total_bytes_of_xyz_and_rgba));
-          
-              //Allocate memory accessible as positions.
-              var position_view = new Float32Array(buffer);
-            
-              //Allocate memory accessible as colors.
-              var color_view = new Uint8Array(buffer);
-            /*
-            //Transfer and convert(where nessecary) from triangle position and color(from motherboard ram) to Open GL ES uploadable format(motherboard ram).
-            var index_of_triangle_position_or_color = 0;
-            var offset_of_position = 0;
-            var offset_of_color = 12;
-            for(var iterator = 0; iterator < number_of_positions; iterator = iterator + 1)
-            {
-              //Transfer X
-              position_view[offset_of_position] = triangle_and_color_vertex[index_of_triangle_position_or_color];
-           
-              //Transfer Y
-              position_view[offset_of_position+1] = triangle_and_color_vertex[index_of_triangle_position_or_color+1];
-           
-              //Transfer Z
-              position_view[offset_of_position+2] = triangle_and_color_vertex[index_of_triangle_position_or_color+2];
-           
-              //Transfer Red
-              color_view[offset_of_color] = triangle_and_color_vertex[index_of_triangle_position_or_color+3];
-           
-              //Transfer Blue
-              color_view[offset_of_color+1] = triangle_and_color_vertex[index_of_triangle_position_or_color+4];
-          
-              //Transfer Green
-              color_view[offset_of_color+2] = triangle_and_color_vertex[index_of_triangle_position_or_color+5];
-          
-              //Transfer Alpha
-              color_view[offset_of_color+3] = triangle_and_color_vertex[index_of_triangle_position_or_color+6];
-              
-              //increment offsets
-              offset_of_position = offset_of_position + total_bytes_of_xyz_rgba_as_floats;
-              offset_of_color = offset_of_color + total_bytes_of_xyz_and_rgba;
-              index_of_triangle_position_or_color = index_of_triangle_position_or_color + 7;
-            }
-            */
-            
-          
+       
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Allocate C structure within the Open GL ES engine.
             var triangle_vertex_opengles = opengles.createBuffer();
@@ -99,7 +55,7 @@
             opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
             
             //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
-            opengles.bufferData(opengles.ARRAY_BUFFER, buffer, opengles.STATIC_DRAW);
+            opengles.bufferData(opengles.ARRAY_BUFFER, triangle_and_color_vertex, opengles.STATIC_DRAW);
              
             //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram.
             triangle_vertex_opengles.positionSize = 3;
@@ -209,5 +165,4 @@
     <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
   </body>
 </html>
-
 
