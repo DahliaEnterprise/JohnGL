@@ -8,12 +8,18 @@
       {
         let hypotenus = undefined;
         
-        //Convert exact plane position to choose a quadrant(this prevents user or developer interaction to make a decision during game play on how to orient angle calculations, with out this predetermination your just computing an angle only relevant within an infinite and non orentiable.)
+        //convert to integers to prevent decimal precision errors if had calculated using floating-point operations over CPU hardware, integer math is also a faster mechism and reduces heat on the CPU in comparison to decimal math.
+        let point_one_x_as_integer = (point_one_x * 1000000);
+        let point_one_y_as_integer = (point_one_y * 1000000);
+       
+        let point_two_x_as_integer = (point_two_x * 1000000);
+        let point_two_y_as_integer = (point_two_y * 1000000);
+        
+        //determine adjacent squared.
+        let adjacent = point_one_x_as_integer - point_two_x_as_integer;
         
         
-        //convert to integers to prevent decimal precision errors if had calculated using floating-point operations over CPU hardware.
-        
-        
+        //hypotenus
         return hypotenus;
       }
       
