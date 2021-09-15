@@ -22,7 +22,14 @@
               adjacent = Math.abs(adjacent);
        
         let adjacent_squared = Math.pow(adjacent, 2);
-              
+             
+        //determine opposite squared.
+          //determine opposite over an infinite, non oriented line.
+          let opposite = point_one_y_as_integer - point_two_y_as_integer;
+              //determine the absolute value. (checking if absolute value is needed everytime would cause a variance time to deliver(variable lag), so instead it is determined every time to produce constant time CPU delivery.)
+              opposite = Math.abs(opposite);
+        
+        let opposite_squared = Math.pow(opposite, 2);
         
         //hypotenus
         return hypotenus;
