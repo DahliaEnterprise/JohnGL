@@ -29,24 +29,10 @@
           //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
           var triangle_and_color_vertex = new Float32Array([
                                   0.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
-                                  -0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 1.0,
+                                  -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0,
                                   0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
                                 ]);
-                                
-          //Temporary definition position, pre calculate.
-            //The number of XYZ positions.
-           /* var number_of_positions = 3;
-            
-            //Determine the number of bytes of space required per combined one group of X,Y,Z and one group of R,G,B,A.
-            var total_bytes_of_xyz_and_rgba = 0;
-                //Increment in the amount of total bytes required for float(decimals) X,Y,Z.
-                total_bytes_of_xyz_and_rgba = 3 * Float32Array.BYTES_PER_ELEMENT;
-                //Increment in the amount of total bytes required for Unsigned Integer Red,Blue,Green,Alpha.
-                total_bytes_of_xyz_and_rgba = total_bytes_of_xyz_and_rgba + (4 * Uint8Array.BYTES_PER_ELEMENT);
-            
-            //Determine the number of bytes as if it is all already float format.
-            var total_bytes_of_xyz_rgba_as_floats = total_bytes_of_xyz_and_rgba / Float32Array.BYTES_PER_ELEMENT;
-            */
+        
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Allocate C structure within the Open GL ES engine.
             var triangle_vertex_opengles = opengles.createBuffer();
@@ -74,13 +60,13 @@
             //Define how each vertex is colorized by defining a color to each point.
               //Define the C source code to be imported into the Open GL ES engine related to vertex shader.
               var solid_color_vertex_shader_source_code = "";
-                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec3 position_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 position_of_vertex_to_colorize; \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 color_of_vertex_to_colorize; \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "void main() { \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  //colorize position.  \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  gl_Position = position_of_vertex_to_colorize; \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  varying_color_of_vertex_to_colorize = color_of_vertex_to_colorize;  \n";
-                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  gl_Position = vec4(position_of_vertex_to_colorize, 1.0); \n";
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "} \n";
                   
               //Transfer C source code to the Open GL ES engine and associate that transfer with the a handleable variable named solid_color_vertex_shader.
@@ -142,10 +128,10 @@
           solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
           
         //tell the GPU data line to get ready to transfer position data.
-        opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_vertex_opengles.positionSize, opengles.FLOAT, false, 16, 0);
-       
+        opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_vertex_opengles.positionSize, opengles.FLOAT, false, 28, 0);
+        
         //tell the GPU data line to get ready to transfer color data.
-        opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_vertex_opengles.colorSize, opengles.UNSIGNED_BYTE, true, 16, 12);
+        opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_vertex_opengles.colorSize, opengles.FLOAT, false, 28, 12);
         
         //tell the gpu you have decided what to transfer and that it is about to happen.
         opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
