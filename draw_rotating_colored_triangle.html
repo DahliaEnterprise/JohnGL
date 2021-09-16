@@ -110,7 +110,7 @@
                                 
           //Apply rotation
             //Amount of rotation to apply in radians for entire object.
-            let amount_of_rotation_to_apply_in_degrees = -25;
+            let amount_of_rotation_to_apply_in_degrees = 90;
             let amount_of_rotation_to_apply_in_radians = ((amount_of_rotation_to_apply_in_degrees * 3.141592) / 180);
             
             //Define center of rotation
@@ -125,6 +125,24 @@
               //Output rotated point.
               triangle_and_color_vertex[0] = (angle_as_radians_first_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_first_row)) / 1000000;
               triangle_and_color_vertex[1] = (angle_as_radians_first_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_first_row)) / 1000000;
+        
+            //Get current angle of second row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
+            let angle_as_radians_second_row = get_two_dimensional_angle_as_radians(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
+              //Apply rotation of angle.
+              let rotated_angle_as_radians_second_row = angle_as_radians_second_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
+            
+              //Output rotated point.
+              triangle_and_color_vertex[7] = (angle_as_radians_second_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_second_row)) / 1000000;
+              triangle_and_color_vertex[8] = (angle_as_radians_second_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_second_row)) / 1000000;
+              
+            //Get current angle of third row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
+            let angle_as_radians_third_row = get_two_dimensional_angle_as_radians(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[14], triangle_and_color_vertex[15]);
+              //Apply rotation of angle.
+              let rotated_angle_as_radians_third_row = angle_as_radians_third_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
+            
+              //Output rotated point.
+              triangle_and_color_vertex[14] = (angle_as_radians_third_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_third_row)) / 1000000;
+              triangle_and_color_vertex[15] = (angle_as_radians_third_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_third_row)) / 1000000;
               
               
               
