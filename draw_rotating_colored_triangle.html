@@ -113,8 +113,12 @@
             let amount_of_rotation_to_apply_in_degrees = -25;
             let amount_of_rotation_to_apply_in_radians = ((amount_of_rotation_to_apply_in_degrees * 3.141592) / 180);
             
-            //Get current angle(0.0, 0.0, is the center to rotate)
-            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(0.0, 0.0, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
+            //Define center of rotation
+            let center_of_rotation_x = 0.0;
+            let center_of_rotation_y = 0.0;
+            
+            //Get current angle(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
+            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
               //Apply rotation of angle.
               let rotated_angle_as_radians_first_row = angle_as_radians_first_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
             
