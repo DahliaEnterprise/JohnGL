@@ -31,7 +31,11 @@
         
         let opposite_squared = Math.pow(opposite, 2);
         
-        //hypotenus
+        //determine hypotenue on an infinite grid that is locally oriented only by its two side(hypotenuse and opposite).
+        let a_squared_plus_b_squared = adjacent_squared + opposite_squared;
+        hypotenus = Math.sqrt(a_squared_plus_b_squared);
+        
+        //return hypotenus
         return hypotenus;
       }
       
