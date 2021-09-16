@@ -66,6 +66,7 @@
         
         //support for one of the two points to be within the top-right quandrant within orientation of the other point.
         let pythagorean_therom_data = get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y);
+        angle_as_radians.pythagorean_therom_data = pythagorean_therom_data;
         //console.log(pythagorean_therom_data.adjacent);
         //console.log(pythagorean_therom_data.hypotenus);
         let three_hundred_and_sixty_degrees_as_radians = Math.acos(pythagorean_therom_data.adjacent/pythagorean_therom_data.hypotenus);
@@ -109,16 +110,20 @@
                                 
           //Apply rotation
             //Amount of rotation to apply in radians for entire object.
-            let amount_of_rotation_to_apply_in_degrees = 25;
+            let amount_of_rotation_to_apply_in_degrees = -25;
             let amount_of_rotation_to_apply_in_radians = ((amount_of_rotation_to_apply_in_degrees * 3.141592) / 180);
             
             //Get current angle(0.0, 0.0, is the center to rotate)
             let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(0.0, 0.0, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
               //Apply rotation of angle.
               let rotated_angle_as_radians_first_row = angle_as_radians_first_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
-              
+            
+            //step by step calculate new rotated x and y point. 
               //Output rotated point.
-              triangle_and_color_vertex[0] = (angle_as_radians_first_row.hypotenus * angle_as_radians_first_row.angle_as_radians);
+              triangle_and_color_vertex[0] = (angle_as_radians_first_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_first_row)) / 1000000;
+              triangle_and_color_vertex[1] = (angle_as_radians_first_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_first_row)) / 1000000;
+              
+              console.log(triangle_and_color_vertex);
               
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Motherboard' ram constant for vertex metadata.
