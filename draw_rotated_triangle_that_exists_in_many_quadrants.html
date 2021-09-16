@@ -67,10 +67,22 @@
         //support for one of the two points to be within the top-right quandrant within orientation of the other point.
         let pythagorean_therom_data = get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y);
         angle_as_radians.pythagorean_therom_data = pythagorean_therom_data;
-        //console.log(pythagorean_therom_data.adjacent);
-        //console.log(pythagorean_therom_data.hypotenus);
-        let three_hundred_and_sixty_degrees_as_radians = Math.acos(pythagorean_therom_data.adjacent/pythagorean_therom_data.hypotenus);
+       
+        let three_hundred_and_sixty_degrees_as_radians = undefined;
         
+        //if the two points are oriented on an infinite graph in such a way that both align exactly with infinite precision on the y plane while both x planes are different then radians must be manually set in order to avoid division by zero(and avoid misuse of the cos function).
+        if(pythagorean_therom_data.adjacent == 0)
+        {
+          //point one is consider the source, so if point two is higher than point one than it is zero radians(zero degrees), if its lower than it is one-hundred-and-eighty degrees radians.
+          if(point_two_y_as_integer > point_one_y_as_integer)
+          {
+            three_hundred_and_sixty_degrees_as_radians = 0; 
+          
+          }
+        }else if(pythagorean_therom_data.adjacent != 0)
+        {
+          three_hundred_and_sixty_degrees_as_radians = Math.acos(pythagorean_therom_data.adjacent/pythagorean_therom_data.hypotenus);
+        }
         
         angle_as_radians.angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
         
@@ -80,6 +92,7 @@
       
       function start_adventure_game()
       {
+        
         //make the dom elememt canvas handled by a useable variable.
         var canvas_handle = document.getElementById("canvas_for_opengles");
         
@@ -108,7 +121,7 @@
                                   
                                 ]);
                                 
-        /*  //Apply rotation
+         //Apply rotation
             //Amount of rotation to apply in radians for entire object.
             let amount_of_rotation_to_apply_in_degrees = 0;
             let amount_of_rotation_to_apply_in_radians = ((amount_of_rotation_to_apply_in_degrees * 3.141592) / 180);
@@ -144,7 +157,7 @@
               triangle_and_color_vertex[14] = (angle_as_radians_third_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_third_row)) / 1000000;
               triangle_and_color_vertex[15] = (angle_as_radians_third_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_third_row)) / 1000000;
               
-              */
+           console.log(triangle_and_color_vertex);
               
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Motherboard' ram constant for vertex metadata.
