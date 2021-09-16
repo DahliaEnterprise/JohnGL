@@ -118,12 +118,11 @@
               //Apply rotation of angle.
               let rotated_angle_as_radians_first_row = angle_as_radians_first_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
             
-            //step by step calculate new rotated x and y point. 
               //Output rotated point.
               triangle_and_color_vertex[0] = (angle_as_radians_first_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_first_row)) / 1000000;
               triangle_and_color_vertex[1] = (angle_as_radians_first_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_first_row)) / 1000000;
               
-              console.log(triangle_and_color_vertex);
+              
               
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Motherboard' ram constant for vertex metadata.
