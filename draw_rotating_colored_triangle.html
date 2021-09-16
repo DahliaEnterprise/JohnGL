@@ -10,7 +10,7 @@
                           "adjacent": undefined,
                           "opposite": undefined,
                           "hypotenus": undefined
-                        }
+                        };
         
         //convert to integers to prevent decimal precision errors if had calculated using floating-point operations over CPU hardware, integer math is also a faster mechism and reduces heat on the CPU in comparison to decimal math.
         let point_one_x_as_integer = (point_one_x * 1000000);
@@ -49,7 +49,10 @@
       
       function get_two_dimensional_angle_as_radians(point_one_x, point_one_y, point_two_x, point_two_y)
       {
-        let angle_as_radians = undefined;
+        let angle_as_radians = {
+                                "pythagorean_therom_data": undefined,
+                                "angle_as_radians": undefined
+                                };
         
         //convert to integers to prevent decimal precision errors if had calculated using floating-point operations over CPU hardware, integer math is also a faster mechism and reduces heat on the CPU in comparison to decimal math.
         let point_one_x_as_integer = (point_one_x * 1000000);
@@ -61,12 +64,14 @@
         //acos seems to be the only function across many scripting languages that accepts the input ratio and returns an output that is the same(the mathmatical definition of a function), therefore acos is decided as the domineering function.
         //acos JavaScript orientation is up is zero, right is nintey, bottom is one hundred and eighty, and left is two-hundred-forty, this man not be the same orientations for other scripting languages.
         
-        //support for top-right quandrant
+        //support for one of the two points to be within the top-right quandrant within orientation of the other point.
         let pythagorean_therom_data = get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y);
+        //console.log(pythagorean_therom_data.adjacent);
+        //console.log(pythagorean_therom_data.hypotenus);
         let three_hundred_and_sixty_degrees_as_radians = Math.acos(pythagorean_therom_data.adjacent/pythagorean_therom_data.hypotenus);
         
         
-        angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
+        angle_as_radians.angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
         
         //return angle in radians format 
         return angle_as_radians;
@@ -96,16 +101,25 @@
           //Define vertex data into motherboard' ram.
           //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
           var triangle_and_color_vertex = new Float32Array([
-                                  0.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
-                                  -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0,
-                                  0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
+                                  0.5, 0.9, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                  0.000001, 0.000001, 0.0, 0.0, 1.0, 0.0, 1.0,
+                                  0.9, 0.000001, 0.0, 0.0, 0.0, 1.0, 1.0
                                   
                                 ]);
                                 
           //Apply rotation
-            //Get current angle
-            console.log(get_two_dimensional_angle_as_radians(triangle_and_color_vertex[0], triangle_and_color_vertex[1], triangle_and_color_vertex[7], triangle_and_color_vertex[8]));
-        
+            //Amount of rotation to apply in radians for entire object.
+            let amount_of_rotation_to_apply_in_degrees = 25;
+            let amount_of_rotation_to_apply_in_radians = ((amount_of_rotation_to_apply_in_degrees * 3.141592) / 180);
+            
+            //Get current angle(0.0, 0.0, is the center to rotate)
+            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(0.0, 0.0, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
+              //Apply rotation of angle.
+              let rotated_angle_as_radians_first_row = angle_as_radians_first_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
+              
+              //Output rotated point.
+              triangle_and_color_vertex[0] = (angle_as_radians_first_row.hypotenus * angle_as_radians_first_row.angle_as_radians);
+              
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Motherboard' ram constant for vertex metadata.
             var position_size = 3; //X,Y,Z
