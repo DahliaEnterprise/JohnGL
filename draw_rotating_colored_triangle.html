@@ -6,7 +6,11 @@
       /* Venmo: Shane-Betz1990 */
       function get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y)
       {
-        let hypotenus = undefined;
+        let pythagorean_therom_data = {
+                          "adjacent": undefined,
+                          "opposite": undefined,
+                          "hypotenus": undefined
+                        }
         
         //convert to integers to prevent decimal precision errors if had calculated using floating-point operations over CPU hardware, integer math is also a faster mechism and reduces heat on the CPU in comparison to decimal math.
         let point_one_x_as_integer = (point_one_x * 1000000);
@@ -35,13 +39,37 @@
         let a_squared_plus_b_squared = adjacent_squared + opposite_squared;
         hypotenus = Math.sqrt(a_squared_plus_b_squared);
         
-        //return hypotenus
-        return hypotenus;
+        pythagorean_therom_data.adjacent = adjacent;
+        pythagorean_therom_data.opposite = opposite;
+        pythagorean_therom_data.hypotenus = hypotenus;
+        
+        //return pythagorean_therom_data
+        return pythagorean_therom_data;
       }
       
       function get_two_dimensional_angle_as_radians(point_one_x, point_one_y, point_two_x, point_two_y)
       {
+        let angle_as_radians = undefined;
         
+        //convert to integers to prevent decimal precision errors if had calculated using floating-point operations over CPU hardware, integer math is also a faster mechism and reduces heat on the CPU in comparison to decimal math.
+        let point_one_x_as_integer = (point_one_x * 1000000);
+        let point_one_y_as_integer = (point_one_y * 1000000);
+       
+        let point_two_x_as_integer = (point_two_x * 1000000);
+        let point_two_y_as_integer = (point_two_y * 1000000);
+        
+        //acos seems to be the only function across many scripting languages that accepts the input ratio and returns an output that is the same(the mathmatical definition of a function), therefore acos is decided as the domineering function.
+        //acos JavaScript orientation is up is zero, right is nintey, bottom is one hundred and eighty, and left is two-hundred-forty, this man not be the same orientations for other scripting languages.
+        
+        //support for top-right quandrant
+        let pythagorean_therom_data = get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y);
+        let three_hundred_and_sixty_degrees_as_radians = Math.acos(pythagorean_therom_data.adjacent/pythagorean_therom_data.hypotenus);
+        
+        
+        angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
+        
+        //return angle in radians format 
+        return angle_as_radians;
       }
       
       function start_adventure_game()
@@ -73,13 +101,16 @@
                                   0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
                                   
                                 ]);
+                                
+          //Apply rotation
+            //Get current angle
+            console.log(get_two_dimensional_angle_as_radians(triangle_and_color_vertex[0], triangle_and_color_vertex[1], triangle_and_color_vertex[7], triangle_and_color_vertex[8]));
         
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Motherboard' ram constant for vertex metadata.
             var position_size = 3; //X,Y,Z
             var color_size = 4; //Red,Green,Blue,Alpha
-            var total_items = 3;
-            3; //total groups of x,y,z,red,green,blue,alpha
+            var total_items = 3; //total groups of x,y,z,red,green,blue,alpha
             
             
             //Allocate C structure within the Open GL ES engine.
