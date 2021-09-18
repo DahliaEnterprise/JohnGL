@@ -96,6 +96,14 @@
           {
             //start is exactly top left, second point is bottom right.
             quadrant = 3;
+          }else if(point_one_y_as_integer < point_two_y_as_integer)
+          {
+            //start is exactly bottom-left and second point is top-right.
+            quadrant = 0;
+          }else if(point_one_y_as_integer == point_two_y_as_integer)
+          {
+            //start is exactly left, second point is exactly right.
+            exact_plane = 0;
           }
         }        
         //define angle as radians that has been calculated.
