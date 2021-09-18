@@ -90,8 +90,14 @@
             //start is exactly right of second x y coordinates, second point is exactly left of first point.
             exact_plane = 2;
           }
-        }
-        
+        }else if(point_one_x_as_integer < point_two_x_as_integer)
+        {
+          if(point_one_y_as_integer > point_two_y_as_integer)
+          {
+            //start is exactly top left, second point is bottom right.
+            quadrant = 3;
+          }
+        }        
         //define angle as radians that has been calculated.
         angle_as_radians.angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
         
