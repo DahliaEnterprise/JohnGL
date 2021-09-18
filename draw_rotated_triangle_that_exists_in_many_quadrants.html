@@ -109,49 +109,50 @@
         
         
         //angle with a precision of eight directions is determined, now to determine the magnitude of the line.
-          three_hundred_and_sixty_degrees_as_radians = undefined;
-         
-          //determine angle as radians.
-          if(quadrant != undefined)
+        three_hundred_and_sixty_degrees_as_radians = undefined;
+         console.log("quadrant:"+quadrant);
+         console.log("exact plane:"+exact_plane);
+        //determine angle as radians.
+        if(quadrant !== undefined)
+        {
+          if(quadrant == 0)
           {
-            if(quadrant == 0)
-            {
-              //zero to ninety, top right.
-              three_hundred_and_sixty_degrees_as_radians = Math.acos(adjacent / hypotenus);
-            }else if(quadrant == 1)
-            {
-              //nintey to one hundred and eighty, top left.
-              three_hundred_and_sixty_degrees_as_radians = 3.141592 - Math.acos(adjacent / hypotenus);
-            }else if(quadrant == 2)
-            {
-              //one hundred and eighty to two hundred and seventy, bottom left.
-              three_hundred_and_sixty_degrees_as_radians = 3.141592 + Math.acos(adjacent / hypotenus);
-            }else if(quadrant == 3)
-            {
-              //two hundred and seventy to three hundred and sixty, bottom right
-              three_hundred_and_sixty_degrees_as_radians = 3.141592 + (3.141592 - Math.acos(adjacent / hypotenus));
-            }
-          }else if(exact_plane != undefined)
+            //zero to ninety, top right.
+            three_hundred_and_sixty_degrees_as_radians = Math.acos(adjacent / hypotenus);
+          }else if(quadrant == 1)
           {
-            if(exact_plane == 0)
-            {
-              //zero degrees
-              three_hundred_and_sixty_degrees_as_radians = 0.000000;
-            }else if(exact_plane == 1)
-            {
-              //ninety degrees
-              three_hundred_and_sixty_degrees_as_radians = 1.570796;
-            }else if(exact_plane == 2)
-            {
-              //one hundred and eighty degrees
-              three_hundred_and_sixty_degrees_as_radians = 3.141592;
-            }else if(exact_plane == 3)
-            {
-              //two hundred and seventy
-              three_hundred_and_sixty_degrees_as_radians = 4.712388;
-            }
+            //nintey to one hundred and eighty, top left.
+            three_hundred_and_sixty_degrees_as_radians = 3.141592 - Math.acos(adjacent / hypotenus);
+          }else if(quadrant == 2)
+          {
+            //one hundred and eighty to two hundred and seventy, bottom left.
+            three_hundred_and_sixty_degrees_as_radians = 3.141592 + Math.acos(adjacent / hypotenus);
+            console.log("quad two:"+three_hundred_and_sixty_degrees_as_radians);
+          }else if(quadrant == 3)
+          {
+            //two hundred and seventy to three hundred and sixty, bottom right
+            three_hundred_and_sixty_degrees_as_radians = 3.141592 + (3.141592 - Math.acos(adjacent / hypotenus));
           }
-        
+        }else if(exact_plane !== undefined)
+        {
+          if(exact_plane == 0)
+          {
+            //zero degrees
+            three_hundred_and_sixty_degrees_as_radians = 0.000000;
+          }else if(exact_plane == 1)
+          {
+            //ninety degrees
+            three_hundred_and_sixty_degrees_as_radians = 1.570796;
+          }else if(exact_plane == 2)
+          {
+            //one hundred and eighty degrees
+            three_hundred_and_sixty_degrees_as_radians = 3.141592;
+          }else if(exact_plane == 3)
+          {
+            //two hundred and seventy
+            three_hundred_and_sixty_degrees_as_radians = 4.712388;
+          }
+        }
         //define angle as radians that has been calculated.
         angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
         
@@ -219,9 +220,9 @@
             let center_of_rotation_y = 0.0;
             
             //Get current angle(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
-            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1], triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
-            //console.log(angle_as_radians_first_row);
-            
+            let hypotenus_adjacent_opposite = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
+            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite.adjacent, hypotenus_adjacent_opposite.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
+            console.log(angle_as_radians_first_row);
             
             /*
             //Get current angle(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
