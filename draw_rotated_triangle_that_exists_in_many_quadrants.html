@@ -31,7 +31,7 @@
               
         let opposite_squared = Math.pow(opposite, 2);
         
-        //determine hypotenue on an infinite grid that is locally oriented only by its two side(hypotenuse and opposite).
+        //determine hypotenus on an infinite grid that is locally oriented only by its two side(hypotenuse and opposite).
         if((adjacent*1000000) == 0)
         {
           hypotenus = opposite;
@@ -119,7 +119,13 @@
         
         //angle with a precision of eight directions is determined, now to determine the magnitude of the line.
         three_hundred_and_sixty_degrees_as_radians = undefined;
+        if((adjacent*1000000) == 0)
+        {
+          adjacent = 0.000001;
+        }
        
+       console.log("quadrant:"+quadrant);
+       console.log("exact_plane:"+exact_plane);
         //determine angle as radians.
         if(quadrant !== undefined)
         {
@@ -171,17 +177,22 @@
       function get_two_dimensional_rotated_points(hypotenus, current_angle_as_radians, amount_of_rotation_to_apply_in_radians)
       {
         let rotated_points = {
-                                "rotated_x": undefined,
-                                "rotated_y": undefined
+                                "rotated_x": 0.000000,
+                                "rotated_y": 0.000000
                               };
                               
-        //apply rotation
-        let rotated_angle = current_angle_as_radians + amount_of_rotation_to_apply_in_radians;
+       //apply rotation
+       let rotated_angle = 0.000000;
+       rotated_angle += parseFloat(current_angle_as_radians) + parseFloat(amount_of_rotation_to_apply_in_radians);
+       console.log("current angle:"+current_angle_as_radians)
+       console.log("rotated angle:"+rotated_angle)
+       console.log("hypotenuse:"+hypotenus);
+ 
  
         //calculate rotated points, the offsets are not set here so the rotation outputs are on a center of zero x, and zero y.
         rotated_points.rotated_x = hypotenus * Math.cos(rotated_angle);
         rotated_points.rotated_y = hypotenus * Math.sin(rotated_angle);
-                              
+      
         return rotated_points;
       }
       
@@ -220,7 +231,7 @@
          //Apply rotation
             //Amount of rotation to apply in radians for entire object.
             let amount_of_rotation_to_apply_in_degrees = 0;
-            let amount_of_rotation_to_apply_in_radians = ((amount_of_rotation_to_apply_in_degrees * 3.141592) / 180);
+            let amount_of_rotation_to_apply_in_radians = ((amount_of_rotation_to_apply_in_degrees * 3.141592) / 180.000000);
             
             //Define center of rotation
             let center_of_rotation_x = 0.0;
