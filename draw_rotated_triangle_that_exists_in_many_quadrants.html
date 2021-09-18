@@ -91,9 +91,21 @@
       }
       */
       
-      function get_two_dimensional_rotated_angle_as_radians(hypotenus, current_angle_as_radians, amount_of_rotation_to_apply_in_radians)
+      function get_two_dimensional_rotated_points(hypotenus, current_angle_as_radians, amount_of_rotation_to_apply_in_radians)
       {
+        let rotated_points = {
+                                "rotated_x": undefined,
+                                "rotated_y": undefined
+                              };
+                              
+        //apply rotation
+        let rotated_angle = current_angle_as_radians + amount_of_rotation_to_apply_in_radians;
         
+        //calculate rotated points, the offsets are not set here so the rotation outputs are on a center of zero x, and zero y.
+        rotated_points.rotated_x = hypotenus * Math.cos(rotated_angle);
+        rotated_points.rotated_y = hypotenus * Math.cos(rotated_angle);
+                              
+        return rotated_points;
       }
       
       function start_adventure_game()
