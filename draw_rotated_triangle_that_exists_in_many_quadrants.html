@@ -7,9 +7,9 @@
       function get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y)
       {
         let pythagorean_therom_data = {
-                          "adjacent": undefined,
-                          "opposite": undefined,
-                          "hypotenus": undefined
+                          "adjacent": 0.000000,
+                          "opposite": 0.000000,
+                          "hypotenus": 0.000000
                         };
         
         //determine adjacent squared.
@@ -34,14 +34,17 @@
         //determine hypotenus on an infinite grid that is locally oriented only by its two side(hypotenuse and opposite).
         if((adjacent*1000000) == 0)
         {
-          hypotenus = opposite;
-        }else if((opposite*1000000) == 0)
-        {
-          hypotenus = adjacent;
-        }else{
-          let a_squared_plus_b_squared = adjacent_squared + opposite_squared;
-          hypotenus = Math.sqrt(a_squared_plus_b_squared);
+          adjacent = 0.000001;
         }
+        
+        if((opposite*1000000) == 0)
+        {
+          opposite = 0.000001;
+        }
+      
+        let a_squared_plus_b_squared = adjacent_squared + opposite_squared;
+        hypotenus = Math.sqrt(a_squared_plus_b_squared);
+        
         
         pythagorean_therom_data.adjacent = adjacent;
         pythagorean_therom_data.opposite = opposite;
@@ -183,12 +186,14 @@
                               
        //apply rotation
        let rotated_angle = 0.000000;
-       rotated_angle += parseFloat(current_angle_as_radians) + parseFloat(amount_of_rotation_to_apply_in_radians);
-       console.log("current angle:"+current_angle_as_radians)
-       console.log("rotated angle:"+rotated_angle)
-       console.log("hypotenuse:"+hypotenus);
+       rotated_angle += current_angle_as_radians;
+       rotated_angle += amount_of_rotation_to_apply_in_radians;
  
- 
+       //problem is here
+       console.log(rotated_angle);
+       console.log(hypotenus);
+       console.log(0.5*Math.cos(1.570796));
+       console.log(parseFloat(hypotenus.toString())*parseFloat(Math.cos(rotated_angle).toString()));
         //calculate rotated points, the offsets are not set here so the rotation outputs are on a center of zero x, and zero y.
         rotated_points.rotated_x = hypotenus * Math.cos(rotated_angle);
         rotated_points.rotated_y = hypotenus * Math.sin(rotated_angle);
@@ -230,24 +235,46 @@
                                 
          //Apply rotation
             //Amount of rotation to apply in radians for entire object.
-            let amount_of_rotation_to_apply_in_degrees = 0;
+            let amount_of_rotation_to_apply_in_degrees = 29;
             let amount_of_rotation_to_apply_in_radians = ((amount_of_rotation_to_apply_in_degrees * 3.141592) / 180.000000);
             
             //Define center of rotation
             let center_of_rotation_x = 0.0;
             let center_of_rotation_y = 0.0;
             
-            //Get current angle(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
-            let hypotenus_adjacent_opposite = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
-            console.log(hypotenus_adjacent_opposite);
-            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite.adjacent, hypotenus_adjacent_opposite.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
-            console.log(angle_as_radians_first_row);
-            let rotated_points_first_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite.hypotenus, angle_as_radians_first_row, amount_of_rotation_to_apply_in_radians);
-            console.log(rotated_points_first_row);
+            //Get current angle for first row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
+            let hypotenus_adjacent_opposite_first_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
+            //console.log(hypotenus_adjacent_opposite);
+            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_first_row.adjacent, hypotenus_adjacent_opposite_first_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
+            //console.log(angle_as_radians_first_row);
+            let rotated_points_first_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_first_row.hypotenus, angle_as_radians_first_row, amount_of_rotation_to_apply_in_radians);
+            //console.log(rotated_points_first_row);
             
             
             triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
             triangle_and_color_vertex[1] = rotated_points_first_row.rotated_y;
+            
+            //Get current angle for second row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
+            let hypotenus_adjacent_opposite_second_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
+            //console.log(hypotenus_adjacent_opposite);
+            let angle_as_radians_second_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_second_row.adjacent, hypotenus_adjacent_opposite_second_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
+            //console.log(angle_as_radians_first_row);
+            let rotated_points_second_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_second_row.hypotenus, angle_as_radians_second_row, amount_of_rotation_to_apply_in_radians);
+            //console.log(rotated_points_first_row);
+            
+            triangle_and_color_vertex[7] = rotated_points_second_row.rotated_x;
+            triangle_and_color_vertex[8] = rotated_points_second_row.rotated_y;
+            
+            //Get current angle for third row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
+            let hypotenus_adjacent_opposite_third_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[14], triangle_and_color_vertex[15]);
+            //console.log(hypotenus_adjacent_opposite);
+            let angle_as_radians_third_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_third_row.adjacent, hypotenus_adjacent_opposite_third_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[14], triangle_and_color_vertex[15]);
+            //console.log(angle_as_radians_first_row);
+            let rotated_points_third_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_third_row.hypotenus, angle_as_radians_third_row, amount_of_rotation_to_apply_in_radians);
+            //console.log(rotated_points_first_row);
+            
+            triangle_and_color_vertex[14] = rotated_points_third_row.rotated_x;
+            triangle_and_color_vertex[15] = rotated_points_third_row.rotated_y;
             
             /*
             //Get current angle(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
