@@ -118,6 +118,52 @@
           }
         }
         
+        //angle with a precision of eight directions is determined, now to determine the magnitude of the line.
+          //get hypotenus and save the adjacent data.
+          let pythagorean_therom = get_two_dimensional_hypotenus(point_one_x_as_integer, point_one_y_as_integer, point_two_x_as_integer, point_two_y_as_integer);
+          angle_as_radians.pythagorean_therom_data = pythagorean_therom;
+          
+          //determine angle as radians.
+          if(quadrant != undefined)
+          {
+            if(quadrant == 0)
+            {
+              //zero to ninety, top right.
+              three_hundred_and_sixty_degrees_as_radians = Math.acos(pythagorean_therom.adjacent / pythagorean_therom.hypotenus);
+            }else if(quadrant == 1)
+            {
+              //nintey to one hundred and eighty, top left.
+              three_hundred_and_sixty_degrees_as_radians = 3.141592 - Math.acos(pythagorean_therom.adjacent / pythagorean_therom.hypotenus);
+            }else if(quadrant == 2)
+            {
+              //one hundred and eighty to two hundred and seventy, bottom left.
+              three_hundred_and_sixty_degrees_as_radians = 3.141592 + Math.acos(pythagorean_therom.adjacent / pythagorean_therom.hypotenus);
+            }else if(quadrant == 3)
+            {
+              //two hundred and seventy to three hundred and sixty, bottom right
+              three_hundred_and_sixty_degrees_as_radians = 3.141592 + (3.141592 - Math.acos(pythagorean_therom.adjacent / pythagorean_therom.hypotenus));
+            }
+          }else if(exact_plane != undefined)
+          {
+            if(exact_plane == 0)
+            {
+              //zero degrees
+              three_hundred_and_sixty_degrees_as_radians = 0.000000;
+            }else if(exact_plane == 1)
+            {
+              //ninety degrees
+              three_hundred_and_sixty_degrees_as_radians = 1.570796;
+            }else if(exact_plane == 2)
+            {
+              //one hundred and eighty degrees
+              three_hundred_and_sixty_degrees_as_radians = 3.141592;
+            }else if(exact_plane == 3)
+            {
+              //two hundred and seventy
+              three_hundred_and_sixty_degrees_as_radians = 4.712388;
+            }
+          }
+        
         //define angle as radians that has been calculated.
         angle_as_radians.angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
         
