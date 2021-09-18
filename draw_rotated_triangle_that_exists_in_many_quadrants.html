@@ -79,7 +79,12 @@
         {
           if(point_one_y_as_integer > point_two_y_as_integer)
           {
-            
+            //start is exactly somewhere finite within the top right, bottom is some where in a finite but only know as infinite angle within the bottom left.
+            quadrant = 2;
+          }else if(point_one_y_as_integer == point_two_y_as_integer)
+          {
+            //start is exactly right of second x y coordinates, second point is exactly left of first point.
+            exact_plane = 2;
           }
         }
         
