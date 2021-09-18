@@ -127,8 +127,6 @@
           adjacent = 0.000001;
         }
        
-       console.log("quadrant:"+quadrant);
-       console.log("exact_plane:"+exact_plane);
         //determine angle as radians.
         if(quadrant !== undefined)
         {
@@ -189,12 +187,8 @@
        rotated_angle += current_angle_as_radians;
        rotated_angle += amount_of_rotation_to_apply_in_radians;
  
-       //problem is here
-       console.log(rotated_angle);
-       console.log(hypotenus);
-       console.log(0.5*Math.cos(1.570796));
-       console.log(parseFloat(hypotenus.toString())*parseFloat(Math.cos(rotated_angle).toString()));
-        //calculate rotated points, the offsets are not set here so the rotation outputs are on a center of zero x, and zero y.
+ 
+        //calculate rotated points
         rotated_points.rotated_x = hypotenus * Math.cos(rotated_angle);
         rotated_points.rotated_y = hypotenus * Math.sin(rotated_angle);
       
@@ -244,11 +238,8 @@
             
             //Get current angle for first row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
             let hypotenus_adjacent_opposite_first_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
-            //console.log(hypotenus_adjacent_opposite);
             let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_first_row.adjacent, hypotenus_adjacent_opposite_first_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
-            //console.log(angle_as_radians_first_row);
             let rotated_points_first_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_first_row.hypotenus, angle_as_radians_first_row, amount_of_rotation_to_apply_in_radians);
-            //console.log(rotated_points_first_row);
             
             
             triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
@@ -256,56 +247,20 @@
             
             //Get current angle for second row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
             let hypotenus_adjacent_opposite_second_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
-            //console.log(hypotenus_adjacent_opposite);
             let angle_as_radians_second_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_second_row.adjacent, hypotenus_adjacent_opposite_second_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
-            //console.log(angle_as_radians_first_row);
             let rotated_points_second_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_second_row.hypotenus, angle_as_radians_second_row, amount_of_rotation_to_apply_in_radians);
-            //console.log(rotated_points_first_row);
             
             triangle_and_color_vertex[7] = rotated_points_second_row.rotated_x;
             triangle_and_color_vertex[8] = rotated_points_second_row.rotated_y;
             
             //Get current angle for third row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
             let hypotenus_adjacent_opposite_third_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[14], triangle_and_color_vertex[15]);
-            //console.log(hypotenus_adjacent_opposite);
             let angle_as_radians_third_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_third_row.adjacent, hypotenus_adjacent_opposite_third_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[14], triangle_and_color_vertex[15]);
-            //console.log(angle_as_radians_first_row);
             let rotated_points_third_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_third_row.hypotenus, angle_as_radians_third_row, amount_of_rotation_to_apply_in_radians);
-            //console.log(rotated_points_first_row);
             
             triangle_and_color_vertex[14] = rotated_points_third_row.rotated_x;
             triangle_and_color_vertex[15] = rotated_points_third_row.rotated_y;
             
-            /*
-            //Get current angle(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
-            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
-              //Apply rotation of angle.
-              let rotated_angle_as_radians_first_row = angle_as_radians_first_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
-            
-              //Output rotated point.
-              triangle_and_color_vertex[0] = (angle_as_radians_first_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_first_row)) / 1000000;
-              triangle_and_color_vertex[1] = (angle_as_radians_first_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_first_row)) / 1000000;
-        
-            //Get current angle of second row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
-            let angle_as_radians_second_row = get_two_dimensional_angle_as_radians(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
-              //Apply rotation of angle.
-              let rotated_angle_as_radians_second_row = angle_as_radians_second_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
-            
-              //Output rotated point.
-              triangle_and_color_vertex[7] = (angle_as_radians_second_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_second_row)) / 1000000;
-              triangle_and_color_vertex[8] = (angle_as_radians_second_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_second_row)) / 1000000;
-              
-            //Get current angle of third row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
-            let angle_as_radians_third_row = get_two_dimensional_angle_as_radians(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[14], triangle_and_color_vertex[15]);
-              //Apply rotation of angle.
-              let rotated_angle_as_radians_third_row = angle_as_radians_third_row.angle_as_radians + amount_of_rotation_to_apply_in_radians;
-            
-              //Output rotated point.
-              triangle_and_color_vertex[14] = (angle_as_radians_third_row.pythagorean_therom_data.hypotenus * Math.cos(rotated_angle_as_radians_third_row)) / 1000000;
-              triangle_and_color_vertex[15] = (angle_as_radians_third_row.pythagorean_therom_data.hypotenus * Math.sin(rotated_angle_as_radians_third_row)) / 1000000;
-           */
-           console.log(triangle_and_color_vertex);
-              
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Motherboard' ram constant for vertex metadata.
             var position_size = 3; //X,Y,Z
