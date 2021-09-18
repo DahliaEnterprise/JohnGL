@@ -105,7 +105,19 @@
             //start is exactly left, second point is exactly right.
             exact_plane = 0;
           }
-        }        
+        }else if(point_one_x_as_integer == point_two_x_as_integer)
+        {
+          if(point_one_y_as_integer > point_two_y_as_integer)
+          {
+            //exact start is top and exact second point is bottom.
+            exact_plane = 3;
+          }else if(point_one_y_as_integer < point_two_y_as_integer)
+          {
+            //exact start is bottom and exact second point is top.
+            exact_plane = 1;
+          }
+        }
+        
         //define angle as radians that has been calculated.
         angle_as_radians.angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
         
