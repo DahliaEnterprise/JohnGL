@@ -4,6 +4,7 @@
     <title>Adventure Game</title>
     <script type="text/javascript">
       /* Venmo: Shane-Betz1990 */
+      
       function get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y)
       {
         let pythagorean_therom_data = {
@@ -47,7 +48,6 @@
         return pythagorean_therom_data;
       }
       
-      /*
       function get_two_dimensional_angle_as_radians(point_one_x, point_one_y, point_two_x, point_two_y)
       {
         let angle_as_radians = {
@@ -62,34 +62,34 @@
         let point_two_x_as_integer = (point_two_x * 1000000);
         let point_two_y_as_integer = (point_two_y * 1000000);
         
-        //acos seems to be the only function across many scripting languages that accepts the input ratio and returns an output that is the same(the mathmatical definition of a function), therefore acos is decided as the domineering function.
-        //acos JavaScript orientation is up is zero, right is nintey, bottom is one hundred and eighty, and left is two-hundred-forty, this man not be the same orientations for other scripting languages.
+        //if any of the points are zero they must be 0.000001 as an integer or magnitude calculations (hypotenus and rotated point combonation results) will be non existent, the result of this function should be uploaded to the gpu and not alter the model data within the source(usually the CPU, or the hardrive when saving the state of the game, make sure to interject and replace with zeros decimals where nessecary if this is being used to store states within long term storage sources or CPU ram dataline transfers), or spin-out-of-control(or strange precision rotations of objects) will happen after a long peroid of time with seemingly no end to debugging.
+        //a conversion to integers then comparision in integers is garunteed while decimal only comparisons will garuntee error/failure without debugging possibilities had you not known this about transistor computation flaws.
+        //its already converted to integers, now determine.
+        if(point_one_x_as_integer == 0){ point_one_x_as_integer = 1; }
+        if(point_one_y_as_integer == 0){ point_one_y_as_integer = 1; }
+        if(point_two_x_as_integer == 0){ point_two_x_as_integer = 1; }
+        if(point_two_y_as_integer == 0){ point_two_y_as_integer = 1; }
         
-        //support for one of the two points to be within the top-right quandrant within orientation of the other point.
-        let pythagorean_therom_data = get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y);
-        angle_as_radians.pythagorean_therom_data = pythagorean_therom_data;
-       
-        let three_hundred_and_sixty_degrees_as_radians = undefined;
+        //Determine if starting point(point one x y) is on a quadrant or an exact plane, there is no zero x, zero y during these calculations due to the magnitude determination collapse problem.
+        let quadrant = undefined; //0 = bottom-left to top-right(0-90), 1 = bottom-right to top-left(90-180), 2 = top-right to bottom-left(180-270), 3 = top-left to bottom-right(270-360).
+        let exact_plane = undefined; //0 = left to exactly right(0), 1 = bottom to exactly top(90), 2 = right to exactly left(180), 3 = top to exactly bottom(270).
         
-        //if the two points are oriented on an infinite graph in such a way that both align exactly with infinite precision on the y plane while both x planes are different then radians must be manually set in order to avoid division by zero(and avoid misuse of the cos function).
-        if(pythagorean_therom_data.adjacent == 0)
+        //the following conditionals are upon an infinite grid with no orientation until exactly upon determiniation when checked by the second point x and y coordinates. the starting point is finite while the ending point is both finite and infinite in order to discover a floating angle direction of a precision of eight directions(up, right, down, left and their diagonals).
+        if(point_one_x_as_integer > point_two_x_as_integer)
         {
-          //point one is consider the source, so if point two is higher than point one than it is zero radians(zero degrees), if its lower than it is one-hundred-and-eighty degrees radians.
-          if(point_two_y_as_integer > point_one_y_as_integer)
+          if(point_one_y_as_integer > point_two_y_as_integer)
           {
-            three_hundred_and_sixty_degrees_as_radians = 0; 
+            
           }
-        }else if(pythagorean_therom_data.adjacent != 0)
-        {
-          three_hundred_and_sixty_degrees_as_radians = Math.acos(pythagorean_therom_data.adjacent/pythagorean_therom_data.hypotenus);
         }
         
+        //define angle as radians that has been calculated.
         angle_as_radians.angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
         
         //return angle in radians format 
         return angle_as_radians;
       }
-      */
+      
       
       function get_two_dimensional_rotated_points(hypotenus, current_angle_as_radians, amount_of_rotation_to_apply_in_radians)
       {
