@@ -184,7 +184,7 @@
         
         //calculate rotated points, the offsets are not set here so the rotation outputs are on a center of zero x, and zero y.
         rotated_points.rotated_x = hypotenus * Math.cos(rotated_angle);
-        rotated_points.rotated_y = hypotenus * Math.cos(rotated_angle);
+        rotated_points.rotated_y = hypotenus * Math.sin(rotated_angle);
                               
         return rotated_points;
       }
@@ -228,6 +228,13 @@
             //Define center of rotation
             let center_of_rotation_x = 0.0;
             let center_of_rotation_y = 0.0;
+            
+            //Get current angle(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
+            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
+              //Apply rotation of angle.
+              let rotated_points = get_two_dimensional_rotated_points((angle_as_radians_first_row.pythagorean_therom_data.hypotenus/1000000), angle_as_radians_first_row.angle_as_radians, amount_of_rotation_to_apply_in_radians);
+              triangle_and_color_vertex[0] = (rotated_points.rotated_x/1000000);
+              triangle_and_color_vertex[1] = (rotated_points.rotated_y/1000000);
             
             /*
             //Get current angle(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
