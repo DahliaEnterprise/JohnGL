@@ -195,6 +195,24 @@
         return rotated_points;
       }
       
+      function place_object_at_specific_two_dimensional_position(vertex_object_to_place, stride_color_size, x_position, y_position)
+      {
+        //notice: the object must be at the center of the Open GL ES coordinates in order to function, the entire object should be moved offset from the center by a developer(or designer) if it reall needs to be that way.
+        let index = 0;
+        while(index < vertex_object_to_place.length)
+        {
+          //offset x
+          vertex_object_to_place[index] = vertex_object_to_place[index] + x_position;
+          
+          //offset y
+          vertex_object_to_place[index+1] = vertex_object_to_place[index+1] + y_position;
+          
+          //next group to manipulate.
+          index = index + (3 + stride_color_size);
+        }
+        
+        return vertex_object_to_place;
+      }
       
       function start_adventure_game()
       {
@@ -226,7 +244,36 @@
                                   0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
                                   
                                 ]);
-                                
+         
+          //clone vertex to preserve but also manipulate by manipulation of the clone.
+          //an animation enabled version would keep its size allocated at all times but manipulate by replacing(overwriting) usually the entire vertex object.
+          let manipulate_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex.length);
+            //manual initalizing of object.
+            let index = 0;
+            while(index < triangle_and_color_vertex.length)
+            {
+              //initialize X,Y,Z,Red,Green,Blue,Alpha
+              manipulate_triangle_and_color_vertex[index] = triangle_and_color_vertex[index];
+              manipulate_triangle_and_color_vertex[index+1] = triangle_and_color_vertex[index+1];
+              manipulate_triangle_and_color_vertex[index+2] = triangle_and_color_vertex[index+2];
+              manipulate_triangle_and_color_vertex[index+3] = triangle_and_color_vertex[index+3];
+              manipulate_triangle_and_color_vertex[index+4] = triangle_and_color_vertex[index+4];
+              manipulate_triangle_and_color_vertex[index+5] = triangle_and_color_vertex[index+5];
+              manipulate_triangle_and_color_vertex[index+6] = triangle_and_color_vertex[index+6];
+              
+              
+              //next index
+              index = index + 7;
+            }
+          
+         /* 
+            To preserve the object with out morphing within any situation,
+            the order of operations for translation is 
+            rotation,
+            scale,
+            position placement.
+         */
+         
          //Apply rotation
             //Amount of rotation to apply in radians for entire object.
             let amount_of_rotation_to_apply_in_degrees = 29;
@@ -237,28 +284,33 @@
             let center_of_rotation_y = 0.0;
             
             //Get current angle for first row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
-            let hypotenus_adjacent_opposite_first_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
-            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_first_row.adjacent, hypotenus_adjacent_opposite_first_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[0], triangle_and_color_vertex[1]);
+            let hypotenus_adjacent_opposite_first_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[0], manipulate_triangle_and_color_vertex[1]);
+            let angle_as_radians_first_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_first_row.adjacent, hypotenus_adjacent_opposite_first_row.hypotenus, center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[0], manipulate_triangle_and_color_vertex[1]);
             let rotated_points_first_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_first_row.hypotenus, angle_as_radians_first_row, amount_of_rotation_to_apply_in_radians);
             
-            triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
-            triangle_and_color_vertex[1] = rotated_points_first_row.rotated_y;
+            manipulate_triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
+            manipulate_triangle_and_color_vertex[1] = rotated_points_first_row.rotated_y;
             
             //Get current angle for second row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
-            let hypotenus_adjacent_opposite_second_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
-            let angle_as_radians_second_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_second_row.adjacent, hypotenus_adjacent_opposite_second_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[7], triangle_and_color_vertex[8]);
+            let hypotenus_adjacent_opposite_second_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[7], manipulate_triangle_and_color_vertex[8]);
+            let angle_as_radians_second_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_second_row.adjacent, hypotenus_adjacent_opposite_second_row.hypotenus, center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[7], manipulate_triangle_and_color_vertex[8]);
             let rotated_points_second_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_second_row.hypotenus, angle_as_radians_second_row, amount_of_rotation_to_apply_in_radians);
             
-            triangle_and_color_vertex[7] = rotated_points_second_row.rotated_x;
-            triangle_and_color_vertex[8] = rotated_points_second_row.rotated_y;
+            manipulate_triangle_and_color_vertex[7] = rotated_points_second_row.rotated_x;
+            manipulate_triangle_and_color_vertex[8] = rotated_points_second_row.rotated_y;
             
             //Get current angle for third row(center_of_rotation_x, center_of_rotation_y, is the center to rotate)
-            let hypotenus_adjacent_opposite_third_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[14], triangle_and_color_vertex[15]);
-            let angle_as_radians_third_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_third_row.adjacent, hypotenus_adjacent_opposite_third_row.hypotenus, center_of_rotation_x, center_of_rotation_y, triangle_and_color_vertex[14], triangle_and_color_vertex[15]);
+            let hypotenus_adjacent_opposite_third_row = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[14], manipulate_triangle_and_color_vertex[15]);
+            let angle_as_radians_third_row = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_third_row.adjacent, hypotenus_adjacent_opposite_third_row.hypotenus, center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[14], manipulate_triangle_and_color_vertex[15]);
             let rotated_points_third_row = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_third_row.hypotenus, angle_as_radians_third_row, amount_of_rotation_to_apply_in_radians);
             
-            triangle_and_color_vertex[14] = rotated_points_third_row.rotated_x;
-            triangle_and_color_vertex[15] = rotated_points_third_row.rotated_y;
+            manipulate_triangle_and_color_vertex[14] = rotated_points_third_row.rotated_x;
+            manipulate_triangle_and_color_vertex[15] = rotated_points_third_row.rotated_y;
+            
+          //scale, do nothing this file.
+          
+          //Apply Position Placement.
+          manipulate_triangle_and_color_vertex = place_object_at_specific_two_dimensional_position(manipulate_triangle_and_color_vertex, 4, 0.5, 0.5);
             
           //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Motherboard' ram constant for vertex metadata.
@@ -274,7 +326,7 @@
             opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
             
             //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
-            opengles.bufferData(opengles.ARRAY_BUFFER, triangle_and_color_vertex, opengles.STATIC_DRAW);
+            opengles.bufferData(opengles.ARRAY_BUFFER, manipulate_triangle_and_color_vertex, opengles.STATIC_DRAW);
              
             //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram.
             triangle_vertex_opengles.positionSize = position_size;
@@ -303,7 +355,7 @@
                   solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "} \n";
                   
               //Transfer C source code to the Open GL ES engine and associate that transfer with the a handleable variable named solid_color_vertex_shader.
-              opengles.shaderSource(solid_color_vertex_shader , solid_color_vertex_shader_source_code);
+              opengles.shaderSource(solid_color_vertex_shader, solid_color_vertex_shader_source_code);
               
               //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_vertex_shader variable.
               opengles.compileShader(solid_color_vertex_shader);
