@@ -32,6 +32,9 @@
           //original vertex object(this is sourced per frame to prevent morphing).
           var triangle_and_color_vertex = null;
           
+          //manipulation vertex object(the source is copied here then this is modified and used for drawing).
+          var manipulation_triangle_and_color_vertex = null;
+          
           //color shader
           var solid_color_vertex_shader = null;
 
@@ -40,7 +43,10 @@
 
           //compiled shader program
           var solid_color_shader_program = null;
-          
+      
+        //Open GL ES buffer associated with the triangle and color vertex.
+        var triangle_and_color_vertex_buffer = null;
+        
       function start_adventure_game()
       {
         
@@ -137,7 +143,12 @@
       
       function draw_next_frame()
       {
-       
+         triangle_and_color_vertex_buffer = opengles.createBuffer();
+         opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+         opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(triangle_and_color_vertex), opengles.STATIC_DRAW);
+         
+         //draw specific
+         opengles.useProgram(solid_color_shader_program);
       }
     </script>
   </head>
