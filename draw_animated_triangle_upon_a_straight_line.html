@@ -24,16 +24,29 @@
       }
       
       //globals
-      var canvas_handle = null;
-      var opengles = null;
+        //open gl es engine related.
+        var canvas_handle = null;
+        var opengles = null;
 
+        //vertex object related including specific shaders intended for it.
+          //original vertex object(this is sourced per frame to prevent morphing).
+          var triangle_and_color_vertex = null;
+          
+          //color shader
+          var solid_color_vertex_shader = null;
 
+          //fragment shader
+          var solid_color_fragment_shader = null;
+
+          //compiled shader program
+          var solid_color_shader_program = null;
+          
       function start_adventure_game()
       {
         
         //make the dom elememt canvas handled by a useable variable.
         canvas_handle = document.getElementById("canvas_for_opengles");
-        
+          
         //Apply OpenGL ES engine to the canvas and make that engine handled by a useable variable.
         opengles = canvas_handle.getContext("webgl2");
         opengles.viewportWidth = canvas_handle.width;
@@ -119,8 +132,7 @@
             }
         
         //draw frame
-
-          draw_next_frame();
+        draw_next_frame();
       }
       
       function draw_next_frame()
