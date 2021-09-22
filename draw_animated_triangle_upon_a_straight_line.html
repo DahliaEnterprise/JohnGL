@@ -256,17 +256,26 @@
         return vertex_object_to_place;
       }
       
+      //globals
+      var canvas_handle = null;
+      var opengles = null;
+
+      var triangle_and_color_vertex = null;
       var manipulate_triangle_and_color_vertex = null;
       var triangle_vertex_opengles = null;
+      
+      var solid_color_vertex_shader = null;
+      var solid_color_fragment_shader = null;
+      var solid_color_shader_program = null;
       
       function start_adventure_game()
       {
         
         //make the dom elememt canvas handled by a useable variable.
-        var canvas_handle = document.getElementById("canvas_for_opengles");
+        canvas_handle = document.getElementById("canvas_for_opengles");
         
         //Apply OpenGL ES engine to the canvas and make that engine handled by a useable variable.
-        var opengles = canvas_handle.getContext("webgl2");
+        opengles = canvas_handle.getContext("webgl2");
         opengles.viewportWidth = canvas_handle.width;
         opengles.viewportHeight = canvas_handle.height;
         
@@ -283,7 +292,7 @@
         //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
           //Define vertex data into motherboard' ram.
           //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
-          var triangle_and_color_vertex = new Float32Array([
+          triangle_and_color_vertex = new Float32Array([
                                   0.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
                                   -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0,
                                   0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
@@ -351,7 +360,7 @@
 
         //Solid Color Shader (useable for more than one vertex(or vertices)).
           //Allocate vertex shader within the Open GL ES engine and allow that vertex shader to be handled by a useable variable.
-          var solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
+          solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
             //Define how each vertex is colorized by defining a color to each point.
               //Define the C source code to be imported into the Open GL ES engine related to vertex shader.
               var solid_color_vertex_shader_source_code = "";
@@ -371,7 +380,7 @@
               opengles.compileShader(solid_color_vertex_shader);
               
           //Allocate fragment shader within the opengl engine and make that fragment shader handled by a useable variable.
-          var solid_color_fragment_shader = opengles.createShader(opengles.FRAGMENT_SHADER);
+          solid_color_fragment_shader = opengles.createShader(opengles.FRAGMENT_SHADER);
               //Define how fragments of the vertex or vertices are filitered.
                 //Define the C source code to be imported into the Open GL ES engine.
                 var solid_color_fragment_shader_source_code = "";
@@ -389,7 +398,7 @@
               opengles.compileShader(solid_color_fragment_shader);
                 
           //Allocate one Shader Program(C structure of memory allocated within Open GL ES memory hardware.) within the Open GL ES engine and make that shader program handled by a useable variable.
-          var solid_color_shader_program = opengles.createProgram();
+          solid_color_shader_program = opengles.createProgram();
             //Append intended shaders to the shader program(not sure if this is infinite appendable or the strict definitions of vertex and fragment shaders).
               //Flag vertex shader to be apart of the shader program intended to be recognized during the link process.
               opengles.attachShader(solid_color_shader_program, solid_color_vertex_shader);
@@ -497,7 +506,6 @@
       
       function draw_next_frame()
       {
-        /*
         //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
             //Motherboard' ram constant for vertex metadata.
             var position_size = 3; //X,Y,Z
@@ -523,7 +531,7 @@
 
             //update changes by binding buffer again
             opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
-            */
+      
       }
     </script>
   </head>
