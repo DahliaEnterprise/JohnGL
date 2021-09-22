@@ -256,6 +256,9 @@
         return vertex_object_to_place;
       }
       
+      var manipulate_triangle_and_color_vertex = null;
+      var triangle_vertex_opengles = null;
+      
       function start_adventure_game()
       {
         
@@ -286,27 +289,7 @@
                                   0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
                                   
                                 ]);
-            
-          //clone vertex to preserve but also manipulate by manipulation of the clone.
-          //an animation enabled version would keep its size allocated at all times but manipulate by replacing(overwriting) usually the entire vertex object.
-          let manipulate_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex.length);
-            //manual initalizing of object.
-            let index = 0;
-            while(index < triangle_and_color_vertex.length)
-            {
-              //initialize X,Y,Z,Red,Green,Blue,Alpha
-              manipulate_triangle_and_color_vertex[index] = triangle_and_color_vertex[index];
-              manipulate_triangle_and_color_vertex[index+1] = triangle_and_color_vertex[index+1];
-              manipulate_triangle_and_color_vertex[index+2] = triangle_and_color_vertex[index+2];
-              manipulate_triangle_and_color_vertex[index+3] = triangle_and_color_vertex[index+3];
-              manipulate_triangle_and_color_vertex[index+4] = triangle_and_color_vertex[index+4];
-              manipulate_triangle_and_color_vertex[index+5] = triangle_and_color_vertex[index+5];
-              manipulate_triangle_and_color_vertex[index+6] = triangle_and_color_vertex[index+6];
-              
-              //next index
-              index = index + 7;
-            }
-          
+      
          /* 
             To preserve the object with out morphing within any situation,
             the order of operations for translation is 
@@ -314,7 +297,10 @@
             scale,
             position placement.
          */
-         
+         /* muted to demonstrate only animation functions as integration 
+            has not been actualized with all three translation types.
+         */
+         /*
          //Apply rotation
             //Amount of rotation to apply in radians for entire object.
             let amount_of_rotation_to_apply_in_degrees = 29;
@@ -350,8 +336,8 @@
             
           //scale
             //set scale destination.
-            let x_scale_destination = 0.50000;
-            let y_scale_destination = 0.50000;
+            let x_scale_destination = 0.00000;
+            let y_scale_destination = 0.00000;
           
             //define center of scale.
             let center_of_scale_x = 0.0;
@@ -359,36 +345,9 @@
             
             manipulate_triangle_and_color_vertex = scale_object_two_diemensional(manipulate_triangle_and_color_vertex, 4, x_scale_destination, y_scale_destination, center_of_scale_x, center_of_scale_y);
            
-           
           //Apply Position Placement.
-          manipulate_triangle_and_color_vertex = place_object_at_specific_two_dimensional_position(manipulate_triangle_and_color_vertex, 4, 0.5, 0.5);
-            
-          //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
-            //Motherboard' ram constant for vertex metadata.
-            var position_size = 3; //X,Y,Z
-            var color_size = 4; //Red,Green,Blue,Alpha
-            var total_items = 3; //total groups of x,y,z,red,green,blue,alpha
-            
-            
-            //Allocate C structure within the Open GL ES engine.
-            var triangle_vertex_opengles = opengles.createBuffer();
-        
-            //Alert Open GL ES engine on how to interpret and utilize the following data about to be uploaded to the GPU ram(as it wont always be vertex or vertices arrays).
-            opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
-            
-            //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
-            opengles.bufferData(opengles.ARRAY_BUFFER, manipulate_triangle_and_color_vertex, opengles.STATIC_DRAW);
-             
-            //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram.
-            triangle_vertex_opengles.positionSize = position_size;
-            triangle_vertex_opengles.colorSize = color_size;
-            
-            //Alert Open GL ES engine how many groups of three there is. With out this precount it will not work but most importantly if Open GL ES engine counted for you it could stall an entire graphics application by the magnitude of seconds with only a few obiects on screen.
-            triangle_vertex_opengles.numberOfItems = total_items;
-
-            //update changes by binding buffer again
-            opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
-            
+          manipulate_triangle_and_color_vertex = place_object_at_specific_two_dimensional_position(triangle_and_color_vertex, 4, 0.5, 0.5);
+           */
 
         //Solid Color Shader (useable for more than one vertex(or vertices)).
           //Allocate vertex shader within the Open GL ES engine and allow that vertex shader to be handled by a useable variable.
@@ -447,6 +406,11 @@
               alert("shader link process failed.");
             }
         
+        //draw frame
+
+
+        /*
+        
         //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
         opengles.clearColor(0.0, 0.0, 0.0, 1.0);
         opengles.viewport(0, 0, opengles.viewportWidth, opengles.viewportHeight);
@@ -485,7 +449,7 @@
         //fictious action of draw next frame function here.
         
         //upload altered data(no data has been altered, the same data is being reuploaded)
-        manipulate_triangle_and_color_vertex = place_object_at_specific_two_dimensional_position(manipulate_triangle_and_color_vertex, 4, 0.5, 0.5);
+        manipulate_triangle_and_color_vertex = place_object_at_specific_two_dimensional_position(manipulate_triangle_and_color_vertex, 4, 0.0, 0.0);
         opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
             
         //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
@@ -526,7 +490,40 @@
           
           //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
           opengles.drawArrays(opengles.TRIANGLES, 0, triangle_vertex_opengles.numberOfItems);
+          */
           
+          draw_next_frame();
+      }
+      
+      function draw_next_frame()
+      {
+        /*
+        //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
+            //Motherboard' ram constant for vertex metadata.
+            var position_size = 3; //X,Y,Z
+            var color_size = 4; //Red,Green,Blue,Alpha
+            var total_items = 3; //total groups of x,y,z,red,green,blue,alpha
+            
+            
+            //Allocate C structure within the Open GL ES engine.
+            triangle_vertex_opengles = opengles.createBuffer();
+        
+            //Alert Open GL ES engine on how to interpret and utilize the following data about to be uploaded to the GPU ram(as it wont always be vertex or vertices arrays).
+            opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
+            
+            //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
+            opengles.bufferData(opengles.ARRAY_BUFFER, manipulate_triangle_and_color_vertex, opengles.STATIC_DRAW);
+             
+            //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram.
+            triangle_vertex_opengles.positionSize = position_size;
+            triangle_vertex_opengles.colorSize = color_size;
+            
+            //Alert Open GL ES engine how many groups of three there is. With out this precount it will not work but most importantly if Open GL ES engine counted for you it could stall an entire graphics application by the magnitude of seconds with only a few obiects on screen.
+            triangle_vertex_opengles.numberOfItems = total_items;
+
+            //update changes by binding buffer again
+            opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
+            */
       }
     </script>
   </head>
