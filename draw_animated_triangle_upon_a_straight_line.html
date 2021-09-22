@@ -145,10 +145,47 @@
       {
          triangle_and_color_vertex_buffer = opengles.createBuffer();
          opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+         triangle_and_color_vertex_buffer.positionSize = 3;
+         triangle_and_color_vertex_buffer.colorSize = 4;
+         triangle_and_color_vertex_buffer.numberOfItems = 3;
          opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(triangle_and_color_vertex), opengles.STATIC_DRAW);
          
          //draw specific
          opengles.useProgram(solid_color_shader_program);
+         opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+         
+         //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
+        opengles.clearColor(0.0, 0.0, 0.0, 1.0);
+        opengles.viewport(0, 0, opengles.viewportWidth, opengles.viewportHeight);
+        opengles.clear(opengles.COLOR_BUFFER_BIT);
+        
+        //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
+        //Set the shader program to use for the following vertex or vertices and its defineable attributes.
+          //Pop in a shader program to be used within the following order of operations.
+          opengles.useProgram(solid_color_shader_program);
+        
+          //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+          solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
+         
+          //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
+          solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
+          
+        //tell the GPU data line to get ready to transfer position data.
+        opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_and_color_vertex_buffer.positionSize, opengles.FLOAT, false, 28, 0);
+        
+        //tell the GPU data line to get ready to transfer color data.
+        opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_and_color_vertex_buffer.colorSize, opengles.FLOAT, false, 28, 12);
+        
+        //tell the gpu you have decided what to transfer and that it is about to happen.
+        opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
+      
+        //tell the gpu you have decided what to transfer and that it is about to happen.
+        opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
+        
+        //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
+        opengles.drawArrays(opengles.TRIANGLES, 0, triangle_and_color_vertex_buffer.numberOfItems);
+        
+         
       }
     </script>
   </head>
