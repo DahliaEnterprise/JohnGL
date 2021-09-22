@@ -511,9 +511,13 @@
 
            [3] iterate each triangle for drawing to screen.
         */
-        
+        current_x_position = current_x_position + 0.01;
         manipulate_triangle_and_color_vertex = place_object_at_specific_two_dimensional_position(manipulate_triangle_and_color_vertex, 4, current_x_position, current_y_position);
             
+        //delete buffer from graphics since it has already been upload to the GPU and we have altered it before the next draw.
+        opengles.deleteBuffer(triangle_vertex_opengles);
+        
+        
         
         //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
         opengles.clearColor(0.0, 0.0, 0.0, 1.0);
