@@ -484,6 +484,13 @@
         
         //fictious action of draw next frame function here.
         
+        //upload altered data(no data has been altered, the same data is being reuploaded)
+        opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_vertex_opengles);
+            
+        //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
+        opengles.bufferData(opengles.ARRAY_BUFFER, manipulate_triangle_and_color_vertex, opengles.STATIC_DRAW);
+        
+        
         //do redraw
          //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
           opengles.clearColor(0.0, 0.0, 0.0, 1.0);
