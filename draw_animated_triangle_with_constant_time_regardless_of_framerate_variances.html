@@ -1,0 +1,217 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Adventure Game</title>
+    <script type="text/javascript">
+      /* Venmo: Shane-Betz1990 */
+      function place_object_at_specific_two_dimensional_position(vertex_object_to_place, stride_color_size, x_position, y_position)
+      {
+        //notice: the object must be at the center of the Open GL ES coordinates in order to function, the entire object should be moved offset from the center by a developer(or designer) if it reall needs to be that way.
+        let index = 0;
+        while(index < vertex_object_to_place.length)
+        {
+          //offset x
+          vertex_object_to_place[index] = vertex_object_to_place[index] + x_position;
+          
+          //offset y
+          vertex_object_to_place[index+1] = vertex_object_to_place[index+1] + y_position;
+          
+          //next group to manipulate.
+          index = index + (3 + stride_color_size);
+        }
+        
+        return vertex_object_to_place;
+      }
+      
+      //globals
+        //open gl es engine related.
+        var canvas_handle = null;
+        var opengles = null;
+
+        //vertex object related including specific shaders intended for it.
+          //original vertex object(this is sourced per frame to prevent morphing).
+          var triangle_and_color_vertex = null;
+          
+          //manipulation vertex object(the source is copied here then this is modified and used for drawing).
+          var manipulation_triangle_and_color_vertex = null;
+          
+          //color shader
+          var solid_color_vertex_shader = null;
+
+          //fragment shader
+          var solid_color_fragment_shader = null;
+
+          //compiled shader program
+          var solid_color_shader_program = null;
+      
+        //Open GL ES buffer associated with the triangle and color vertex.
+        var triangle_and_color_vertex_buffer = null;
+      
+      //animation loop
+      var animation_interval = null;
+      var animation_last_timestamp = 0;
+        
+      function start_adventure_game()
+      {
+        
+        //make the dom elememt canvas handled by a useable variable.
+        canvas_handle = document.getElementById("canvas_for_opengles");
+          
+        //Apply OpenGL ES engine to the canvas and make that engine handled by a useable variable.
+        opengles = canvas_handle.getContext("webgl2");
+        opengles.viewportWidth = canvas_handle.width;
+        opengles.viewportHeight = canvas_handle.height;
+        
+        /* 
+           It does not matter which order the 
+           vertex(or vertices) or shader programs
+           are defined and uploaded to the Open GL ES engine.
+           as long as the order of operations per
+           major goal(vertex data or shader program) is
+           adhered to with out interlacing other non related
+           Open GL ES commands, actions or major goals
+        */
+        
+        //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
+          //Define vertex data into motherboard' ram.
+          //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
+          triangle_and_color_vertex = new Float32Array([
+                                  0.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                  -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0,
+                                  0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
+                                  
+                                ]);
+      
+       
+
+        //Solid Color Shader (useable for more than one vertex(or vertices)).
+          //Allocate vertex shader within the Open GL ES engine and allow that vertex shader to be handled by a useable variable.
+          solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
+            //Define how each vertex is colorized by defining a color to each point.
+              //Define the C source code to be imported into the Open GL ES engine related to vertex shader.
+              var solid_color_vertex_shader_source_code = "";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 position_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 color_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "void main() { \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  //colorize position.  \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  gl_Position = position_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  varying_color_of_vertex_to_colorize = color_of_vertex_to_colorize;  \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "} \n";
+                  
+              //Transfer C source code to the Open GL ES engine and associate that transfer with the a handleable variable named solid_color_vertex_shader.
+              opengles.shaderSource(solid_color_vertex_shader, solid_color_vertex_shader_source_code);
+              
+              //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_vertex_shader variable.
+              opengles.compileShader(solid_color_vertex_shader);
+              
+          //Allocate fragment shader within the opengl engine and make that fragment shader handled by a useable variable.
+          solid_color_fragment_shader = opengles.createShader(opengles.FRAGMENT_SHADER);
+              //Define how fragments of the vertex or vertices are filitered.
+                //Define the C source code to be imported into the Open GL ES engine.
+                var solid_color_fragment_shader_source_code = "";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "precision mediump float;  \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "void main() { \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  //Define filter \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  gl_FragColor = varying_color_of_vertex_to_colorize; \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "} \n";
+                
+              //Transfer C source code to the Open GL ES engine and associate that transfer with the solid_color_fragement_shader handle.
+              opengles.shaderSource(solid_color_fragment_shader, solid_color_fragment_shader_source_code);
+                
+              //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_fragement_shader handle.
+              opengles.compileShader(solid_color_fragment_shader);
+                
+          //Allocate one Shader Program(C structure of memory allocated within Open GL ES memory hardware.) within the Open GL ES engine and make that shader program handled by a useable variable.
+          solid_color_shader_program = opengles.createProgram();
+            //Append intended shaders to the shader program(not sure if this is infinite appendable or the strict definitions of vertex and fragment shaders).
+              //Flag vertex shader to be apart of the shader program intended to be recognized during the link process.
+              opengles.attachShader(solid_color_shader_program, solid_color_vertex_shader);
+          
+              //Flag fragement shader to be apart of the shader program intended to be recognized during the link process.
+              opengles.attachShader(solid_color_shader_program, solid_color_fragment_shader);
+              
+            //Link vertex shader and fragment shader which results into a handlable solid color opengl binary shader program.
+            opengles.linkProgram(solid_color_shader_program);
+      
+            //Due to the order of operations paradigm, checking if the linkage was succesfful must be determined immediately after or more precisely before an Open GL engine operation not assocated with shader program link or compliation process.
+            if(!opengles.getProgramParameter(solid_color_shader_program, opengles.LINK_STATUS))
+            {
+              alert("shader link process failed.");
+            }
+            
+        
+        //draw frame
+        animation_interval = setInterval(draw_next_frame, 1);
+      }
+      
+      var buffer_created = 0;
+      
+      var object_x = 0.0;
+      var object_y = 0.0;
+      
+      function draw_next_frame()
+      {
+         //buffer created note: just like a CPU ram paradigm in C, the GPU ram paradigm needs developer aware memory clean up and usage or the push pop stack becomes full.
+         if(buffer_created == 0)
+         {
+           triangle_and_color_vertex_buffer = opengles.createBuffer();
+           buffer_created = 1;
+         }else{
+           opengles.deleteBuffer(triangle_and_color_vertex_buffer);
+           triangle_and_color_vertex_buffer = opengles.createBuffer();
+         }
+        object_x = object_x + 0.001;
+        object_y = object_y + 0.001;
+        manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
+        manipulation_triangle_and_color_vertex =  place_object_at_specific_two_dimensional_position(manipulation_triangle_and_color_vertex, 4, object_x, object_y);
+      
+        opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+        triangle_and_color_vertex_buffer.positionSize = 3;
+        triangle_and_color_vertex_buffer.colorSize = 4;
+        triangle_and_color_vertex_buffer.numberOfItems = 3;
+        opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(manipulation_triangle_and_color_vertex), opengles.STATIC_DRAW);
+
+         //draw specific
+         opengles.useProgram(solid_color_shader_program);
+         opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+         
+        //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
+        opengles.clearColor(0.0, 0.0, 0.0, 1.0);
+        opengles.viewport(0, 0, opengles.viewportWidth, opengles.viewportHeight);
+        opengles.clear(opengles.COLOR_BUFFER_BIT);
+        
+        //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
+        //Set the shader program to use for the following vertex or vertices and its defineable attributes.
+        //Pop in a shader program to be used within the following order of operations.
+        opengles.useProgram(solid_color_shader_program);
+        
+        //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+        solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
+        
+        //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
+        solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
+        
+        //tell the GPU data line to get ready to transfer position data.
+        opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_and_color_vertex_buffer.positionSize, opengles.FLOAT, false, 28, 0);
+        
+        //tell the GPU data line to get ready to transfer color data.
+        opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_and_color_vertex_buffer.colorSize, opengles.FLOAT, false, 28, 12);
+        
+        //tell the gpu you have decided what to transfer and that it is about to happen.
+        opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
+        
+        //tell the gpu you have decided what to transfer and that it is about to happen.
+        opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
+        
+        //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
+        opengles.drawArrays(opengles.TRIANGLES, 0, triangle_and_color_vertex_buffer.numberOfItems);
+
+      }
+    </script>
+  </head>
+  <body onLoad="start_adventure_game();">
+    <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
+  </body>
+</html>
