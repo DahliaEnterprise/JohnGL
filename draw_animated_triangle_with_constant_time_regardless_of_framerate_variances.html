@@ -49,6 +49,7 @@
       
       //animation group loop
       var animation_loop_group_loop = null;
+      var animation_loop_group_last_timestamp = null;
       
       //state animation loop (a pseudo physics engine)
       var state_animation_last_timestamp = 0;
@@ -148,9 +149,9 @@
             
         
        //start animation
-       animation_loop_group_loop = setInterval(next_animation_group_iteration, 5);
+       animation_loop_group_last_timestamp = Date.now();
+       animation_loop_group_loop = setInterval(next_animation_group_iteration, 3);
        
-     
       }
       
       var buffer_created = 0;
@@ -162,8 +163,15 @@
       
       function next_animation_group_iteration()
       {
-        iterate_states();
-        draw_next_frame();
+        let milliseconds_since_last_run = Date.now() - animation_loop_group_last_timestamp;
+        if(milliseconds_since_last_run >= 5)
+        {
+          iterate_states();
+          draw_next_frame();
+          
+          //update last timestamp run
+          animation_loop_group_last_timestamp = Date.now();
+        }
       }
       
       function iterate_states()
@@ -199,12 +207,8 @@
            opengles.deleteBuffer(triangle_and_color_vertex_buffer);
            triangle_and_color_vertex_buffer = opengles.createBuffer();
          }
-        /*
-        object_x = object_x + 0.001;
-        object_y = object_y + 0.001;
-        manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
-        manipulation_triangle_and_color_vertex =  place_object_at_specific_two_dimensional_position(manipulation_triangle_and_color_vertex, 4, object_x, object_y);
-       */
+    
+    
         opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
         triangle_and_color_vertex_buffer.positionSize = 3;
         triangle_and_color_vertex_buffer.colorSize = 4;
