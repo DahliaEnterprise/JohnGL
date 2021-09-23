@@ -4,25 +4,6 @@
     <title>Adventure Game</title>
     <script type="text/javascript">
       /* Venmo: Shane-Betz1990 */
-      function place_object_at_specific_two_dimensional_position(vertex_object_to_place, stride_color_size, x_position, y_position)
-      {
-        //notice: the object must be at the center of the Open GL ES coordinates in order to function, the entire object should be moved offset from the center by a developer(or designer) if it reall needs to be that way.
-        let index = 0;
-        while(index < vertex_object_to_place.length)
-        {
-          //offset x
-          vertex_object_to_place[index] = vertex_object_to_place[index] + x_position;
-          
-          //offset y
-          vertex_object_to_place[index+1] = vertex_object_to_place[index+1] + y_position;
-          
-          //next group to manipulate.
-          index = index + (3 + stride_color_size);
-        }
-        
-        return vertex_object_to_place;
-      }
-      
       //globals
         //open gl es engine related.
         var canvas_handle = null;
@@ -184,13 +165,6 @@
           //determine how many milliseconds have passed since last state change.
           let milliseconds_since_last_state = Date.now() - state_animation_last_timestamp;
           
-          
-          object_x = object_x + ((milliseconds_since_last_state * object_x_change_per_millisecond) * 0.1);
-          //object_y = object_y + 0.001;
-          manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
-          manipulation_triangle_and_color_vertex =  place_object_at_specific_two_dimensional_position(manipulation_triangle_and_color_vertex, 4, object_x, object_y);
-         
-         
           //update last time changed
           state_animation_last_timestamp = Date.now();
         }
@@ -257,3 +231,6 @@
     <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
   </body>
 </html>
+
+
+
