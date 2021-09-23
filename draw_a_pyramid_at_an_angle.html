@@ -196,6 +196,42 @@
         return rotated_points;
       }
       
+      function three_dimensional_rotation()
+      {
+        /* In order to prevent drift during rotation,
+           the useage of quaternions are the standard;
+           However stress testing by means of multiple programs
+           and calibration and verification methods declares that
+           quaternions only prevent drift over a short time span.
+           
+           Therefore the solution is to rotate three infinitely long
+           lines that will point towards the intended direction
+           and usually to achieve exactitude by pointing at an object
+           to achieve orientation (less than negligible drift).
+           
+           Once the infinitely long lines are pointed the exact direction
+           the vertex object will only rotate with out drift on an infinite ling timeline(longer than the known universe life and beyond)
+           if all three algorithms are tried and the none drifted result is choosen.
+           hence why pointing at an object(and another object such as the floor) will achieve maximum precision 
+           within regards to the intended exact direction.
+           
+           these three algorithms will rotate in the following order
+           x,y,z or y,z,x or z,y,x
+           
+           there are some occasions where the starting rotation can be 
+           so complex that the computer must try all possible,
+           methods to achieve the requested direction(not to be confused with the 
+           proposed order of operations of the three algorithms previously discussed).
+           which would result in unprecedented stalling in any graphics applications
+           that could last for hours.
+           
+           In order to avoid the indefinite machine learning senario
+           all objects using the proposed functions within this file must be cloned
+           from the source as a zero, zero, zero, rotation and then can be rotated from
+           the cloned dataset(manipulation vertex).
+        */
+      }
+      
       
       
       //globals
@@ -232,6 +268,11 @@
       //animation loop
       var animation_last_timestamp = 0;
       
+      //object state.
+        //rotation
+        var object_x_rotation = 0.0;
+        var object_y_rotation = 0.0;
+        var object_z_rotation = 0.0;
         
       //start game
       function start_adventure_game()
