@@ -196,7 +196,7 @@
         return rotated_points;
       }
       
-      function three_dimensional_rotation()
+      function three_dimensional_rotation(amount_of_rotation_to_apply_in_radians_x_y)
       {
         /* In order to prevent drift during rotation,
            the useage of quaternions are the standard;
@@ -211,7 +211,7 @@
            
            Once the infinitely long lines are pointed the exact direction
            the vertex object will only rotate with out drift on an infinite ling timeline(longer than the known universe life and beyond)
-           if all three algorithms are tried and the none drifted result is choosen.
+           if all three algorithms are tried and the one drifted result is choosen.
            hence why pointing at an object(and another object such as the floor) will achieve maximum precision 
            within regards to the intended exact direction.
            
@@ -230,6 +230,15 @@
            from the source as a zero, zero, zero, rotation and then can be rotated from
            the cloned dataset(manipulation vertex).
         */
+        
+        //Get current angle for x,y
+        let hypotenus_adjacent_opposite_x_y = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[0], manipulate_triangle_and_color_vertex[1]);
+        let angle_as_radians_x_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_y.adjacent, hypotenus_adjacent_opposite_x_y.hypotenus, center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[0], manipulate_triangle_and_color_vertex[1]);
+        let rotated_points_x_y = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_x_y.hypotenus, angle_as_radians_x_y, amount_of_rotation_to_apply_in_radians_x_y);
+        
+       // manipulate_triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
+        //manipulate_triangle_and_color_vertex[1] = rotated_points_first_row.rotated_y;
+        
       }
       
       
