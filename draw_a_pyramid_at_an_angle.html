@@ -196,7 +196,8 @@
         return rotated_points;
       }
       
-      function three_dimensional_rotation(amount_of_rotation_to_apply_in_radians_x_y)
+      function three_dimensional_rotation(amount_of_rotation_to_apply_in_radians_x_y, center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y, 
+                                          amount_of_rotation_to_apply_in_radians_y_z, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z)
       {
         /* In order to prevent drift during rotation,
            the useage of quaternions are the standard;
@@ -231,10 +232,21 @@
            the cloned dataset(manipulation vertex).
         */
         
-        //Get current angle for x,y
-        let hypotenus_adjacent_opposite_x_y = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[0], manipulate_triangle_and_color_vertex[1]);
-        let angle_as_radians_x_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_y.adjacent, hypotenus_adjacent_opposite_x_y.hypotenus, center_of_rotation_x, center_of_rotation_y, manipulate_triangle_and_color_vertex[0], manipulate_triangle_and_color_vertex[1]);
+        //temporarily there is no multithreading of trying three rotations until the first is created.
+        
+        //points to rotate
+        let point_x = null;
+        let point_y = null;
+        let point_z = null;
+        
+        //Rotate X,Y
+        let hypotenus_adjacent_opposite_x_y = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
+        let angle_as_radians_x_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_y.adjacent, hypotenus_adjacent_opposite_x_y.hypotenus, center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
         let rotated_points_x_y = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_x_y.hypotenus, angle_as_radians_x_y, amount_of_rotation_to_apply_in_radians_x_y);
+        
+        point_x = rotated_points_x_y.rotated_x;
+        point_y = rotated_points_x_y.rotated_y;
+        
         
        // manipulate_triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
         //manipulate_triangle_and_color_vertex[1] = rotated_points_first_row.rotated_y;
