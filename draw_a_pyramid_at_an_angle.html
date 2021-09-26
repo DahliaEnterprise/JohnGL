@@ -246,6 +246,17 @@
         
         point_x = rotated_points_x_y.rotated_x;
         point_y = rotated_points_x_y.rotated_y;
+        //point_z = null;
+        
+        //Rotate Y,Z
+        let hypotenus_adjacent_opposite_y_z = get_two_dimensional_hypotenus(center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
+        let angle_as_radians_y_z = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_y_z.adjacent, hypotenus_adjacent_opposite_y_z.hypotenus, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
+        let rotated_points_y_z = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_y_z.hypotenus, angle_as_radians_y_z, amount_of_rotation_to_apply_in_radians_y_z);
+        
+        //point_x = rotated_points_x_y.rotated_x;
+        point_y = rotated_points_y_z.rotated_x;
+        point_z = rotated_points_y_z.rotated_y;
+    
         
         
        // manipulate_triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
