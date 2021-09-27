@@ -197,7 +197,8 @@
       }
       
       function three_dimensional_rotation(amount_of_rotation_to_apply_in_radians_x_y, center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y, 
-                                          amount_of_rotation_to_apply_in_radians_y_z, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z)
+                                          amount_of_rotation_to_apply_in_radians_y_z, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z,
+                                          amount_of_rotation_to_apply_in_radians_x_z, center_of_rotation_x, center_of_rotation_z, point_to_rotate_x, point_to_rotate_z)
       {
         /* In order to prevent drift during rotation,
            the useage of quaternions are the standard;
@@ -271,6 +272,12 @@
        // manipulate_triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
         //manipulate_triangle_and_color_vertex[1] = rotated_points_first_row.rotated_y;
         
+        let output = {
+                        "x": point_x,
+                        "y": point_y,
+                        "z": point_z
+        };
+        return output;
       }
       
       
@@ -301,13 +308,13 @@
       
       //animation group loop
       var animation_loop_group_loop = null;
-      var animation_loop_group_last_timestamp = null;
+      var animation_loop_group_next_timestamp = null;
       
       //state animation loop (a pseudo physics engine)
-      var state_animation_last_timestamp = 0;
+      var state_animation_next_timestamp = null;
       
       //animation loop
-      var animation_last_timestamp = 0;
+      var animation_next_timestamp = null;
       
       //object state.
         //rotation
