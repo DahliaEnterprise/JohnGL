@@ -236,9 +236,9 @@
         //temporarily there is no multithreading of trying three rotations until the first is created.
         
         //points to rotate
-        let point_x = null;
-        let point_y = null;
-        let point_z = null;
+        let point_x = 0.0;
+        let point_y = 0.0;
+        let point_z = 0.0;
         
         //Rotate z axis(alter x and y)
         let hypotenus_adjacent_opposite_x_y = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
@@ -248,7 +248,7 @@
         point_x = rotated_points_x_y.rotated_x;
         point_y = rotated_points_x_y.rotated_y;
         //point_z = null;
-        
+        /*
         //Rotate x axis (alter y and z)
         let hypotenus_adjacent_opposite_y_z = get_two_dimensional_hypotenus(center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
         let angle_as_radians_y_z = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_y_z.adjacent, hypotenus_adjacent_opposite_y_z.hypotenus, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
@@ -268,10 +268,7 @@
         point_z = rotated_points_x_z.rotated_y;
     
         
-        
-       // manipulate_triangle_and_color_vertex[0] = rotated_points_first_row.rotated_x;
-        //manipulate_triangle_and_color_vertex[1] = rotated_points_first_row.rotated_y;
-        
+        */
         let output = {
                         "rotated_x": point_x,
                         "rotated_y": point_y,
@@ -460,14 +457,25 @@
               manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
               
               //temporary test rotation for consistency in comparison to two dimensional rotation.
-              let rotated_points_xyz_first_row = three_dimensional_rotation(1.6, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[1], 
-                                                                            0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[1], manipulation_triangle_and_color_vertex[2],
-                                                                            0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[2]);
-         
-              manipulation_triangle_and_color_vertex[0] = rotated_points_xyz_first_row.rotated_x;
-              manipulation_triangle_and_color_vertex[1] = rotated_points_xyz_first_row.rotated_y;
-              manipulation_triangle_and_color_vertex[2] = rotated_points_xyz_first_row.rotated_z;
-          console.log("state change");
+                  //first row
+                  let rotated_points_xyz_first_row = three_dimensional_rotation(0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[1], 
+                                                                                0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[1], manipulation_triangle_and_color_vertex[2],
+                                                                                0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[2]);
+             
+                  manipulation_triangle_and_color_vertex[0] = rotated_points_xyz_first_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[1] = rotated_points_xyz_first_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[2] = rotated_points_xyz_first_row.rotated_z;
+          
+                  //second row
+                  let rotated_points_xyz_second_row = three_dimensional_rotation(0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[7], manipulation_triangle_and_color_vertex[8], 
+                                                                                0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[8], manipulation_triangle_and_color_vertex[9],
+                                                                                0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[7], manipulation_triangle_and_color_vertex[9]);
+             
+                  manipulation_triangle_and_color_vertex[7] = rotated_points_xyz_second_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[8] = rotated_points_xyz_second_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[9] = rotated_points_xyz_second_row.rotated_z;
+          
+          
           //update next timestamp
           state_animation_next_timestamp = Date.now() + state_animation_interval;
         }
@@ -489,7 +497,6 @@
              opengles.deleteBuffer(triangle_and_color_vertex_buffer);
              triangle_and_color_vertex_buffer = opengles.createBuffer();
            }
-      console.log("animated");
       
           opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
           triangle_and_color_vertex_buffer.positionSize = 3;
