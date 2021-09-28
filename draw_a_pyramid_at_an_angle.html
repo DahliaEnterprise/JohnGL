@@ -273,9 +273,9 @@
         //manipulate_triangle_and_color_vertex[1] = rotated_points_first_row.rotated_y;
         
         let output = {
-                        "x": point_x,
-                        "y": point_y,
-                        "z": point_z
+                        "rotated_x": point_x,
+                        "rotated_y": point_y,
+                        "rotated_z": point_z
         };
         return output;
       }
@@ -456,7 +456,18 @@
         }else if(Date.now() >= state_animation_next_timestamp)
         {
           //do animation or physica here.
-          
+              //clone source model
+              manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
+              
+              //temporary test rotation for consistency in comparison to two dimensional rotation.
+              let rotated_points_xyz_first_row = three_dimensional_rotation(1.6, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[1], 
+                                                                            0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[1], manipulation_triangle_and_color_vertex[2],
+                                                                            0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[2]);
+         
+              manipulation_triangle_and_color_vertex[0] = rotated_points_xyz_first_row.rotated_x;
+              manipulation_triangle_and_color_vertex[1] = rotated_points_xyz_first_row.rotated_y;
+              manipulation_triangle_and_color_vertex[2] = rotated_points_xyz_first_row.rotated_z;
+          console.log("state change");
           //update next timestamp
           state_animation_next_timestamp = Date.now() + state_animation_interval;
         }
@@ -478,7 +489,7 @@
              opengles.deleteBuffer(triangle_and_color_vertex_buffer);
              triangle_and_color_vertex_buffer = opengles.createBuffer();
            }
-      
+      console.log("animated");
       
           opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
           triangle_and_color_vertex_buffer.positionSize = 3;
