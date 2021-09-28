@@ -309,12 +309,15 @@
       //animation group loop
       var animation_loop_group_loop = null;
       var animation_loop_group_next_timestamp = null;
+      var animation_loop_group_interval = 5;
       
       //state animation loop (a pseudo physics engine)
       var state_animation_next_timestamp = null;
+      var state_animation_interval = 5;
       
       //animation loop
       var animation_next_timestamp = null;
+      var animation_interval = 5;
       
       //object state.
         //rotation
@@ -421,8 +424,8 @@
             
         
        //start animation
-       animation_loop_group_last_timestamp = Date.now();
-       animation_loop_group_loop = setInterval(next_animation_group_iteration, 3);
+       animation_loop_group_next_timestamp = Date.now() + animation_loop_group_interval;
+       animation_loop_group_loop = setInterval(next_animation_group_iteration, 1);
        
       }
       
@@ -435,86 +438,92 @@
       
       function next_animation_group_iteration()
       {
-        let milliseconds_since_last_run = Date.now() - animation_loop_group_last_timestamp;
-        if(milliseconds_since_last_run >= 5)
+        if(Date.now() >= animation_loop_group_next_timestamp)
         {
           iterate_states();
           draw_next_frame();
           
-          //update last timestamp run
-          animation_loop_group_last_timestamp = Date.now();
+          //update next timestamp run
+          animation_loop_group_next_timestamp = Date.now() + animation_loop_group_interval;
         }
       }
       
       function iterate_states()
       {
-        if(state_animation_last_timestamp == 0)
+        if(state_animation_next_timestamp == null)
         {
-          state_animation_last_timestamp = Date.now();
-        }else if(state_animation_last_timestamp != 0)
+          state_animation_next_timestamp = Date.now() + state_animation_interval;
+        }else if(Date.now() >= state_animation_next_timestamp)
         {
-          //determine how many milliseconds have passed since last state change.
-          let milliseconds_since_last_state = Date.now() - state_animation_last_timestamp;
+          //do animation or physica here.
           
-          //update last time changed
-          state_animation_last_timestamp = Date.now();
+          //update next timestamp
+          state_animation_next_timestamp = Date.now() + state_animation_interval;
         }
       }
       
       function draw_next_frame()
       {
-         //buffer created note: just like a CPU ram paradigm in C, the GPU ram paradigm needs developer aware memory clean up and usage or the push pop stack becomes full.
-         if(buffer_created == 0)
-         {
-           triangle_and_color_vertex_buffer = opengles.createBuffer();
-           buffer_created = 1;
-         }else{
-           opengles.deleteBuffer(triangle_and_color_vertex_buffer);
-           triangle_and_color_vertex_buffer = opengles.createBuffer();
-         }
-    
-    
-        opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
-        triangle_and_color_vertex_buffer.positionSize = 3;
-        triangle_and_color_vertex_buffer.colorSize = 4;
-        triangle_and_color_vertex_buffer.numberOfItems = 6;
-        opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(manipulation_triangle_and_color_vertex), opengles.STATIC_DRAW);
-
-         //draw specific
-         opengles.useProgram(solid_color_shader_program);
-         opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
-         
-        //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
-        opengles.clearColor(0.0, 0.0, 0.0, 1.0);
-        opengles.viewport(0, 0, opengles.viewportWidth, opengles.viewportHeight);
-        opengles.clear(opengles.COLOR_BUFFER_BIT);
-        
-        //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
-        //Set the shader program to use for the following vertex or vertices and its defineable attributes.
-        //Pop in a shader program to be used within the following order of operations.
-        opengles.useProgram(solid_color_shader_program);
-        
-        //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
-        solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
-        
-        //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
-        solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
-        
-        //tell the GPU data line to get ready to transfer position data.
-        opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_and_color_vertex_buffer.positionSize, opengles.FLOAT, false, 28, 0);
-        
-        //tell the GPU data line to get ready to transfer color data.
-        opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_and_color_vertex_buffer.colorSize, opengles.FLOAT, false, 28, 12);
-        
-        //tell the gpu you have decided what to transfer and that it is about to happen.
-        opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
-        
-        //tell the gpu you have decided what to transfer and that it is about to happen.
-        opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
-        
-        //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
-        opengles.drawArrays(opengles.TRIANGLES, 0, triangle_and_color_vertex_buffer.numberOfItems);
-
+        if(animation_next_timestamp == null)
+        {
+          animation_next_timestamp = Date.now() + animation_interval;
+        }else if(Date.now() >= animation_next_timestamp)
+        {
+           //buffer created note: just like a CPU ram paradigm in C, the GPU ram paradigm needs developer aware memory clean up and usage or the push pop stack becomes full.
+           if(buffer_created == 0)
+           {
+             triangle_and_color_vertex_buffer = opengles.createBuffer();
+             buffer_created = 1;
+           }else{
+             opengles.deleteBuffer(triangle_and_color_vertex_buffer);
+             triangle_and_color_vertex_buffer = opengles.createBuffer();
+           }
+      
+      
+          opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+          triangle_and_color_vertex_buffer.positionSize = 3;
+          triangle_and_color_vertex_buffer.colorSize = 4;
+          triangle_and_color_vertex_buffer.numberOfItems = 6;
+          opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(manipulation_triangle_and_color_vertex), opengles.STATIC_DRAW);
+  
+           //draw specific
+           opengles.useProgram(solid_color_shader_program);
+           opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+           
+          //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
+          opengles.clearColor(0.0, 0.0, 0.0, 1.0);
+          opengles.viewport(0, 0, opengles.viewportWidth, opengles.viewportHeight);
+          opengles.clear(opengles.COLOR_BUFFER_BIT);
+          
+          //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
+          //Set the shader program to use for the following vertex or vertices and its defineable attributes.
+          //Pop in a shader program to be used within the following order of operations.
+          opengles.useProgram(solid_color_shader_program);
+          
+          //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+          solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
+          
+          //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
+          solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
+          
+          //tell the GPU data line to get ready to transfer position data.
+          opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_and_color_vertex_buffer.positionSize, opengles.FLOAT, false, 28, 0);
+          
+          //tell the GPU data line to get ready to transfer color data.
+          opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_and_color_vertex_buffer.colorSize, opengles.FLOAT, false, 28, 12);
+          
+          //tell the gpu you have decided what to transfer and that it is about to happen.
+          opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
+          
+          //tell the gpu you have decided what to transfer and that it is about to happen.
+          opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
+          
+          //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
+          opengles.drawArrays(opengles.TRIANGLES, 0, triangle_and_color_vertex_buffer.numberOfItems);
+          
+          //update next timestamp
+          animation_next_timestamp = Date.now() + animation_interval;
+        }
       }
     </script>
   </head>
