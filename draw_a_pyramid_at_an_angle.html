@@ -502,6 +502,15 @@
                   manipulation_triangle_and_color_vertex[29] = rotated_points_xyz_secondtriangle_second_row.rotated_y;
                   manipulation_triangle_and_color_vertex[30] = rotated_points_xyz_secondtriangle_second_row.rotated_z;
                   
+                  //second triangle, third row
+                  let rotated_points_xyz_secondtriangle_third_row = three_dimensional_rotation(0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[35], manipulation_triangle_and_color_vertex[36], 
+                                                                                0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[36], manipulation_triangle_and_color_vertex[37],
+                                                                                0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[35], manipulation_triangle_and_color_vertex[37]);
+             
+                  manipulation_triangle_and_color_vertex[35] = rotated_points_xyz_secondtriangle_third_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[36] = rotated_points_xyz_secondtriangle_third_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[37] = rotated_points_xyz_secondtriangle_third_row.rotated_z;
+                  
           
           //update next timestamp
           state_animation_next_timestamp = Date.now() + state_animation_interval;
