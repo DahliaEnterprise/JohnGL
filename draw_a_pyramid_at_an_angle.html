@@ -438,9 +438,9 @@
       
       //object state.
         //rotation
-        var object_x_rotation = 0.42;
+        var object_x_rotation = 0.0;
         var object_y_rotation = 0.0;
-        var object_z_rotation = 0.0;
+        var object_z_rotation = 0.42;
         
         var object_x = 0.0;
         var object_x_change_per_millisecond = 0.001;
@@ -453,7 +453,7 @@
         if(Date.now() >= animation_loop_group_next_timestamp)
         {
           //input alterator
-          object_x_rotation = object_x_rotation + 0.01;
+          object_z_rotation = object_z_rotation + 0.01;
           
           //iterate states and draw frame
           iterate_states();
@@ -477,7 +477,7 @@
               
               //temporary test rotation for consistency in comparison to two dimensional rotation.
                   //first row
-                  let rotated_points_xyz_first_row = three_dimensional_rotation(object_x_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[1], 
+                  let rotated_points_xyz_first_row = three_dimensional_rotation(object_z_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[1], 
                                                                                 0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[1], manipulation_triangle_and_color_vertex[2],
                                                                                 0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[2]);
              
@@ -486,7 +486,7 @@
                   manipulation_triangle_and_color_vertex[2] = rotated_points_xyz_first_row.rotated_z;
           
                   //second row
-                  let rotated_points_xyz_second_row = three_dimensional_rotation(object_x_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[7], manipulation_triangle_and_color_vertex[8], 
+                  let rotated_points_xyz_second_row = three_dimensional_rotation(object_z_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[7], manipulation_triangle_and_color_vertex[8], 
                                                                                 0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[8], manipulation_triangle_and_color_vertex[9],
                                                                                 0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[7], manipulation_triangle_and_color_vertex[9]);
              
@@ -495,7 +495,7 @@
                   manipulation_triangle_and_color_vertex[9] = rotated_points_xyz_second_row.rotated_z;
           
                   //third row
-                  let rotated_points_xyz_third_row = three_dimensional_rotation(object_x_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[14], manipulation_triangle_and_color_vertex[15], 
+                  let rotated_points_xyz_third_row = three_dimensional_rotation(object_z_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[14], manipulation_triangle_and_color_vertex[15], 
                                                                                 0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[15], manipulation_triangle_and_color_vertex[16],
                                                                                 0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[14], manipulation_triangle_and_color_vertex[16]);
              
@@ -504,7 +504,7 @@
                   manipulation_triangle_and_color_vertex[16] = rotated_points_xyz_third_row.rotated_z;
                   
                   //second triangle, first row
-                  let rotated_points_xyz_secondtriangle_first_row = three_dimensional_rotation(object_x_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[21], manipulation_triangle_and_color_vertex[22], 
+                  let rotated_points_xyz_secondtriangle_first_row = three_dimensional_rotation(object_z_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[21], manipulation_triangle_and_color_vertex[22], 
                                                                                                 0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[22], manipulation_triangle_and_color_vertex[23],
                                                                                                 0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[21], manipulation_triangle_and_color_vertex[23]);
              
@@ -513,7 +513,7 @@
                   manipulation_triangle_and_color_vertex[23] = rotated_points_xyz_secondtriangle_first_row.rotated_z;
                   
                   //second triangle, second row
-                  let rotated_points_xyz_secondtriangle_second_row = three_dimensional_rotation(object_x_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[28], manipulation_triangle_and_color_vertex[29], 
+                  let rotated_points_xyz_secondtriangle_second_row = three_dimensional_rotation(object_z_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[28], manipulation_triangle_and_color_vertex[29], 
                                                                                                 0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[29], manipulation_triangle_and_color_vertex[30],
                                                                                                 0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[28], manipulation_triangle_and_color_vertex[30]);
              
@@ -522,7 +522,7 @@
                   manipulation_triangle_and_color_vertex[30] = rotated_points_xyz_secondtriangle_second_row.rotated_z;
                   
                   //second triangle, third row
-                  let rotated_points_xyz_secondtriangle_third_row = three_dimensional_rotation(object_x_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[35], manipulation_triangle_and_color_vertex[36], 
+                  let rotated_points_xyz_secondtriangle_third_row = three_dimensional_rotation(object_z_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[35], manipulation_triangle_and_color_vertex[36], 
                                                                                                 0.43, 0.0, 0.0, manipulation_triangle_and_color_vertex[36], manipulation_triangle_and_color_vertex[37],
                                                                                                 0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[35], manipulation_triangle_and_color_vertex[37]);
              
