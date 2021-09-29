@@ -218,7 +218,7 @@
            within regards to the intended exact direction.
            
            these three algorithms will rotate in the following order
-           x,y,z or y,z,x or z,y,x
+           x,y,z or y,z,x or z,y,x (note to add :z,x,y)
            
            there are some occasions where the starting rotation can be 
            so complex that the computer must try all possible,
@@ -240,6 +240,7 @@
         let point_y = 0.0;
         let point_z = 0.0;
         
+        //aligorithm one (z,x,y)
         //Rotate z axis(alter x and y)
           //mute z axis rotation if set to decimal zero.
           if((amount_of_rotation_to_apply_in_radians_x_y*1000000) != 0)
