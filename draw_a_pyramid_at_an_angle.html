@@ -241,23 +241,31 @@
         let point_z = 0.0;
         
         //Rotate z axis(alter x and y)
-        let hypotenus_adjacent_opposite_x_y = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
-        let angle_as_radians_x_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_y.adjacent, hypotenus_adjacent_opposite_x_y.hypotenus, center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
-        let rotated_points_x_y = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_x_y.hypotenus, angle_as_radians_x_y, amount_of_rotation_to_apply_in_radians_x_y);
-        
-        point_x = rotated_points_x_y.rotated_x;
-        point_y = rotated_points_x_y.rotated_y;
-        //point_z = null;
+          //mute z axis rotation if set to decimal zero.
+          if((amount_of_rotation_to_apply_in_radians_x_y*1000000) != 0)
+          {
+            let hypotenus_adjacent_opposite_x_y = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
+            let angle_as_radians_x_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_y.adjacent, hypotenus_adjacent_opposite_x_y.hypotenus, center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
+            let rotated_points_x_y = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_x_y.hypotenus, angle_as_radians_x_y, amount_of_rotation_to_apply_in_radians_x_y);
+            
+            point_x = rotated_points_x_y.rotated_x;
+            point_y = rotated_points_x_y.rotated_y;
+            //point_z = null;
+          }
+          
+          if((amount_of_rotation_to_apply_in_radians_y_z*1000000) != 0)
+          {
+            //Rotate x axis (alter y and z)
+            let hypotenus_adjacent_opposite_y_z = get_two_dimensional_hypotenus(center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
+            let angle_as_radians_y_z = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_y_z.adjacent, hypotenus_adjacent_opposite_y_z.hypotenus, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
+            let rotated_points_y_z = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_y_z.hypotenus, angle_as_radians_y_z, amount_of_rotation_to_apply_in_radians_y_z);
+            
+            //point_x = rotated_points_x_y.rotated_x;
+            point_y = rotated_points_y_z.rotated_x;
+            point_z = rotated_points_y_z.rotated_y;
+           
+          }
         /*
-        //Rotate x axis (alter y and z)
-        let hypotenus_adjacent_opposite_y_z = get_two_dimensional_hypotenus(center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
-        let angle_as_radians_y_z = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_y_z.adjacent, hypotenus_adjacent_opposite_y_z.hypotenus, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
-        let rotated_points_y_z = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_y_z.hypotenus, angle_as_radians_y_z, amount_of_rotation_to_apply_in_radians_y_z);
-        
-        //point_x = rotated_points_x_y.rotated_x;
-        point_y = rotated_points_y_z.rotated_x;
-        point_z = rotated_points_y_z.rotated_y;
-    
         //Rotate y axis (alter x and z)
         let hypotenus_adjacent_opposite_x_z = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_z, point_to_rotate_x, point_to_rotate_z);
         let angle_as_radians_x_z = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_z.adjacent, hypotenus_adjacent_opposite_x_z.hypotenus, center_of_rotation_x, center_of_rotation_z, point_to_rotate_x, point_to_rotate_z);
