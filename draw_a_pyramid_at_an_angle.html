@@ -56,6 +56,8 @@
         return pythagorean_therom_data;
       }
       
+      
+      
       function get_two_dimensional_angle_as_radians(adjacent, hypotenus, point_one_x, point_one_y, point_two_x, point_two_y)
       {
         let angle_as_radians = undefined;
@@ -196,12 +198,7 @@
         return rotated_points;
       }
       
-      /*
-      function three_dimensional_rotation(amount_of_rotation_to_apply_in_radians_x_y, center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y, 
-                                          amount_of_rotation_to_apply_in_radians_y_z, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z,
-                                          amount_of_rotation_to_apply_in_radians_x_z, center_of_rotation_x, center_of_rotation_z, point_to_rotate_x, point_to_rotate_z)
-      {
-      */
+     
       function three_dimensional_rotation(amount_of_rotation_x, amount_of_rotation_y, amount_of_rotation_z,
                                           center_of_rotation_x, center_of_rotation_y, center_of_rotation_z,
                                           point_to_rotate_x, point_to_rotate_y, point_to_rotate_z)
@@ -242,9 +239,9 @@
         //temporarily there is no multithreading of trying three rotations until the first is created.
         
         //points to rotate
-        let point_x = 0.0;
-        let point_y = 0.0;
-        let point_z = 0.0;
+        let point_x = point_to_rotate_x
+        let point_y = point_to_rotate_y;
+        let point_z = point_to_rotate_z;
         
         //Rotate z axis (alter x and y coordinates according to documents)
         //mute z axis rotation if set to decimal zero.
@@ -259,51 +256,34 @@
          
         }
         
+        //Rotate x axis (alter z and y coordinates according to documents)
+        //mute x axis rotation if set to decimal zero.
+        if((amount_of_rotation_x*1000000) != 0)
+        {
+          let hypotenus_adjacent_opposite_z_y = get_two_dimensional_hypotenus(center_of_rotation_z, center_of_rotation_y, point_to_rotate_z, point_to_rotate_y);
+          let angle_as_radians_z_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_z_y.adjacent, hypotenus_adjacent_opposite_z_y.hypotenus, center_of_rotation_z, center_of_rotation_y, point_to_rotate_z, point_to_rotate_y);
+          let rotated_points_z_y = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_z_y.hypotenus, angle_as_radians_z_y, amount_of_rotation_x);
+          
+          point_z = rotated_points_z_y.rotated_x;
+          point_y = rotated_points_z_y.rotated_y;
+        }
+        
+        //Rotate y axis (alter z and y coordinates according to documents)
+        //mute y axis rotation if set to decimal zero.
+        if((amount_of_rotation_y*1000000) != 0)
+        {
+          let hypotenus_adjacent_opposite_z_x = get_two_dimensional_hypotenus(center_of_rotation_z, center_of_rotation_x, point_to_rotate_z, point_to_rotate_x);
+          let angle_as_radians_z_x = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_z_x.adjacent, hypotenus_adjacent_opposite_z_x.hypotenus, center_of_rotation_z, center_of_rotation_x, point_to_rotate_z, point_to_rotate_x);
+          let rotated_points_z_x = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_z_x.hypotenus, angle_as_radians_z_x, amount_of_rotation_y);
+          
+          point_z = rotated_points_z_x.rotated_x;
+          point_x = rotated_points_z_x.rotated_y;
+        }
+        
 
         
         
-        /*
-        //aligorithm one (z,x,y)
-        //Rotate z axis(alter x and y)
-          //mute z axis rotation if set to decimal zero.
-          if((amount_of_rotation_to_apply_in_radians_x_y*1000000) != 0)
-          {
-            let hypotenus_adjacent_opposite_x_y = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
-            let angle_as_radians_x_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_y.adjacent, hypotenus_adjacent_opposite_x_y.hypotenus, center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
-            let rotated_points_x_y = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_x_y.hypotenus, angle_as_radians_x_y, amount_of_rotation_to_apply_in_radians_x_y);
-            
-            point_x = rotated_points_x_y.rotated_x;
-            point_y = rotated_points_x_y.rotated_y;
-            //point_z = null;
-          }
-          
-          
-        //Rotate x axis (alter y and z)
-          //mute x axis rotation if set to decimal zero.
-          if((amount_of_rotation_to_apply_in_radians_y_z*1000000) != 0)
-          {
-            let hypotenus_adjacent_opposite_y_z = get_two_dimensional_hypotenus(center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
-            let angle_as_radians_y_z = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_y_z.adjacent, hypotenus_adjacent_opposite_y_z.hypotenus, center_of_rotation_y, center_of_rotation_z, point_to_rotate_y, point_to_rotate_z);
-            let rotated_points_y_z = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_y_z.hypotenus, angle_as_radians_y_z, amount_of_rotation_to_apply_in_radians_y_z);
-            
-            //point_x = rotated_points_x_y.rotated_x;
-            point_y = rotated_points_y_z.rotated_x;
-            point_z = rotated_points_y_z.rotated_y;
-           
-          }
-          
-     
-        //Rotate y axis (alter x and z)
-        let hypotenus_adjacent_opposite_x_z = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_z, point_to_rotate_x, point_to_rotate_z);
-        let angle_as_radians_x_z = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_z.adjacent, hypotenus_adjacent_opposite_x_z.hypotenus, center_of_rotation_x, center_of_rotation_z, point_to_rotate_x, point_to_rotate_z);
-        let rotated_points_x_z = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_x_z.hypotenus, angle_as_radians_x_z, amount_of_rotation_to_apply_in_radians_x_z);
         
-        point_x = rotated_points_x_z.rotated_x;
-        //point_y = rotated_points_y_z.rotated_x;
-        point_z = rotated_points_x_z.rotated_y;
-    
-        
-        */
         let output = {
                         "rotated_x": point_x,
                         "rotated_y": point_y,
@@ -475,7 +455,10 @@
         if(Date.now() >= animation_loop_group_next_timestamp)
         {
           //input alterator
-          object_z_rotation = object_z_rotation + 0.01;
+          //object_x_rotation = object_x_rotation + 0.01;
+          object_y_rotation = object_y_rotation + 0.01;
+          //object_z_rotation = object_z_rotation + 0.01;
+          
           
           //iterate states and draw frame
           iterate_states();
@@ -498,12 +481,8 @@
               manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
               
               //temporary test rotation for consistency in comparison to two dimensional rotation.
-                  //first row
-                  /*let rotated_points_xyz_first_row = three_dimensional_rotation(object_z_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[1], 
-                                                                                object_y_rotation, 0.0, 0.0, manipulation_triangle_and_color_vertex[1], manipulation_triangle_and_color_vertex[2],
-                                                                                0.0, 0.0, 0.0, manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[2]);*/
-                  
-                  let rotated_points_xyz_first_row = three_dimensional_rotation(0.0, 0.0, object_z_rotation,
+           
+                  let rotated_points_xyz_first_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
                                                                                 0.0, 0.0, 0.0,
                                                                                 manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[1], manipulation_triangle_and_color_vertex[2]);
                                           
@@ -513,7 +492,7 @@
                   manipulation_triangle_and_color_vertex[2] = rotated_points_xyz_first_row.rotated_z;
           
                   //second row
-                  let rotated_points_xyz_second_row = three_dimensional_rotation(0.0, 0.0, object_z_rotation,
+                  let rotated_points_xyz_second_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
                                                                                 0.0, 0.0, 0.0,
                                                                                 manipulation_triangle_and_color_vertex[7], manipulation_triangle_and_color_vertex[8], manipulation_triangle_and_color_vertex[9]);
                                           
@@ -523,7 +502,7 @@
                   manipulation_triangle_and_color_vertex[9] = rotated_points_xyz_second_row.rotated_z;
                   
                   //third row
-                  let rotated_points_xyz_third_row = three_dimensional_rotation(0.0, 0.0, object_z_rotation,
+                  let rotated_points_xyz_third_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
                                                                                 0.0, 0.0, 0.0,
                                                                                 manipulation_triangle_and_color_vertex[14], manipulation_triangle_and_color_vertex[15], manipulation_triangle_and_color_vertex[16]);
                                           
@@ -534,7 +513,7 @@
                   
                   
                   //second triangle, first row
-                  let rotated_points_xyz_secondtriangle_first_row = three_dimensional_rotation(0.0, 0.0, object_z_rotation,
+                  let rotated_points_xyz_secondtriangle_first_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
                                                                                                0.0, 0.0, 0.0,
                                                                                                manipulation_triangle_and_color_vertex[21], manipulation_triangle_and_color_vertex[22], manipulation_triangle_and_color_vertex[23]);
                                           
@@ -546,7 +525,7 @@
                  
                   
                   //second triangle, second row
-                  let rotated_points_xyz_secondtriangle_second_row =  three_dimensional_rotation(0.0, 0.0, object_z_rotation,
+                  let rotated_points_xyz_secondtriangle_second_row =  three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
                                                                                                  0.0, 0.0, 0.0,
                                                                                                  manipulation_triangle_and_color_vertex[28], manipulation_triangle_and_color_vertex[29], manipulation_triangle_and_color_vertex[30]);
                                           
@@ -558,9 +537,9 @@
                   
                   
                   //second triangle, third row
-                  let rotated_points_xyz_secondtriangle_third_row = three_dimensional_rotation(0.0, 0.0, object_z_rotation,
-                                                                                                 0.0, 0.0, 0.0,
-                                                                                                 manipulation_triangle_and_color_vertex[35], manipulation_triangle_and_color_vertex[36], manipulation_triangle_and_color_vertex[37]);
+                  let rotated_points_xyz_secondtriangle_third_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, 0.0,
+                                                                                               manipulation_triangle_and_color_vertex[35], manipulation_triangle_and_color_vertex[36], manipulation_triangle_and_color_vertex[37]);
                                           
                   
                   manipulation_triangle_and_color_vertex[35] = rotated_points_xyz_secondtriangle_third_row.rotated_x;
