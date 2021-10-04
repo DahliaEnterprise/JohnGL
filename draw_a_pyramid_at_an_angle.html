@@ -359,6 +359,17 @@
           //Format selected is Float(decimals) for X,Y,Z and Float(decimals) for Red,Green,Blue.,Alpha
           //a box is temporarily used due to simplicity.
           triangle_and_color_vertex = new Float32Array([
+                                  /* first triangle facing camera */
+                                  0.0, 0.5, -1.0, 1.0, 0.0, 0.0, 1.0,
+                                  -0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 1.0,
+                                  0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 1.0,
+                                  
+                                  /* second triangle facing camera */
+                                  0.0, 0.5, -1.0, 0.0, 1.0, 0.0, 1.0,
+                                  0.5, -0.5, -0.5, 0.0, 1.0, 0.0, 1.0,
+                                  0.5, -1.0, -1.0, 0.0, 1.0, 0.0, 1.0
+                                  
+                               /*
                                   -0.5, 0.5, -0.5, 1.0, 0.0, 0.0, 1.0,
                                   -0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 1.0,
                                   0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 1.0,
@@ -366,7 +377,7 @@
                                   0.5, 0.5, -1.0, 1.0, 1.0, 0.0, 1.0,
                                   -0.5, 0.5, -1.0, 1.0, 1.0, 0.0, 1.0,
                                   0.5, -0.5, -1.0, 1.0, 1.0, 0.0, 1.0
-                              
+                                  */
                                 ]);
       
            manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
