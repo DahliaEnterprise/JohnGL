@@ -367,7 +367,7 @@
                                   /* second triangle facing camera */
                                   0.0, 0.5, -1.0, 0.0, 1.0, 0.0, 1.0,
                                   0.5, -0.5, -0.5, 0.0, 1.0, 0.0, 1.0,
-                                  0.5, -1.0, -1.0, 0.0, 1.0, 0.0, 1.0
+                                  0.5, -0.5, -1.0, 0.0, 1.0, 0.0, 1.0
                                   
                                /*
                                   -0.5, 0.5, -0.5, 1.0, 0.0, 0.0, 1.0,
@@ -592,7 +592,17 @@
            
           //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
           opengles.clearColor(0.0, 0.0, 0.0, 1.0);
+          
+          /* define expectations of culling */
+          opengles.frontFace(opengles.CCW);
+          opengles.enable(opengles.CULL_FACE);
+          opengles.cullFace(opengles.BACK);
+          
+          
+          /* define viee port */
           opengles.viewport(0, 0, opengles.viewportWidth, opengles.viewportHeight);
+          
+          /* clear frame */
           opengles.clear(opengles.COLOR_BUFFER_BIT);
           
           //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
