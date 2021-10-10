@@ -1,0 +1,736 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Adventure Game</title>
+    <script type="text/javascript">
+      /* Venmo: Shane-Betz1990 */
+      //rotational functions
+      function get_two_dimensional_hypotenus(point_one_x, point_one_y, point_two_x, point_two_y)
+      {
+        let pythagorean_therom_data = {
+                          "adjacent": 0.000000,
+                          "opposite": 0.000000,
+                          "hypotenus": 0.000000
+                        };
+        
+        //determine adjacent squared.
+          //determine adjacent over an infinite, non oriented line.
+          let adjacent = point_one_x - point_two_x;
+             
+              //determine the absolute value. (checking if absolute value is needed everytime would cause a variance time to deliver(variable lag), so instead it is determined every time to produce constant time CPU delivery.)
+              adjacent = Math.abs(adjacent);
+              
+              
+        let adjacent_squared = Math.pow(adjacent, 2);
+             
+        //determine opposite squared.
+          //determine opposite over an infinite, non oriented line.
+          let opposite = point_one_y - point_two_y;
+              
+              //determine the absolute value. (checking if absolute value is needed everytime would cause a variance time to deliver(variable lag), so instead it is determined every time to produce constant time CPU delivery.)
+              opposite = Math.abs(opposite);
+              
+        let opposite_squared = Math.pow(opposite, 2);
+        
+        //determine hypotenus on an infinite grid that is locally oriented only by its two side(hypotenuse and opposite).
+        if((adjacent*1000000) == 0)
+        {
+          adjacent = 0.000001;
+        }
+        
+        if((opposite*1000000) == 0)
+        {
+          opposite = 0.000001;
+        }
+      
+        let a_squared_plus_b_squared = adjacent_squared + opposite_squared;
+        hypotenus = Math.sqrt(a_squared_plus_b_squared);
+        
+        
+        pythagorean_therom_data.adjacent = adjacent;
+        pythagorean_therom_data.opposite = opposite;
+        pythagorean_therom_data.hypotenus = hypotenus;
+       
+       
+        //return pythagorean_therom_data
+        return pythagorean_therom_data;
+      }
+      
+      
+      
+      function get_two_dimensional_angle_as_radians(adjacent, hypotenus, point_one_x, point_one_y, point_two_x, point_two_y)
+      {
+        let angle_as_radians = undefined;
+      
+        //if any of the points are zero they must be 0.000001 as an integer or magnitude calculations (hypotenus and rotated point combonation results) will be non existent, the result of this function should be uploaded to the gpu and not alter the model data within the source(usually the CPU, or the hardrive when saving the state of the game, make sure to interject and replace with zeros decimals where nessecary if this is being used to store states within long term storage sources or CPU ram dataline transfers), or spin-out-of-control(or strange precision rotations of objects) will happen after a long peroid of time with seemingly no end to debugging.
+        if((point_one_x*1000000) == 0){ point_one_x = 0.000001; }
+        if((point_one_y*1000000) == 0){ point_one_y = 0.000001; }
+        if((point_two_x*1000000) == 0){ point_two_x = 0.000001; }
+        if((point_two_y*1000000) == 0){ point_two_y = 0.000001; }
+        
+        //Determine if starting point(point one x y) is on a quadrant or an exact plane, there is no zero x, zero y during these calculations due to the magnitude determination collapse problem.
+        let quadrant = undefined; //0 = bottom-left to top-right(0-90), 1 = bottom-right to top-left(90-180), 2 = top-right to bottom-left(180-270), 3 = top-left to bottom-right(270-360).
+        let exact_plane = undefined; //0 = left to exactly right(0), 1 = bottom to exactly top(90), 2 = right to exactly left(180), 3 = top to exactly bottom(270).
+        
+        
+        //a conversion to integers then comparision in integers is garunteed while decimal only comparisons will garuntee error/failure without debugging possibilities had you not known this about transistor computation flaws.
+        let point_one_x_integer = point_one_x*1000000;
+        let point_one_y_integer = point_one_y*1000000;
+        let point_two_x_integer = point_two_x*1000000;
+        let point_two_y_integer = point_two_y*1000000;
+        //the following conditionals are upon an infinite grid with no orientation until exactly upon determiniation when checked by the second point x and y coordinates. the starting point is finite while the ending point is both finite and infinite in order to discover a floating angle direction of a precision of eight directions(up, right, down, left and their diagonals).
+        if(point_one_x_integer > point_two_x_integer)
+        {
+          if(point_one_y_integer > point_two_y_integer)
+          {
+            //start is exactly somewhere finite within the top right, second point is some where in a finite but only known as infinite angle within the bottom left.
+            quadrant = 2;
+          }else if(point_one_y_integer < point_two_y_integer)
+          {
+            //start is exactly somewhere finite within the bottom right, second point is some where in a finite but only known as infinite angle within the top left.
+            quadrant = 1;
+          }else if(point_one_y_integer == point_two_y_integer)
+          {
+            //start is exactly right of second x y coordinates, second point is exactly left of first point.
+            exact_plane = 2;
+          }
+        }else if(point_one_x_integer < point_two_x_integer)
+        {
+          if(point_one_y_integer > point_two_y_integer)
+          {
+            //start is exactly top left, second point is bottom right.
+            quadrant = 3;
+          }else if(point_one_y_integer < point_two_y_integer)
+          {
+            //start is exactly bottom-left and second point is top-right.
+            quadrant = 0;
+          }else if(point_one_y_integer == point_two_y_integer)
+          {
+            //start is exactly left, second point is exactly right.
+            exact_plane = 0;
+          }
+        }else if(point_one_x_integer == point_two_x_integer)
+        {
+          if(point_one_y_integer > point_two_y_integer)
+          {
+            //exact start is top and exact second point is bottom.
+            exact_plane = 3;
+          }else if(point_one_y_integer < point_two_y_integer)
+          {
+            //exact start is bottom and exact second point is top.
+            exact_plane = 1;
+          }
+        }
+        
+        
+        //angle with a precision of eight directions is determined, now to determine the magnitude of the line.
+        three_hundred_and_sixty_degrees_as_radians = undefined;
+        if((adjacent*1000000) == 0)
+        {
+          adjacent = 0.000001;
+        }
+       
+        //determine angle as radians.
+        if(quadrant !== undefined)
+        {
+          if(quadrant == 0)
+          {
+            //zero to ninety, top right.
+            three_hundred_and_sixty_degrees_as_radians = Math.acos(adjacent / hypotenus);
+          }else if(quadrant == 1)
+          {
+            //nintey to one hundred and eighty, top left.
+            three_hundred_and_sixty_degrees_as_radians = 3.141592 - Math.acos(adjacent / hypotenus);
+          }else if(quadrant == 2)
+          {
+            //one hundred and eighty to two hundred and seventy, bottom left.
+            three_hundred_and_sixty_degrees_as_radians = 3.141592 + Math.acos(adjacent / hypotenus);
+          }else if(quadrant == 3)
+          {
+            //two hundred and seventy to three hundred and sixty, bottom right
+            three_hundred_and_sixty_degrees_as_radians = 3.141592 + (3.141592 - Math.acos(adjacent / hypotenus));
+          }
+        }else if(exact_plane !== undefined)
+        {
+          if(exact_plane == 0)
+          {
+            //zero degrees
+            three_hundred_and_sixty_degrees_as_radians = 0.000000;
+          }else if(exact_plane == 1)
+          {
+            //ninety degrees
+            three_hundred_and_sixty_degrees_as_radians = 1.570796;
+          }else if(exact_plane == 2)
+          {
+            //one hundred and eighty degrees
+            three_hundred_and_sixty_degrees_as_radians = 3.141592;
+          }else if(exact_plane == 3)
+          {
+            //two hundred and seventy
+            three_hundred_and_sixty_degrees_as_radians = 4.712388;
+          }
+        }
+        //define angle as radians that has been calculated.
+        angle_as_radians = three_hundred_and_sixty_degrees_as_radians;
+        
+        //return angle in radians format 
+        return angle_as_radians;
+      }
+      
+      
+      function get_two_dimensional_rotated_points(hypotenus, current_angle_as_radians, amount_of_rotation_to_apply_in_radians)
+      {
+        let rotated_points = {
+                                "rotated_x": 0.000000,
+                                "rotated_y": 0.000000
+                              };
+                              
+       //apply rotation
+       let rotated_angle = 0.000000;
+       rotated_angle += current_angle_as_radians;
+       rotated_angle += amount_of_rotation_to_apply_in_radians;
+ 
+ 
+        //calculate rotated points
+        rotated_points.rotated_x = hypotenus * Math.cos(rotated_angle);
+        rotated_points.rotated_y = hypotenus * Math.sin(rotated_angle);
+      
+        return rotated_points;
+      }
+      
+     
+      function three_dimensional_rotation(amount_of_rotation_x, amount_of_rotation_y, amount_of_rotation_z,
+                                          center_of_rotation_x, center_of_rotation_y, center_of_rotation_z,
+                                          point_to_rotate_x, point_to_rotate_y, point_to_rotate_z)
+      {
+        /* In order to prevent drift during rotation,
+           the useage of quaternions are the standard;
+           However stress testing by means of multiple programs
+           and calibration and verification methods declares that
+           quaternions only prevent drift over a short time span.
+           
+           Therefore the solution is to rotate three infinitely long
+           lines that will point towards the intended direction
+           and usually to achieve exactitude by pointing at an object
+           to achieve orientation (less than negligible drift).
+           
+           Once the infinitely long lines are pointed the exact direction
+           the vertex object will only rotate with out drift on an infinite ling timeline(longer than the known universe life and beyond)
+           if all three algorithms are tried and the one drifted result is choosen.
+           hence why pointing at an object(and another object such as the floor) will achieve maximum precision 
+           within regards to the intended exact direction.
+           
+           these three algorithms will rotate in the following order
+           x,y,z or y,z,x or z,y,x (note to add :z,x,y)
+           
+           there are some occasions where the starting rotation can be 
+           so complex that the computer must try all possible,
+           methods to achieve the requested direction(not to be confused with the 
+           proposed order of operations of the three algorithms previously discussed).
+           which would result in unprecedented stalling in any graphics applications
+           that could last for hours.
+           
+           In order to avoid the indefinite machine learning senario
+           all objects using the proposed functions within this file must be cloned
+           from the source as a zero, zero, zero, rotation and then can be rotated from
+           the cloned dataset(manipulation vertex).
+        */
+        
+        //temporarily there is no multithreading of trying three rotations until the first is created.
+        
+        //points to rotate
+        let point_x = point_to_rotate_x
+        let point_y = point_to_rotate_y;
+        let point_z = point_to_rotate_z;
+        
+        //Rotate z axis (alter x and y coordinates according to documents)
+        //mute z axis rotation if set to decimal zero.
+        if((amount_of_rotation_z*1000000) != 0)
+        {
+          let hypotenus_adjacent_opposite_x_y = get_two_dimensional_hypotenus(center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
+          let angle_as_radians_x_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_x_y.adjacent, hypotenus_adjacent_opposite_x_y.hypotenus, center_of_rotation_x, center_of_rotation_y, point_to_rotate_x, point_to_rotate_y);
+          let rotated_points_x_y = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_x_y.hypotenus, angle_as_radians_x_y, amount_of_rotation_z);
+         
+          point_x = rotated_points_x_y.rotated_x;
+          point_y = rotated_points_x_y.rotated_y;
+         
+        }
+        
+        //Rotate x axis (alter z and y coordinates according to documents)
+        //mute x axis rotation if set to decimal zero.
+        if((amount_of_rotation_x*1000000) != 0)
+        {
+          let hypotenus_adjacent_opposite_z_y = get_two_dimensional_hypotenus(center_of_rotation_z, center_of_rotation_y, point_to_rotate_z, point_to_rotate_y);
+          let angle_as_radians_z_y = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_z_y.adjacent, hypotenus_adjacent_opposite_z_y.hypotenus, center_of_rotation_z, center_of_rotation_y, point_to_rotate_z, point_to_rotate_y);
+          let rotated_points_z_y = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_z_y.hypotenus, angle_as_radians_z_y, amount_of_rotation_x);
+          
+          point_z = rotated_points_z_y.rotated_x;
+          point_y = rotated_points_z_y.rotated_y;
+        }
+        
+        //Rotate y axis (alter z and y coordinates according to documents)
+        //mute y axis rotation if set to decimal zero.
+        if((amount_of_rotation_y*1000000) != 0)
+        {
+          let hypotenus_adjacent_opposite_z_x = get_two_dimensional_hypotenus(center_of_rotation_z, center_of_rotation_x, point_to_rotate_z, point_to_rotate_x);
+          let angle_as_radians_z_x = get_two_dimensional_angle_as_radians(hypotenus_adjacent_opposite_z_x.adjacent, hypotenus_adjacent_opposite_z_x.hypotenus, center_of_rotation_z, center_of_rotation_x, point_to_rotate_z, point_to_rotate_x);
+          let rotated_points_z_x = get_two_dimensional_rotated_points(hypotenus_adjacent_opposite_z_x.hypotenus, angle_as_radians_z_x, amount_of_rotation_y);
+          
+          point_z = rotated_points_z_x.rotated_x;
+          point_x = rotated_points_z_x.rotated_y;
+        }
+        
+
+        
+        
+        
+        let output = {
+                        "rotated_x": point_x,
+                        "rotated_y": point_y,
+                        "rotated_z": point_z
+        };
+        return output;
+      }
+      
+      
+      
+      //globals
+        //open gl es engine related.
+        var canvas_handle = null;
+        var opengles = null;
+
+        //vertex object related including specific shaders intended for it.
+          //original vertex object(this is sourced per frame to prevent morphing).
+          var triangle_and_color_vertex = null;
+          
+          //manipulation vertex object(the source is copied here then this is modified and used for drawing).
+          var manipulation_triangle_and_color_vertex = null;
+          
+          //color shader
+          var solid_color_vertex_shader = null;
+
+          //fragment shader
+          var solid_color_fragment_shader = null;
+
+          //compiled shader program
+          var solid_color_shader_program = null;
+      
+        //Open GL ES buffer associated with the triangle and color vertex.
+        var triangle_and_color_vertex_buffer = null;
+      
+      //animation group loop
+      var animation_loop_group_loop = null;
+      var animation_loop_group_next_timestamp = null;
+      var animation_loop_group_interval = 50;
+      
+      //state animation loop (a pseudo physics engine)
+      var state_animation_next_timestamp = null;
+      var state_animation_interval = 5;
+      
+      //animation loop
+      var animation_next_timestamp = null;
+      var animation_interval = 5;
+      
+      
+      //start game
+      function start_adventure_game()
+      {
+        
+        //make the dom elememt canvas handled by a useable variable.
+        canvas_handle = document.getElementById("canvas_for_opengles");
+          
+        //Apply OpenGL ES engine to the canvas and make that engine handled by a useable variable.
+        opengles = canvas_handle.getContext("webgl2");
+        opengles.viewportWidth = canvas_handle.width;
+        opengles.viewportHeight = canvas_handle.height;
+        
+        //Depth testing is disabled by default, enable it.
+        opengles.enable(opengles.DEPTH_TEST);
+        opengles.depthFunc(opengles.LESS);
+        /* 
+           It does not matter which order the 
+           vertex(or vertices) or shader programs
+           are defined and uploaded to the Open GL ES engine.
+           as long as the order of operations per
+           major goal(vertex data or shader program) is
+           adhered to with out interlacing other non related
+           Open GL ES commands, actions or major goals
+        */
+        
+        //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
+          //Define vertex data into motherboard' ram.
+          //Format selected is Float(decimals) for X,Y,Z and Float(decimals) for Red,Green,Blue.,Alpha
+          //a box is temporarily used due to simplicity.
+          triangle_and_color_vertex = new Float32Array([
+                                  /* first triangle facing camera */
+                                    //top
+                                    0.0, 0.20, -0.20, 1.0, 0.0, 0.0, 1.0,
+                                    //bottom left
+                                    -0.20, -0.20, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                    //bottom right
+                                    0.20, -0.20, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                  
+                                  /* second triangle right side facing camera */
+                                    //top
+                                    0.0, 0.20, -0.20, 0.0, 1.0, 0.0, 1.0,
+                                    //bottom left
+                                    0.20, -0.20, 0.0, 0.0, 1.0, 0.0, 1.0,
+                                    //bottom right
+                                    0.20, -0.20, -0.40, 0.0, 1.0, 0.0, 1.0,
+                                  
+                                  /* third triangle left side facing camera */
+                                    //top 
+                                    0.0, 0.20, -0.20, 0.0, 0.0, 1.0, 1.0,
+                                    //bottom left
+                                    -0.20, -0.20, -0.40, 0.0, 0.0, 1.0, 1.0,
+                                    //bottom right
+                                    -0.20, -0.20, 0.0, 0.0, 0.0, 1.0, 1.0,
+                                  
+                                  /* fourth triangle back side facing camera */
+                                    //top
+                                    0.0, 0.20, -0.20, 0.5, 0.5, 0.0, 1.0,
+                                    //bottom right
+                                    0.20, -0.20, -0.40, 0.5, 0.5, 0.0, 1.0,
+                                    //bottom left
+                                    -0.20, -0.20, -0.40, 0.5, 0.5, 0.0, 1.0
+                                ]);
+      
+           manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
+           
+           
+        //Solid Color Shader (useable for more than one vertex(or vertices)).
+          //Allocate vertex shader within the Open GL ES engine and allow that vertex shader to be handled by a useable variable.
+          solid_color_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
+            //Define how each vertex is colorized by defining a color to each point.
+              //Define the C source code to be imported into the Open GL ES engine related to vertex shader.
+              var solid_color_vertex_shader_source_code = "";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 position_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 color_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "void main() { \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  //colorize position.  \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  gl_Position = position_of_vertex_to_colorize; \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  varying_color_of_vertex_to_colorize = color_of_vertex_to_colorize;  \n";
+                  solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "} \n";
+                  
+              //Transfer C source code to the Open GL ES engine and associate that transfer with the a handleable variable named solid_color_vertex_shader.
+              opengles.shaderSource(solid_color_vertex_shader, solid_color_vertex_shader_source_code);
+              
+              //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_vertex_shader variable.
+              opengles.compileShader(solid_color_vertex_shader);
+              
+          //Allocate fragment shader within the opengl engine and make that fragment shader handled by a useable variable.
+          solid_color_fragment_shader = opengles.createShader(opengles.FRAGMENT_SHADER);
+              //Define how fragments of the vertex or vertices are filitered.
+                //Define the C source code to be imported into the Open GL ES engine.
+                var solid_color_fragment_shader_source_code = "";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "precision mediump float;  \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "void main() { \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  //Define filter \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  gl_FragColor = varying_color_of_vertex_to_colorize; \n";
+                    solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "} \n";
+                
+              //Transfer C source code to the Open GL ES engine and associate that transfer with the solid_color_fragement_shader handle.
+              opengles.shaderSource(solid_color_fragment_shader, solid_color_fragment_shader_source_code);
+                
+              //Trigger the Open GL ES engine to compile the C source code that is associated with the solid_color_fragement_shader handle.
+              opengles.compileShader(solid_color_fragment_shader);
+                
+          //Allocate one Shader Program(C structure of memory allocated within Open GL ES memory hardware.) within the Open GL ES engine and make that shader program handled by a useable variable.
+          solid_color_shader_program = opengles.createProgram();
+            //Append intended shaders to the shader program(not sure if this is infinite appendable or the strict definitions of vertex and fragment shaders).
+              //Flag vertex shader to be apart of the shader program intended to be recognized during the link process.
+              opengles.attachShader(solid_color_shader_program, solid_color_vertex_shader);
+          
+              //Flag fragement shader to be apart of the shader program intended to be recognized during the link process.
+              opengles.attachShader(solid_color_shader_program, solid_color_fragment_shader);
+              
+            //Link vertex shader and fragment shader which results into a handlable solid color opengl binary shader program.
+            opengles.linkProgram(solid_color_shader_program);
+      
+            //Due to the order of operations paradigm, checking if the linkage was succesfful must be determined immediately after or more precisely before an Open GL engine operation not assocated with shader program link or compliation process.
+            if(!opengles.getProgramParameter(solid_color_shader_program, opengles.LINK_STATUS))
+            {
+              alert("shader link process failed.");
+            }
+            
+        
+       //start animation
+       animation_loop_group_next_timestamp = Date.now() + animation_loop_group_interval;
+       animation_loop_group_loop = setInterval(next_animation_group_iteration, 1);
+       
+      }
+      
+      var buffer_created = 0;
+      
+      //object state.
+        //rotation
+        var object_x_rotation = 0.0;
+        var object_y_rotation = 0.0;
+        var object_z_rotation = 0.0;
+        
+        var object_x = 0.0;
+        var object_x_change_per_millisecond = 0.001;
+        
+        var object_y = 0.0;
+        
+        
+      function next_animation_group_iteration()
+      {
+        if(Date.now() >= animation_loop_group_next_timestamp)
+        {
+          //input alterator
+          //object_x_rotation = object_x_rotation + 0.01;
+          object_y_rotation = object_y_rotation + 0.01;
+          //object_z_rotation = object_z_rotation + 0.01;
+          
+          
+          //iterate states and draw frame
+          iterate_states();
+          draw_next_frame();
+          
+          //update next timestamp run
+          animation_loop_group_next_timestamp = Date.now() + animation_loop_group_interval;
+        }
+      }
+      
+      function iterate_states()
+      {
+        if(state_animation_next_timestamp == null)
+        {
+          state_animation_next_timestamp = Date.now() + state_animation_interval;
+        }else if(Date.now() >= state_animation_next_timestamp)
+        {
+          //do animation or physica here.
+              //clone source model
+              manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
+              
+              //temporary test rotation for consistency in comparison to two dimensional rotation.
+           
+                  let rotated_points_xyz_first_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                0.0, 0.0, -0.20,
+                                                                                manipulation_triangle_and_color_vertex[0], manipulation_triangle_and_color_vertex[1], manipulation_triangle_and_color_vertex[2]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[0] = rotated_points_xyz_first_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[1] = rotated_points_xyz_first_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[2] = rotated_points_xyz_first_row.rotated_z;
+          
+                  //second row
+                  let rotated_points_xyz_second_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                0.0, 0.0, -0.20,
+                                                                                manipulation_triangle_and_color_vertex[7], manipulation_triangle_and_color_vertex[8], manipulation_triangle_and_color_vertex[9]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[7] = rotated_points_xyz_second_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[8] = rotated_points_xyz_second_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[9] = rotated_points_xyz_second_row.rotated_z;
+                  
+                  //third row
+                  let rotated_points_xyz_third_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                0.0, 0.0, -0.20,
+                                                                                manipulation_triangle_and_color_vertex[14], manipulation_triangle_and_color_vertex[15], manipulation_triangle_and_color_vertex[16]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[14] = rotated_points_xyz_third_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[15] = rotated_points_xyz_third_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[16] = rotated_points_xyz_third_row.rotated_z;
+                  
+                  
+                  //second triangle, first row
+                  let rotated_points_xyz_secondtriangle_first_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, -0.20,
+                                                                                               manipulation_triangle_and_color_vertex[21], manipulation_triangle_and_color_vertex[22], manipulation_triangle_and_color_vertex[23]);
+                                          
+                  
+                  
+                  manipulation_triangle_and_color_vertex[21] = rotated_points_xyz_secondtriangle_first_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[22] = rotated_points_xyz_secondtriangle_first_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[23] = rotated_points_xyz_secondtriangle_first_row.rotated_z;
+                 
+                  
+                  //second triangle, second row
+                  let rotated_points_xyz_secondtriangle_second_row =  three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                                 0.0, 0.0, -0.20,
+                                                                                                 manipulation_triangle_and_color_vertex[28], manipulation_triangle_and_color_vertex[29], manipulation_triangle_and_color_vertex[30]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[28] = rotated_points_xyz_secondtriangle_second_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[29] = rotated_points_xyz_secondtriangle_second_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[30] = rotated_points_xyz_secondtriangle_second_row.rotated_z;
+                  
+                  
+                  
+                  //second triangle, third row
+                  let rotated_points_xyz_secondtriangle_third_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, -0.20,
+                                                                                               manipulation_triangle_and_color_vertex[35], manipulation_triangle_and_color_vertex[36], manipulation_triangle_and_color_vertex[37]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[35] = rotated_points_xyz_secondtriangle_third_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[36] = rotated_points_xyz_secondtriangle_third_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[37] = rotated_points_xyz_secondtriangle_third_row.rotated_z;
+       
+       
+                  //third triangle, first row
+                  let rotated_points_xyz_thirdtriangle_first_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, -0.20,
+                                                                                               manipulation_triangle_and_color_vertex[42], manipulation_triangle_and_color_vertex[43], manipulation_triangle_and_color_vertex[44]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[42] = rotated_points_xyz_thirdtriangle_first_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[43] = rotated_points_xyz_thirdtriangle_first_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[44] = rotated_points_xyz_thirdtriangle_first_row.rotated_z;
+       
+                  //third triangle, second row
+                  let rotated_points_xyz_thirdtriangle_second_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, -0.20,
+                                                                                               manipulation_triangle_and_color_vertex[49], manipulation_triangle_and_color_vertex[50], manipulation_triangle_and_color_vertex[51]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[49] = rotated_points_xyz_thirdtriangle_second_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[50] = rotated_points_xyz_thirdtriangle_second_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[51] = rotated_points_xyz_thirdtriangle_second_row.rotated_z;
+       
+       
+                  //third triangle, third row
+                  let rotated_points_xyz_thirdtriangle_third_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, -0.20,
+                                                                                               manipulation_triangle_and_color_vertex[56], manipulation_triangle_and_color_vertex[57], manipulation_triangle_and_color_vertex[58]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[56] = rotated_points_xyz_thirdtriangle_third_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[57] = rotated_points_xyz_thirdtriangle_third_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[58] = rotated_points_xyz_thirdtriangle_third_row.rotated_z;
+       
+               
+                  //fourth triangle, first row
+                  let rotated_points_xyz_fourthtriangle_first_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, -0.20,
+                                                                                               manipulation_triangle_and_color_vertex[63], manipulation_triangle_and_color_vertex[64], manipulation_triangle_and_color_vertex[65]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[63] = rotated_points_xyz_fourthtriangle_first_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[64] = rotated_points_xyz_fourthtriangle_first_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[65] = rotated_points_xyz_fourthtriangle_first_row.rotated_z;
+       
+       
+                  //fourth triangle, second row
+                  let rotated_points_xyz_fourthtriangle_second_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, -0.20,
+                                                                                               manipulation_triangle_and_color_vertex[70], manipulation_triangle_and_color_vertex[71], manipulation_triangle_and_color_vertex[72]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[70] = rotated_points_xyz_fourthtriangle_second_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[71] = rotated_points_xyz_fourthtriangle_second_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[72] = rotated_points_xyz_fourthtriangle_second_row.rotated_z;
+       
+                  //fourth triangle, third row
+                  let rotated_points_xyz_fourthtriangle_third_row = three_dimensional_rotation(object_x_rotation, object_y_rotation, object_z_rotation,
+                                                                                               0.0, 0.0, -0.20,
+                                                                                               manipulation_triangle_and_color_vertex[77], manipulation_triangle_and_color_vertex[78], manipulation_triangle_and_color_vertex[79]);
+                                          
+                  
+                  manipulation_triangle_and_color_vertex[77] = rotated_points_xyz_fourthtriangle_third_row.rotated_x;
+                  manipulation_triangle_and_color_vertex[78] = rotated_points_xyz_fourthtriangle_third_row.rotated_y;
+                  manipulation_triangle_and_color_vertex[79] = rotated_points_xyz_fourthtriangle_third_row.rotated_z;
+       
+       
+          //place item into renderable view
+         /* manipulation_triangle_and_color_vertex[2] = manipulation_triangle_and_color_vertex[2] - 0.20;
+          manipulation_triangle_and_color_vertex[9] = manipulation_triangle_and_color_vertex[9] - 0.20;
+          manipulation_triangle_and_color_vertex[16] = manipulation_triangle_and_color_vertex[16] - 0.20;
+          manipulation_triangle_and_color_vertex[23] = manipulation_triangle_and_color_vertex[23] - 0.20;
+          manipulation_triangle_and_color_vertex[30] = manipulation_triangle_and_color_vertex[30] - 0.20;
+          manipulation_triangle_and_color_vertex[37] = manipulation_triangle_and_color_vertex[37] - 0.20;
+          manipulation_triangle_and_color_vertex[44] = manipulation_triangle_and_color_vertex[37] - 0.20;
+          manipulation_triangle_and_color_vertex[51] = manipulation_triangle_and_color_vertex[37] - 0.20;
+          manipulation_triangle_and_color_vertex[58] = manipulation_triangle_and_color_vertex[37] - 0.20;
+          */
+          //update next timestamp
+          state_animation_next_timestamp = Date.now() + state_animation_interval;
+        }
+      }
+      
+      function draw_next_frame()
+      {
+        if(animation_next_timestamp == null)
+        {
+          animation_next_timestamp = Date.now() + animation_interval;
+        }else if(Date.now() >= animation_next_timestamp)
+        {
+           //buffer created note: just like a CPU ram paradigm in C, the GPU ram paradigm needs developer aware memory clean up and usage or the push pop stack becomes full.
+           if(buffer_created == 0)
+           {
+             triangle_and_color_vertex_buffer = opengles.createBuffer();
+             buffer_created = 1;
+           }else{
+             opengles.deleteBuffer(triangle_and_color_vertex_buffer);
+             triangle_and_color_vertex_buffer = opengles.createBuffer();
+           }
+      
+          opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+          triangle_and_color_vertex_buffer.positionSize = 3;
+          triangle_and_color_vertex_buffer.colorSize = 4;
+          triangle_and_color_vertex_buffer.numberOfItems = 12;
+          opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(manipulation_triangle_and_color_vertex), opengles.STATIC_DRAW);
+  
+           //draw specific
+           opengles.useProgram(solid_color_shader_program);
+           opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+           
+          //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
+          opengles.clearColor(0.0, 0.0, 0.0, 1.0);
+          
+          /* define expectations of culling
+          opengles.frontFace(opengles.CCW);
+          opengles.enable(opengles.CULL_FACE);
+          opengles.cullFace(opengles.BACK);
+          */
+          
+          /* define viee port */
+          opengles.viewport(0, 0, opengles.viewportWidth, opengles.viewportHeight);
+          
+          /* clear frame */
+          opengles.clear(opengles.COLOR_BUFFER_BIT);
+          
+          //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
+          //Set the shader program to use for the following vertex or vertices and its defineable attributes.
+          //Pop in a shader program to be used within the following order of operations.
+          opengles.useProgram(solid_color_shader_program);
+          
+          //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+          solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
+          
+          //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
+          solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
+          
+          //tell the GPU data line to get ready to transfer position data.
+          opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_and_color_vertex_buffer.positionSize, opengles.FLOAT, false, 28, 0);
+          
+          //tell the GPU data line to get ready to transfer color data.
+          opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_and_color_vertex_buffer.colorSize, opengles.FLOAT, false, 28, 12);
+          
+          //tell the gpu you have decided what to transfer and that it is about to happen.
+          opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
+          
+          //tell the gpu you have decided what to transfer and that it is about to happen.
+          opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
+          
+          //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
+          opengles.drawArrays(opengles.TRIANGLES, 0, triangle_and_color_vertex_buffer.numberOfItems);
+          
+          //update next timestamp
+          animation_next_timestamp = Date.now() + animation_interval;
+        }
+      }
+    </script>
+  </head>
+  <body onLoad="start_adventure_game();">
+    <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
+  </body>
+</html>
+
+
+
