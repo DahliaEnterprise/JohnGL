@@ -294,6 +294,7 @@
       
       
       
+      
       //globals
         //open gl es engine related.
         var canvas_handle = null;
@@ -319,6 +320,7 @@
         var triangle_and_color_vertex_buffer = null;
       
         //Open GL ES buffer associated with the little triangle and color vertex.
+        var little_triangle_and_color_vertex = null;
         var manipulation_little_triangle_and_color_vertex = null;
         
         var manipulation_little_triangle_and_color_vertex_buffer = null;
@@ -402,8 +404,43 @@
       
            manipulation_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
            
-           //to be reused three times
-           manipulation_little_triangle_and_color_vertex = new Float32Array(triangle_and_color_vertex);
+           //to be reused three times.
+           little_triangle_and_color_vertex = new Float32Array([
+                                                              /* first triangle facing camera */
+                                                                //top
+                                                                0.0, 0.10, -0.10, 1.0, 0.0, 0.0, 1.0,
+                                                                //bottom left
+                                                                -0.10, -0.10, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                                                //bottom right
+                                                                0.10, -0.10, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                                              
+                                                              /* second triangle right side facing camera */
+                                                                //top
+                                                                0.0, 0.10, -0.10, 0.0, 1.0, 0.0, 1.0,
+                                                                //bottom left
+                                                                0.10, -0.10, 0.0, 0.0, 1.0, 0.0, 1.0,
+                                                                //bottom right
+                                                                0.10, -0.10, -0.40, 0.0, 1.0, 0.0, 1.0,
+                                                              
+                                                              /* third triangle left side facing camera */
+                                                                //top 
+                                                                0.0, 0.10, -0.10, 0.0, 0.0, 1.0, 1.0,
+                                                                //bottom left
+                                                                -0.10, -0.10, -0.40, 0.0, 0.0, 1.0, 1.0,
+                                                                //bottom right
+                                                                -0.10, -0.10, 0.0, 0.0, 0.0, 1.0, 1.0,
+                                                              
+                                                              /* fourth triangle back side facing camera */
+                                                                //top
+                                                                0.0, 0.10, -0.10, 0.5, 0.5, 0.0, 1.0,
+                                                                //bottom right
+                                                                0.10, -0.10, -0.40, 0.5, 0.5, 0.0, 1.0,
+                                                                //bottom left
+                                                                -0.10, -0.10, -0.40, 0.5, 0.5, 0.0, 1.0
+                                                            ]);
+          
+           manipulation_little_triangle_and_color_vertex = new Float32Array(little_triangle_and_color_vertex);
+           
            
         //Solid Color Shader (useable for more than one vertex(or vertices)).
           //Allocate vertex shader within the Open GL ES engine and allow that vertex shader to be handled by a useable variable.
@@ -671,22 +708,16 @@
            if(buffer_created == 0)
            {
              triangle_and_color_vertex_buffer = opengles.createBuffer();
+             little_triangle_and_color_vertex_buffer =  opengles.createBuffer();
              buffer_created = 1;
            }else{
              opengles.deleteBuffer(triangle_and_color_vertex_buffer);
              triangle_and_color_vertex_buffer = opengles.createBuffer();
+             
+             opengles.deleteBuffer(little_triangle_and_color_vertex_buffer);
+             little_triangle_and_color_vertex_buffer = opengles.createBuffer();
            }
       
-          opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
-          triangle_and_color_vertex_buffer.positionSize = 3;
-          triangle_and_color_vertex_buffer.colorSize = 4;
-          triangle_and_color_vertex_buffer.numberOfItems = 12;
-          opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(manipulation_triangle_and_color_vertex), opengles.STATIC_DRAW);
-  
-           //draw specific
-           opengles.useProgram(solid_color_shader_program);
-           opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
-           
           //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
           opengles.clearColor(0.0, 0.0, 0.0, 1.0);
           
@@ -702,9 +733,20 @@
           /* clear frame */
           opengles.clear(opengles.COLOR_BUFFER_BIT);
           
+          //large triangle to rotate with precision.
           //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
           //Set the shader program to use for the following vertex or vertices and its defineable attributes.
           //Pop in a shader program to be used within the following order of operations.
+          opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+          triangle_and_color_vertex_buffer.positionSize = 3;
+          triangle_and_color_vertex_buffer.colorSize = 4;
+          triangle_and_color_vertex_buffer.numberOfItems = 12;
+          opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(manipulation_triangle_and_color_vertex), opengles.STATIC_DRAW);
+  
+           //draw specific
+           opengles.useProgram(solid_color_shader_program);
+           opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_color_vertex_buffer);
+           
           opengles.useProgram(solid_color_shader_program);
           
           //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
@@ -726,7 +768,45 @@
           opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
           
           //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
-          opengles.drawArrays(opengles.TRIANGLES, 0, triangle_and_color_vertex_buffer.numberOfItems);
+          //opengles.drawArrays(opengles.TRIANGLES, 0, triangle_and_color_vertex_buffer.numberOfItems);
+          
+          //smaller triangles to point the larger triangle towards to achieve precision.
+            //x triangle
+            opengles.bindBuffer(opengles.ARRAY_BUFFER, little_triangle_and_color_vertex_buffer);
+            little_triangle_and_color_vertex_buffer.positionSize = 3;
+            little_triangle_and_color_vertex_buffer.colorSize = 4;
+            little_triangle_and_color_vertex_buffer.numberOfItems = 12;
+            opengles.bufferData(opengles.ARRAY_BUFFER, new Float32Array(manipulation_little_triangle_and_color_vertex), opengles.STATIC_DRAW);
+    
+            //bind shader to buffer 
+            opengles.useProgram(solid_color_shader_program);
+            opengles.bindBuffer(opengles.ARRAY_BUFFER, little_triangle_and_color_vertex_buffer);
+           
+            //reactive use program for the upcoming commands
+            opengles.useProgram(solid_color_shader_program);
+          
+            //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+            solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
+            
+            //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
+            solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
+            
+            //tell the GPU data line to get ready to transfer position data.
+            opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  little_triangle_and_color_vertex_buffer.positionSize, opengles.FLOAT, false, 28, 0);
+            
+            //tell the GPU data line to get ready to transfer color data.
+            opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  little_triangle_and_color_vertex_buffer.colorSize, opengles.FLOAT, false, 28, 12);
+            
+            //tell the gpu you have decided what to transfer and that it is about to happen.
+            opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
+            
+            //tell the gpu you have decided what to transfer and that it is about to happen.
+            opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
+            
+            //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
+            opengles.drawArrays(opengles.TRIANGLES, 0, little_triangle_and_color_vertex_buffer.numberOfItems);
+            
+          
           
           //update next timestamp
           animation_next_timestamp = Date.now() + animation_interval;
