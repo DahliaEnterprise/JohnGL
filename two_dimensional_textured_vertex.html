@@ -4,13 +4,22 @@
     <title>Adventure Game</title>
     <script type="text/javascript">
       /* Venmo: Shane-Betz1990 */
+      
+      //global varables
+      var canvas_handle = null;
+      var opengles = null;
+      var texture_shader_program = null;
+      
+      var image = new Image();
+      var gpu_image_handle = null;
+
       function start_adventure_game()
       {
         //make the dom elememt canvas handled by a useable variable.
-        var canvas_handle = document.getElementById("canvas_for_opengles");
+        canvas_handle = document.getElementById("canvas_for_opengles");
         
         //Apply OpenGL ES engine to the canvas and make that engine handled by a useable variable.
-        var opengles = canvas_handle.getContext("webgl2");
+        opengles = canvas_handle.getContext("webgl2");
         opengles.viewportWidth = canvas_handle.width;
         opengles.viewportHeight = canvas_handle.height;
         
@@ -52,7 +61,7 @@
             opengles.shaderSource(texture_fragment_shader, fragment_shader_source);
             opengles.compileShader(texture_fragment_shader);
         
-        var texture_shader_program = opengles.createProgram();
+        texture_shader_program = opengles.createProgram();
             opengles.attachShader(texture_shader_program, texture_vertex_shader);
             opengles.attachShader(texture_shader_program, texture_fragment_shader);
             opengles.linkProgram(texture_shader_program);
@@ -97,7 +106,12 @@
             opengles.enableVertexAttribArray(attribute_texture_coordinates);
             
            
+           image.onload = function()
+           {
+             
+           }
       }
+      
     </script>
   </head>
   <body onLoad="start_adventure_game();">
