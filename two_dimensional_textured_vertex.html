@@ -25,23 +25,41 @@
         */
         
         //compile vertex and fragment shader source.
-        var vertex_shader_source = "";
-            vertex_shader_source = vertex_shader_source + "attribute vec4 a_Position;\n";
-            vertex_shader_source = vertex_shader_source + "attribute vec2 a_TexCoord;\n";
-            vertex_shader_source = vertex_shader_source + "varying vec2 v_TexCoord;\n";
-            vertex_shader_source = vertex_shader_source + "varying vec2 v_TexCoord;\n";
-            vertex_shader_source = vertex_shader_source + "void main() {\n";
-            vertex_shader_source = vertex_shader_source + "  gl_Position = a_Position;\n"; 
-            vertex_shader_source = vertex_shader_source + "  v_TexCoord = a_TexCoord;\n"; 
-            vertex_shader_source = vertex_shader_source + "}\n";
-            vertex_shader_source = vertex_shader_source + "\n";
         
+        var vertex_shader_source = "";
+            vertex_shader_source = vertex_shader_source + "attribute vec4 a_Position; \n";
+            vertex_shader_source = vertex_shader_source + "attribute vec2 a_TexCoord; \n";
+            vertex_shader_source = vertex_shader_source + "varying highp vec2 v_TexCoord; \n";
+            vertex_shader_source = vertex_shader_source + "void main(void) { \n";
+            vertex_shader_source = vertex_shader_source + "  gl_Position = a_Position; \n"; 
+            vertex_shader_source = vertex_shader_source + "  v_TexCoord = a_TexCoord; \n"; 
+            vertex_shader_source = vertex_shader_source + "} \n";
+        
+       
         var fragment_shader_source = "";
-            fragment_shader_source = fragment_shader_source + "uniform sampler2D u_Sampler;\n";
-            fragment_shader_source = fragment_shader_source + "varying vec2 v_TexCoord;\n";
-            fragment_shader_source = fragment_shader_source + "void main(){\n";
-            fragment_shader_source = fragment_shader_source + "  gl_FragColor = texture2D(u_Sampler, v_TexCoord);\n";
-            fragment_shader_source = fragment_shader_source + "}\n";
+            fragment_shader_source = fragment_shader_source + "varying highp vec2 v_TexCoord; \n";
+            fragment_shader_source = fragment_shader_source + "uniform sampler2D u_Sampler; \n";
+            fragment_shader_source = fragment_shader_source + "void main(void){ \n";
+            fragment_shader_source = fragment_shader_source + "  gl_FragColor = texture2D(u_Sampler, v_TexCoord); \n";
+            fragment_shader_source = fragment_shader_source + "} \n";
+        
+        
+        var texture_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
+            opengles.shaderSource(texture_vertex_shader, vertex_shader_source);
+            opengles.compileShader(texture_vertex_shader);
+       
+        var texture_fragment_shader = opengles.createShader(opengles.FRAGMENT_SHADER);
+            opengles.shaderSource(texture_fragment_shader, fragment_shader_source);
+            opengles.compileShader(texture_fragment_shader);
+        
+        var texture_shader_program = opengles.createProgram();
+            opengles.attachShader(texture_shader_program, texture_vertex_shader);
+            opengles.attachShader(texture_shader_program, texture_fragment_shader);
+            opengles.linkProgram(texture_shader_program);
+            if(!opengles.getProgramParameter(texture_shader_program, opengles.LINK_STATUS))
+            {
+              alert("shader link failed");
+            }
         
         //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
           //Define vertex data into motherboard' ram.
@@ -57,7 +75,7 @@
                                 ]);
                                 
           //temporary triangle strip drawing
-
+/*
           //upload to gpu
           var triangle_and_texture_positions_vertex_buffer = opengles.createBuffer();
             //tell gpu at assembly transistor level to open memory/buffer.
@@ -69,7 +87,7 @@
             
             
             //define shader program' parameters.
-            var attribute_position_coordinates = webgl_context.getAttribLocation(shader, "a_Position");
+            var attribute_position_coordinates = opengles.getAttribLocation(shader, "a_Position");
             opengles.vertexAttribPointer(attribute_position_coordinates, 2, opengles.FLOAT, float_size * 4, 0);
             opengles.enableAttributeArray(attribute_position_coordinates);
         
@@ -78,7 +96,7 @@
             opengles.vertexAttribPointer(attribute_texture_coordinates , 2, opengles.FLOAT, float_size * 4, 0);
             opengles.enableAttributeArray(attribute_texture_coordinates);
             
-            
+            */
       }
     </script>
   </head>
