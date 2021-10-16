@@ -75,7 +75,7 @@
                                 ]);
                                 
           //temporary triangle strip drawing
-/*
+
           //upload to gpu
           var triangle_and_texture_positions_vertex_buffer = opengles.createBuffer();
             //tell gpu at assembly transistor level to open memory/buffer.
@@ -87,16 +87,16 @@
             
             
             //define shader program' parameters.
-            var attribute_position_coordinates = opengles.getAttribLocation(shader, "a_Position");
-            opengles.vertexAttribPointer(attribute_position_coordinates, 2, opengles.FLOAT, float_size * 4, 0);
-            opengles.enableAttributeArray(attribute_position_coordinates);
+            var attribute_position_coordinates = opengles.getAttribLocation(texture_shader_program, "a_Position");
+            opengles.vertexAttribPointer(attribute_position_coordinates, 2, opengles.FLOAT, false, (float_size * 4), 0);
+            opengles.enableVertexAttribArray(attribute_position_coordinates);
         
         
-            var attribute_texture_coordinates = opengles.getAttribLocation(opengles.program, 'a_TexCoord');
-            opengles.vertexAttribPointer(attribute_texture_coordinates , 2, opengles.FLOAT, float_size * 4, 0);
-            opengles.enableAttributeArray(attribute_texture_coordinates);
+            var attribute_texture_coordinates = opengles.getAttribLocation(texture_shader_program, 'a_TexCoord');
+            opengles.vertexAttribPointer(attribute_texture_coordinates , 2, opengles.FLOAT, false, (float_size * 4), 0);
+            opengles.enableVertexAttribArray(attribute_texture_coordinates);
             
-            */
+           
       }
     </script>
   </head>
