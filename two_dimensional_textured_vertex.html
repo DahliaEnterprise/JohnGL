@@ -36,6 +36,13 @@
             vertex_shader_source = vertex_shader_source + "}\n";
             vertex_shader_source = vertex_shader_source + "\n";
         
+        var fragment_shader_source = "";
+            fragment_shader_source = fragment_shader_source + "uniform sampler2D u_Sampler;\n";
+            fragment_shader_source = fragment_shader_source + "varying vec2 v_TexCoord;\n";
+            fragment_shader_source = fragment_shader_source + "void main(){\n";
+            fragment_shader_source = fragment_shader_source + "  gl_FragColor = texture2D(u_Sampler, v_TexCoord);\n";
+            fragment_shader_source = fragment_shader_source + "}\n";
+        
         //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
           //Define vertex data into motherboard' ram.
           //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
