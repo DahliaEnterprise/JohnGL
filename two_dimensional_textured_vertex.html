@@ -110,7 +110,6 @@
            image_data.onload = function()
            {
              gpu_image_handle = opengles.createTexture();
-             u_Sampler = opengles.getUniformLocation(texture_shader_program, 'u_Sampler');
              
              //flip image
              opengles.pixelStorei(opengles.UNPACK_FLIP_Y_WEBGL, 1);
@@ -119,10 +118,20 @@
              opengles.activeTexture(opengles.TEXTURE0);
              
              opengles.bindTexture(opengles.TEXTURE_2D, gpu_image_handle);
+            
+             u_Sampler = opengles.getUniformLocation(texture_shader_program, 'u_Sampler');
+             //flag which sampler to use with uniform.
+             opengles.uniform1i(u_Sampler, 0);
              
              opengles.texParameteri(opengles.TEXTURE_2D, opengles.TEXTURE_MIN_FILTER, opengles.LINEAR);
               
+             //upload image data from motherboard ram to gpu ram through cpu instructions.
              opengles.texImage2D(opengles.TEXTURE_2D, 0, opengles.RGB, opengles.RGB, opengles.UNSIGNED_BYTE, image_data);
+          
+             
+             //tell gpu what vertex to draw now that the texture to draw with it has been activated.
+             opengles.useProgram(texture_shader_program);
+             opengles.drawArrays(opengles.TRIANGLE_STRIP, 0, 4);
            }
            
            image_data.src = "./Pictures/squiggles.png";
