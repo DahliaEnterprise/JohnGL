@@ -9,8 +9,9 @@
       var canvas_handle = null;
       var opengles = null;
       var texture_shader_program = null;
+      var u_Sampler = null;
       
-      var image = new Image();
+      var image_data = new Image();
       var gpu_image_handle = null;
 
       function start_adventure_game()
@@ -106,10 +107,25 @@
             opengles.enableVertexAttribArray(attribute_texture_coordinates);
             
            
-           image.onload = function()
+           image_data.onload = function()
            {
+             gpu_image_handle = opengles.createTexture();
+             u_Sampler = opengles.getUniformLocation(texture_shader_program, 'u_Sampler');
              
+             //flip image
+             opengles.pixelStorei(opengles.UNPACK_FLIP_Y_WEBGL, 1);
+             
+             //alert the gpu where to open and ready for unloading of texture data to gpu memory.
+             opengles.activeTexture(opengles.TEXTURE0);
+             
+             opengles.bindTexture(opengles.TEXTURE_2D, gpu_image_handle);
+             
+             opengles.texParameteri(opengles.TEXTURE_2D, opengles.TEXTURE_MIN_FILTER, opengles.LINEAR);
+              
+             opengles.texImage2D(opengles.TEXTURE_2D, 0, opengles.RGB, opengles.RGB, opengles.UNSIGNED_BYTE, image_data);
            }
+           
+           image_data.src = "./Pictures/squiggles.png";
       }
       
     </script>
