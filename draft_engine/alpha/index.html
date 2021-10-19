@@ -4,13 +4,34 @@
     <title>John GL Presents Game Engine</title>
     <script type="text/javascript">
       /* Venmo: Shane-Betz1990 */
-      function start_engine()
+      
+      //global variables
+        //constant
+        var html_canvas_element = null;
+        var interface_to_opengles_hardware = null;
+        
+        //non constants.
+        
+        
+      //function definitions
+      function start_engine(html_dom_id_of_canvas_element)
+      {
+        //canvas is a null element on the HTML dom.
+        html_canvas_element = document. getElementById(""+html_dom_id_of_canvas_element);
+       
+        //open an associated context between the dom canvas element and openGL ES hardware.
+        interface_to_opengles_hardware = html_canvas_element.getContext("webgl2");
+      
+        
+      }
+      
+      function cycle_engine()
       {
         
       }
     </script>
   </head>
-  <body onLoad="start_engine();">
+  <body onLoad="start_engine('canvas_for_opengles');">
     <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
   </body>
 </html>
