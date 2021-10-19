@@ -11,16 +11,27 @@
         var interface_to_opengles_hardware = null;
         
         //non constants.
+        var webgl2_context_attributes = {
+                                          alpha: false,
+                                          desynchronized: true,
+                                          antialiasing: false,
+                                          depth: true,
+                                          failIfMajorPerformanceCaveat: true,
+                                          powerPreference: "high-performance",
+                                          premultipliedAlpha: false,
+                                          preserveDrawingBuffer: true,
+                                          stencil: false
+                                       };
         
         
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
       {
         //canvas is a null element on the HTML dom.
-        html_canvas_element = document. getElementById(""+html_dom_id_of_canvas_element);
+        html_canvas_element = document.getElementById(""+html_dom_id_of_canvas_element);
        
         //open an associated context between the dom canvas element and openGL ES hardware.
-        interface_to_opengles_hardware = html_canvas_element.getContext("webgl2");
+        interface_to_opengles_hardware = html_canvas_element.getContext("webgl2", webgl2_context_attributes);
       
         
       }
