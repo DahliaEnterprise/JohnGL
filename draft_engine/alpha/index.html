@@ -22,6 +22,9 @@
                                           preserveDrawingBuffer: true,
                                           stencil: false
                                        };
+                                       
+        var canvas_element_width = null;
+        var canvas_element_height = null;
         
         
       //function definitions
@@ -33,7 +36,19 @@
         //open an associated context between the dom canvas element and openGL ES hardware.
         interface_to_opengles_hardware = html_canvas_element.getContext("webgl2", webgl2_context_attributes);
       
+        //define canvas diemensions.
+          //define state
+          canvas_element_width = 500;
+          canvas_element_height = 500;
+          
+          //set the canvas DOM element dimensions.
+          interface_to_opengles_hardware.viewportWidth = canvas_element_width;
+          interface_to_opengles_hardware.viewportHeight = canvas_element_height;
+          
+        //manually define viewport dimensions within the associated context and hardware.
+        interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
         
+          
       }
       
       function cycle_engine()
