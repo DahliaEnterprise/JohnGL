@@ -41,6 +41,10 @@
           canvas_element_width = 500;
           canvas_element_height = 500;
           
+          //define DOM element diemensions according to updated canvas element state.
+          document.getElementById("canvas_for_opengles").style.width = canvas_element_width;
+          document.getElementById("canvas_for_opengles").style.height = canvas_element_height;
+          
           //set the canvas DOM element dimensions.
           interface_to_opengles_hardware.viewportWidth = canvas_element_width;
           interface_to_opengles_hardware.viewportHeight = canvas_element_height;
@@ -48,7 +52,8 @@
         //manually define viewport dimensions within the associated context and hardware.
         interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
         
-          
+        //game engine started, proceed to cycle engine(loop).
+        cycle_engine();
       }
       
       function cycle_engine()
