@@ -26,9 +26,10 @@
         var canvas_element_width = null;
         var canvas_element_height = null;
         
-        //models (in the condition as if they had been loaded from a long term storage file type).
+        //models (to be loaded from file(s))
         var model_of_large_square = null;
         
+        //
         
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
@@ -48,12 +49,12 @@
           document.getElementById("canvas_for_opengles").style.width = canvas_element_width;
           document.getElementById("canvas_for_opengles").style.height = canvas_element_height;
           
-          //set the canvas DOM element dimensions.
+          //set the diemensions within the opengl engine and the DOM.
           interface_to_opengles_hardware.viewportWidth = canvas_element_width;
           interface_to_opengles_hardware.viewportHeight = canvas_element_height;
           
-        //manually define viewport dimensions within the associated context and hardware.
-        interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
+          //manually define viewport dimensions within the associated context and hardware.
+          interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
         
         //game engine started, proceed to cycle engine(loop).
         cycle_engine();
