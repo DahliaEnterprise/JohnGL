@@ -26,6 +26,9 @@
         var canvas_element_width = null;
         var canvas_element_height = null;
         
+        var major_scene = 1;
+        var major_scene_prestage = 1;
+        
         /* model framework */
         var game_engine_model_datatypes = {
                                             "two-dimensional-textured-vertex": 1
@@ -43,6 +46,13 @@
                                                     "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates" 
                                                   };
         /* end of models */
+        
+        /* handleable variable(s) of open gl format models */
+          //Start up/welcome image.
+          var vertex_buffer_initial_start_image = null;
+          var texture_initial_start_image = null;
+        /* end of open gl format of models */
+        
         
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
@@ -76,6 +86,23 @@
       
       function cycle_engine()
       {
+        /* determination of scene */
+        if(major_scene == 1)
+        {
+          //initalize major scene
+          if(major_scene_prestage == 1)
+          {
+            //load data to gpu with referencable variables.
+            
+          }else if(major_scene_prestage == 0)
+          {
+            //execute logic of major scene.
+            
+          }
+        }
+        /* end of determination of scene */
+        
+        
         /* temporary drawing procedures */
         
         
