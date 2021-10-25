@@ -41,6 +41,7 @@
                                                     "model_datatype": 1,
                                                     "vertex_coordinate_data": null,
                                                     "texture_coordinate_data": null,
+                                                    "data-loaded": false,
                                                     
                                                     "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
                                                     "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates" 
@@ -53,14 +54,6 @@
           var texture_initial_start_image = null;
         /* end of open gl format of models */
         
-        /* major scene resource management */
-        var major_scene_one_resource_managememt = {
-                                                    1:{
-                                                        name:"one_by_one_square",
-                                                        resource: model_placeholder_one_by_one_square
-                                                      }
-                                                  };
-        /* end of major scene resource management */
         
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
@@ -117,6 +110,10 @@
         /* end of drawing proceedures */
         
       }
+      
+      /* resource management single threaded asynchronous control line */
+      
+      /* end of resource management single threaded asynchronous control line */
     </script>
   </head>
   <body onLoad="start_engine('canvas_for_opengles');">
