@@ -53,6 +53,14 @@
           var texture_initial_start_image = null;
         /* end of open gl format of models */
         
+        /* major scene resource management */
+        var major_scene_one_resource_managememt = {
+                                                    1:{
+                                                        name:"one_by_one_square",
+                                                        resource: model_placeholder_one_by_one_square
+                                                      }
+                                                  };
+        /* end of major scene resource management */
         
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
@@ -92,7 +100,7 @@
           //initalize major scene
           if(major_scene_prestage == 1)
           {
-            //load data to gpu with referencable variables.
+            //load data to gpu using referencable variables.
             
           }else if(major_scene_prestage == 0)
           {
@@ -103,10 +111,10 @@
         /* end of determination of scene */
         
         
-        /* temporary drawing procedures */
+        /* drawing procedures */
         
         
-        /* end of temporary drawing proceedures */
+        /* end of drawing proceedures */
         
       }
     </script>
@@ -115,5 +123,4 @@
     <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
   </body>
 </html>
-
 
