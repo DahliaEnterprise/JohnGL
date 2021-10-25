@@ -30,7 +30,7 @@
         var major_scene_prestage = 1;
         
         var resource_management_xmlhttprequest = null;
-        var resource_mamagement_status = -1;
+        var resource_mamagement_status = 0;
         
         /* model framework */
         var game_engine_model_datatypes = {
@@ -97,7 +97,13 @@
           if(major_scene_prestage == 1)
           {
             //load data to gpu using referencable variables.
-            
+            if(resource_mamagement_status == 0)
+            {
+              resource_management_xmlhttprequest = new XMLHttpRequest();
+              resource_management_xmlhttprequest.addEventListener("load", resource_mamagement_loaded);
+              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square);
+              resource_management_xmlhttprequest.send();
+            }
           }else if(major_scene_prestage == 0)
           {
             //execute logic of major scene.
@@ -115,7 +121,10 @@
       }
       
       /* resource management single threaded asynchronous control line */
-      
+      function resource_mamagement_loaded(event_data)
+      {
+        
+      }
       /* end of resource management single threaded asynchronous control line */
     </script>
   </head>
