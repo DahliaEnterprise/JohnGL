@@ -29,6 +29,9 @@
         var major_scene = 1;
         var major_scene_prestage = 1;
         
+        var resource_management_xmlhttprequest = null;
+        var resource_mamagement_status = -1;
+        
         /* model framework */
         var game_engine_model_datatypes = {
                                             "two-dimensional-textured-vertex": 1
@@ -41,7 +44,7 @@
                                                     "model_datatype": 1,
                                                     "vertex_coordinate_data": null,
                                                     "texture_coordinate_data": null,
-                                                    "data-loaded": false,
+                                                    "data_loaded": false,
                                                     
                                                     "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
                                                     "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates" 
