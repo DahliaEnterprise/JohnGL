@@ -30,6 +30,7 @@
         var major_scene_prestage = 1;
         
         var resource_management_xmlhttprequest = null;
+        var resource_management_loaded_data = null;
         var resource_management_status = 0;
         
         /* model framework */
@@ -96,6 +97,11 @@
           //initalize major scene
           if(major_scene_prestage == 1)
           {
+            /* major scene prestage one
+               is to load the one by one square
+               vertex data.
+            */
+            
             //load data to gpu using referencable variables.
             if(resource_management_status == 0)
             {
@@ -103,10 +109,18 @@
               resource_management_status = 1;
               
               //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
+              resource_management_loaded_data = null;
               resource_management_xmlhttprequest = new XMLHttpRequest();
               resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
+              /* place holder for alternative events
+              resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
+              resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
+              */
               resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.vertex_coordinate_filelocation);
               resource_management_xmlhttprequest.send();
+            }else if(resource_management_status == 3)
+            {
+              major_scene_prestage = 2;
             }
           }else if(major_scene_prestage == 0)
           {
@@ -127,7 +141,8 @@
       /* resource management single threaded asynchronous control line */
       function resource_management_loaded(event_data)
       {
-        
+        resource_management_loaded_data = event_data.target.response;
+        resource_management_status = 3;
       }
       /* end of resource management single threaded asynchronous control line */
     </script>
