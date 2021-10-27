@@ -30,7 +30,7 @@
         var major_scene_prestage = 1;
         
         var resource_management_xmlhttprequest = null;
-        var resource_mamagement_status = 0;
+        var resource_management_status = 0;
         
         /* model framework */
         var game_engine_model_datatypes = {
@@ -97,11 +97,15 @@
           if(major_scene_prestage == 1)
           {
             //load data to gpu using referencable variables.
-            if(resource_mamagement_status == 0)
+            if(resource_management_status == 0)
             {
+              //update resource management status before calling an asynchronous process
+              resource_management_status = 1;
+              
+              //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
               resource_management_xmlhttprequest = new XMLHttpRequest();
-              resource_management_xmlhttprequest.addEventListener("load", resource_mamagement_loaded);
-              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square);
+              resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
+              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.vertex_coordinate_filelocation);
               resource_management_xmlhttprequest.send();
             }
           }else if(major_scene_prestage == 0)
@@ -121,7 +125,7 @@
       }
       
       /* resource management single threaded asynchronous control line */
-      function resource_mamagement_loaded(event_data)
+      function resource_management_loaded(event_data)
       {
         
       }
