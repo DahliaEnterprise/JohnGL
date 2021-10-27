@@ -139,14 +139,13 @@
                   index_of_array = index_of_array + 1;
                 }
                 
-                
-   
-              
-              /*model_placeholder_one_by_one_square.vertex_coordinate_data = new Float32Array(resource_management_loaded_data);
-              console.log(model_placeholder_one_by_one_square.vertex_coordinate_data);
-              */
               //move on to major scene prestage two.
               major_scene_prestage = 2;
+              
+              //reset resource management parameters
+              resource_management_status = 0;
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = null;
             }
           
           }else if(major_scene_prestage == 2)
