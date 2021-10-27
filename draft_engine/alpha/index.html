@@ -101,7 +101,6 @@
                is to load the one by one square
                vertex data.
             */
-            
             //load data to gpu using referencable variables.
             if(resource_management_status == 0)
             {
@@ -118,7 +117,7 @@
               */
               resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.vertex_coordinate_filelocation);
               resource_management_xmlhttprequest.send();
-            }else if(resource_management_status == 3)
+            }else if(resource_management_status == 2)
             {
               major_scene_prestage = 2;
             }
@@ -130,8 +129,9 @@
                texture coordinate data.
             */
             
-  
+            console.log("two");
           }else if(major_scene_prestage == 0)
+          {
             //execute logic of major scene.
             
           }
@@ -144,13 +144,16 @@
         
         /* end of drawing proceedures */
         
+        
+        //commit to the loop paradigm (define a number higher than one ms to allow for gpu cpu cool down)
+        setTimeout(cycle_engine, 5);
       }
       
       /* resource management single threaded asynchronous control line */
       function resource_management_loaded(event_data)
-      {
+        {
         resource_management_loaded_data = event_data.target.response;
-        resource_management_status = 3;
+        resource_management_status = 2;
       }
       /* end of resource management single threaded asynchronous control line */
     </script>
