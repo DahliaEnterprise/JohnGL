@@ -119,6 +119,33 @@
               resource_management_xmlhttprequest.send();
             }else if(resource_management_status == 2)
             {
+              //convert binary data (response, not responseText) to a Float32Array.
+                //split data for iteration
+                let resource_management_loaded_data_as_array = resource_management_loaded_data.split(",");
+                
+                //allocate vertex data coordinate variable for one by one square
+                model_placeholder_one_by_one_square.vertex_coordinate_data = null;
+                model_placeholder_one_by_one_square.vertex_coordinate_data = new Float32Array(resource_management_loaded_data_as_array.length);
+              
+                //fill array
+                let index_of_array = 0;
+                while(index_of_array < resource_management_loaded_data_as_array.length)
+                {
+                  let abstracted_position = parseFloat(resource_management_loaded_data_as_array[index_of_array]);
+                  model_placeholder_one_by_one_square.vertex_coordinate_data[index_of_array] = abstracted_position;
+                console.log(model_placeholder_one_by_one_square.vertex_coordinate_data[index_of_array]);
+                  
+                  //next index
+                  index_of_array = index_of_array + 1;
+                }
+                
+                
+   
+              
+              /*model_placeholder_one_by_one_square.vertex_coordinate_data = new Float32Array(resource_management_loaded_data);
+              console.log(model_placeholder_one_by_one_square.vertex_coordinate_data);
+              */
+              //move on to major scene prestage two.
               major_scene_prestage = 2;
             }
           
@@ -129,7 +156,6 @@
                texture coordinate data.
             */
             
-            console.log("two");
           }else if(major_scene_prestage == 0)
           {
             //execute logic of major scene.
