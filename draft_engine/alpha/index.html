@@ -45,10 +45,12 @@
                                                     "model_datatype": 1,
                                                     "vertex_coordinate_data": null,
                                                     "texture_coordinate_data": null,
+                                                    "image_data": null,
                                                     "data_loaded": false,
                                                     
                                                     "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
-                                                    "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates" 
+                                                    "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates",
+                                                    "image_filelocation": null
                                                   };
         /* end of models */
         
@@ -56,6 +58,7 @@
           //Start up/welcome image.
           var vertex_buffer_initial_start_image = null;
           var texture_initial_start_image = null;
+          var color_data_filelocation_start_image = "./images/start_image.jpg";
         /* end of open gl format of models */
         
         
@@ -101,7 +104,6 @@
                is to load the one by one square
                vertex data.
             */
-            //load data to gpu using referencable variables.
             if(resource_management_status == 0)
             {
               //update resource management status before calling an asynchronous process
@@ -133,8 +135,7 @@
                 {
                   let abstracted_position = parseFloat(resource_management_loaded_data_as_array[index_of_array]);
                   model_placeholder_one_by_one_square.vertex_coordinate_data[index_of_array] = abstracted_position;
-                console.log(model_placeholder_one_by_one_square.vertex_coordinate_data[index_of_array]);
-                  
+                
                   //next index
                   index_of_array = index_of_array + 1;
                 }
@@ -154,7 +155,85 @@
                is to load the one by one square
                texture coordinate data.
             */
-            
+            if(resource_management_status == 0)
+            {
+              //update resource management status before calling an asynchronous process
+              resource_management_status = 1;
+              
+              //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = new XMLHttpRequest();
+              resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
+              /* place holder for alternative events
+              resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
+              resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
+              */
+              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.texture_coordinate_data);
+              resource_management_xmlhttprequest.send();
+            }else if(resource_management_status == 2)
+            {
+              //convert binary data (response, not responseText) to a Float32Array.
+                //split data for iteration
+                let resource_management_loaded_data_as_array = resource_management_loaded_data.split(",");
+                
+                //allocate texture data coordinate variable for one by one square
+                model_placeholder_one_by_one_square.texture_coordinate_data = null;
+                model_placeholder_one_by_one_square.texture_coordinate_data = new Float32Array(resource_management_loaded_data_as_array.length);
+              
+                //fill array
+                let index_of_array = 0;
+                while(index_of_array < resource_management_loaded_data_as_array.length)
+                {
+                  let abstracted_position = parseFloat(resource_management_loaded_data_as_array[index_of_array]);
+                  model_placeholder_one_by_one_square.texture_coordinate_data[index_of_array] = abstracted_position;
+                
+                  //next index
+                  index_of_array = index_of_array + 1;
+                }
+                
+              //move on to major scene prestage three.
+              major_scene_prestage = 3;
+              
+              //reset resource management parameters
+              resource_management_status = 0;
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = null;
+            }
+          }else if(major_scene_prestage == 3)
+          {
+            /* 
+               major scene prestage three
+               is to load the image(red,green,blue) data.
+            */
+            //download the image file to be used for the texture.
+            if(resource_management_status == 0)
+            {
+              //update resource management status before calling an asynchronous process
+              resource_management_status = 1;
+              
+              //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = new XMLHttpRequest();
+              resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
+              /* place holder for alternative events
+              resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
+              resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
+              */
+              resource_management_xmlhttprequest.open("GET", ""+color_data_filelocation_start_image);
+              resource_management_xmlhttprequest.responseType = "arraybuffer";
+              resource_management_xmlhttprequest.send();
+            }else if(resource_management_status == 2)
+            {
+              let bytes = new Uint8Array(resource_management_loaded_data);
+              let image_to_upload = new Image();
+              image_to_upload.src = "data:image/jpeg;base64,"+btoa(bytes);
+              
+              //temp
+              resource_management_status = 3;
+            }else if(resource_management_status == 3)
+            {
+              
+            }
           }else if(major_scene_prestage == 0)
           {
             //execute logic of major scene.
@@ -176,8 +255,9 @@
       
       /* resource management single threaded asynchronous control line */
       function resource_management_loaded(event_data)
-        {
+      {
         resource_management_loaded_data = event_data.target.response;
+       
         resource_management_status = 2;
       }
       /* end of resource management single threaded asynchronous control line */
