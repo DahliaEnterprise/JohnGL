@@ -211,7 +211,7 @@
               //update resource management status before calling an asynchronous process
               resource_management_status = 1;
               
-              //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
+              //call asynchronous process that will return red,green,blue data when the network has streamed(loaded) the data.
               resource_management_loaded_data = null;
               resource_management_xmlhttprequest = new XMLHttpRequest();
               resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
