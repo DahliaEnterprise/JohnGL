@@ -58,9 +58,14 @@
           //Start up/welcome image.
           var vertex_buffer_initial_start_image = null;
           var texture_initial_start_image = null;
+          var shader_program_start_image = null;
           var color_data_filelocation_start_image = "./images/start_image.jpg";
+           
         /* end of open gl format of models */
         
+        /* reuseable handleable variable(s) for the drawing process */
+        var drawing_process_uniform_sampler_index_zero = null;
+        /* end reuseable handleable variable(s) for the drawing process */
         
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
@@ -87,6 +92,44 @@
           
           //manually define viewport dimensions within the associated context and hardware.
           interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
+        
+         /* temporary shader program data */
+            var vertex_shader_source = "";
+                vertex_shader_source = vertex_shader_source + "attribute vec4 a_Position; \n";
+                vertex_shader_source = vertex_shader_source + "attribute vec2 a_TexCoord; \n";
+                vertex_shader_source = vertex_shader_source + "varying highp vec2 v_TexCoord; \n";
+                vertex_shader_source = vertex_shader_source + "void main(void) { \n";
+                vertex_shader_source = vertex_shader_source + "  gl_Position = a_Position; \n"; 
+                vertex_shader_source = vertex_shader_source + "  v_TexCoord = a_TexCoord; \n"; 
+                vertex_shader_source = vertex_shader_source + "} \n";
+            
+           
+            var fragment_shader_source = "";
+                fragment_shader_source = fragment_shader_source + "varying highp vec2 v_TexCoord; \n";
+                fragment_shader_source = fragment_shader_source + "uniform sampler2D u_Sampler; \n";
+                fragment_shader_source = fragment_shader_source + "void main(void){ \n";
+                fragment_shader_source = fragment_shader_source + "  gl_FragColor = texture2D(u_Sampler, v_TexCoord); \n";
+                fragment_shader_source = fragment_shader_source + "} \n";
+            
+            
+            var texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader_source);
+                interface_to_opengles_hardware.compileShader(texture_vertex_shader);
+           
+            var texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader_source);
+                interface_to_opengles_hardware.compileShader(texture_fragment_shader);
+            
+            shader_program_start_image = interface_to_opengles_hardware.createProgram();
+                interface_to_opengles_hardware.attachShader(shader_program_start_image, texture_vertex_shader);
+                interface_to_opengles_hardware.attachShader(shader_program_start_image, texture_fragment_shader);
+                interface_to_opengles_hardware.linkProgram(shader_program_start_image);
+                if(!interface_to_opengles_hardware.getProgramParameter(shader_program_start_image, interface_to_opengles_hardware.LINK_STATUS))
+                {
+                  alert("shader link failed");
+                }
+            /* end temporary shader program data */
+            
         
         //game engine started, proceed to cycle engine(loop).
         cycle_engine();
@@ -224,15 +267,47 @@
               resource_management_xmlhttprequest.send();
             }else if(resource_management_status == 2)
             {
+              //move image data to a img DOM element.
               let bytes = new Uint8Array(resource_management_loaded_data);
               let image_to_upload = new Image();
               image_to_upload.src = "data:image/jpeg;base64,"+btoa(bytes);
               
-              //temp
+              /*temporary drawing proceedure area*/
+              //commit to uploading image data to gpu to be used as a reference able variable.
+              texture_initial_start_image = interface_to_opengles_hardware.createTexture();
+              
+              interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
+               
+              //flag gpu to use TEXTURE0 memory area within the gpu.
+              interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, texture_initial_start_image);
+              
+              //allocate uniform sampler of index zero of the gpu.
+              drawing_process_uniform_sampler_index_zero = interface_to_opengles_hardware.getUniformLocation(shader_program_start_image, "uniform_sampler");
+              
+              //declare which uniform sampler should be used by index(zero). this also creates an associated variable within the context between the developer' input and the gpu' shader render stage.
+              interface_to_opengles_hardware.uniform1f(shader_program_start_image, 0);
+              
+              //declare which filtering the gpu should use during memory reads of interpoliated data within regards to the rendering stage of the gpu upon a cpu initiated draw call.
+              interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
+              
+              //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
+              interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.FLOAT, image_to_upload);
+              
+               //activate the render for this vertex.
+               interface_to_opengles_hardware.useProgram(shader_program_start_image);
+               interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
+              
+              //move on to resource management status three.
               resource_management_status = 3;
+              
             }else if(resource_management_status == 3)
             {
               
+              
+              //reset resource management parameters
+              resource_management_status = 0;
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = null;
             }
           }else if(major_scene_prestage == 0)
           {
