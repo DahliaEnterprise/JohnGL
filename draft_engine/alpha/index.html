@@ -274,29 +274,30 @@
               
               /*temporary drawing proceedure area*/
               //commit to uploading image data to gpu to be used as a reference able variable.
-              texture_initial_start_image = interface_to_opengles_hardware.createTexture();
-              
-              interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
-               
-              //flag gpu to use TEXTURE0 memory area within the gpu.
-              interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, texture_initial_start_image);
-              
-              //allocate uniform sampler of index zero of the gpu.
-              drawing_process_uniform_sampler_index_zero = interface_to_opengles_hardware.getUniformLocation(shader_program_start_image, "uniform_sampler");
-              
-              //declare which uniform sampler should be used by index(zero). this also creates an associated variable within the context between the developer' input and the gpu' shader render stage.
-              interface_to_opengles_hardware.uniform1f(shader_program_start_image, 0);
-              
-              //declare which filtering the gpu should use during memory reads of interpoliated data within regards to the rendering stage of the gpu upon a cpu initiated draw call.
-              interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
-              
-              //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
-              interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.FLOAT, image_to_upload);
-              
-               //activate the render for this vertex.
-               interface_to_opengles_hardware.useProgram(shader_program_start_image);
-               interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
-              
+                //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
+                texture_initial_start_image = interface_to_opengles_hardware.createTexture();
+                
+                interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
+                 
+                //flag gpu to use TEXTURE0 memory area within the gpu.
+                interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, texture_initial_start_image);
+                
+                //allocate uniform sampler of index zero of the gpu.
+                drawing_process_uniform_sampler_index_zero = interface_to_opengles_hardware.getUniformLocation(shader_program_start_image, "uniform_sampler");
+                
+                //declare which uniform sampler should be used by index(zero). this also creates an associated variable within the context between the developer' input and the gpu' shader render stage.
+                interface_to_opengles_hardware.uniform1f(shader_program_start_image, 0);
+                
+                //declare which filtering the gpu should use during memory reads of interpoliated data within regards to the rendering stage of the gpu upon a cpu initiated draw call.
+                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
+                
+                //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
+                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.FLOAT, image_to_upload);
+                
+                 //activate the render for this vertex.
+                 interface_to_opengles_hardware.useProgram(shader_program_start_image);
+                 interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
+                
               //move on to resource management status three.
               resource_management_status = 3;
               
