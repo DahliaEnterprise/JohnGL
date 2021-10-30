@@ -106,9 +106,9 @@
            
             var fragment_shader_source = "";
                 fragment_shader_source = fragment_shader_source + "varying highp vec2 v_TexCoord; \n";
-                fragment_shader_source = fragment_shader_source + "uniform sampler2D u_Sampler; \n";
+                fragment_shader_source = fragment_shader_source + "uniform sampler2D uniform_sampler; \n";
                 fragment_shader_source = fragment_shader_source + "void main(void){ \n";
-                fragment_shader_source = fragment_shader_source + "  gl_FragColor = texture2D(u_Sampler, v_TexCoord); \n";
+                fragment_shader_source = fragment_shader_source + "  gl_FragColor = texture2D(uniform_sampler, v_TexCoord); \n";
                 fragment_shader_source = fragment_shader_source + "} \n";
             
             
@@ -273,20 +273,23 @@
               image_to_upload.src = "data:image/jpeg;base64,"+btoa(bytes);
               
               /*temporary drawing proceedure area*/
-              //commit to uploading image data to gpu to be used as a reference able variable.
+              //commit to uploading image data to gpu to be used as a referenceable variable.
                 //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
                 texture_initial_start_image = interface_to_opengles_hardware.createTexture();
                 
+                //image is expected to be loaded as a fliped orientation, flag here to indicate that a flip should occur in order to have the expected ortiented rotation.
                 interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
                  
                 //flag gpu to use TEXTURE0 memory area within the gpu.
+                interface_to_opengles_hardware.activeTexture(interface_to_opengles_hardware.TEXTURE0);
+                
                 interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, texture_initial_start_image);
                 
                 //allocate uniform sampler of index zero of the gpu.
                 drawing_process_uniform_sampler_index_zero = interface_to_opengles_hardware.getUniformLocation(shader_program_start_image, "uniform_sampler");
                 
                 //declare which uniform sampler should be used by index(zero). this also creates an associated variable within the context between the developer' input and the gpu' shader render stage.
-                interface_to_opengles_hardware.uniform1f(shader_program_start_image, 0);
+                interface_to_opengles_hardware.uniform1i(drawing_process_uniform_sampler_index_zero, 0);
                 
                 //declare which filtering the gpu should use during memory reads of interpoliated data within regards to the rendering stage of the gpu upon a cpu initiated draw call.
                 interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
