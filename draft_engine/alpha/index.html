@@ -50,7 +50,9 @@
                                                     
                                                     "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
                                                     "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates",
-                                                    "image_filelocation": null
+                                                    "image_filelocation": null,
+                                                    
+                                                    "texture_vertex_data": null
                                                   };
         /* end of models */
         
@@ -272,7 +274,47 @@
               let image_to_upload = new Image();
               image_to_upload.src = "data:image/jpeg;base64,"+btoa(bytes);
               
+              /* compile vertex coordinates with texture coordinates */
+              let compiled_texture_vertex = new Float32Array();
+              let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
+              let compiled_texture_vertex_index = 0;
+              let vertex_coordinate_data_index = 0;
+              let texture_coordinate_data_index = model_placeholder_one_by_one_square.vertex_coordinate_data.length-1;
+              
+              while(compiled_texture_vertex_index < compiled_texture_vertex_length)
+              {
+                //x
+                compiled_texture_vertex[compiled_texture_vertex_index] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index];
+                
+                //y
+                compiled_texture_vertex[compiled_texture_vertex_index+1] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+1];
+                
+                //z
+                compiled_texture_vertex[compiled_texture_vertex_index+2] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+2];
+                
+                //x
+                compiled_texture_vertex[compiled_texture_vertex_index+3] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index];
+                
+                //y
+                compiled_texture_vertex[compiled_texture_vertex_index+4] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index+1];
+                
+                //next index
+                compiled_texture_vertex_index = compiled_texture_vertex_index + 5;
+                vertex_coordinate_data_index = vertex_coordinate_data_index + 3;
+                texture_coordinate_data_index = texture_coordinate_data_index + 2;
+              }
+              
+              console.log(compiled_texture_vertex);
+              
               /*temporary drawing proceedure area*/
+              //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
+              interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
+              interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
+              interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
+              
+              //select vertex coordinate data and texture coordinate data.
+              vertex_buffer_initial_start_image
+              
               //commit to uploading image data to gpu to be used as a referenceable variable.
                 //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
                 texture_initial_start_image = interface_to_opengles_hardware.createTexture();
@@ -295,7 +337,7 @@
                 interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
                 
                 //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
-                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.FLOAT, image_to_upload);
+                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, image_to_upload);
                 
                  //activate the render for this vertex.
                  interface_to_opengles_hardware.useProgram(shader_program_start_image);
@@ -303,7 +345,7 @@
                 
               //move on to resource management status three.
               resource_management_status = 3;
-              
+             
             }else if(resource_management_status == 3)
             {
               
@@ -312,6 +354,8 @@
               resource_management_status = 0;
               resource_management_loaded_data = null;
               resource_management_xmlhttprequest = null;
+              
+              major_scene_prestage = 0;
             }
           }else if(major_scene_prestage == 0)
           {
@@ -329,7 +373,7 @@
         
         
         //commit to the loop paradigm (define a number higher than one ms to allow for gpu cpu cool down)
-        setTimeout(cycle_engine, 5);
+        setTimeout(cycle_engine, 16);
       }
       
       /* resource management single threaded asynchronous control line */
