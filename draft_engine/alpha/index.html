@@ -313,7 +313,15 @@
               interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
               
               //select vertex coordinate data and texture coordinate data.
-              vertex_buffer_initial_start_image
+              vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
+              interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, vertex_buffer_initial_start_image);
+              interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, compiled_texture_vertex, interface_to_opengles_hardware.STATIC_DRAW);
+              
+              let float_size = compiled_texture_vertex.BYTES_PER_ELEMENT;
+              let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_Position");
+              interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
+              interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
+              
               
               //commit to uploading image data to gpu to be used as a referenceable variable.
                 //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
