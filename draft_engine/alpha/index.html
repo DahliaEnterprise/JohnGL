@@ -45,8 +45,8 @@
                                                     "model_datatype": 1,
                                                     "vertex_coordinate_data": null,
                                                     "texture_coordinate_data": null,
-                                                    "image_data": null,
-                                                    "data_loaded": false,
+                                                    "vertex_and_texture_coordinate_data": null,
+                                                    "vertex_and_texture_coordinate_data_loaded": false,
                                                     
                                                     "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
                                                     "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates",
@@ -61,7 +61,7 @@
           var vertex_buffer_initial_start_image = null;
           var texture_initial_start_image = null;
           var shader_program_start_image = null;
-          var color_data_filelocation_start_image = "./images/start_image.jpg";
+          var color_data_filelocation_start_image = "./images/start_image.png";
            
         /* end of open gl format of models */
         
@@ -178,9 +178,9 @@
                 let index_of_array = 0;
                 while(index_of_array < resource_management_loaded_data_as_array.length)
                 {
-                  let abstracted_position = parseFloat(resource_management_loaded_data_as_array[index_of_array]);
-                  model_placeholder_one_by_one_square.vertex_coordinate_data[index_of_array] = abstracted_position;
-                
+                  let abstracted_position = resource_management_loaded_data_as_array[index_of_array];
+                  model_placeholder_one_by_one_square.vertex_coordinate_data[index_of_array] = parseFloat(abstracted_position.trim());
+                 
                   //next index
                   index_of_array = index_of_array + 1;
                 }
@@ -213,7 +213,7 @@
               resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
               resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
               */
-              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.texture_coordinate_data);
+              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.texture_coordinate_filelocation);
               resource_management_xmlhttprequest.send();
             }else if(resource_management_status == 2)
             {
@@ -229,9 +229,9 @@
                 let index_of_array = 0;
                 while(index_of_array < resource_management_loaded_data_as_array.length)
                 {
-                  let abstracted_position = parseFloat(resource_management_loaded_data_as_array[index_of_array]);
-                  model_placeholder_one_by_one_square.texture_coordinate_data[index_of_array] = abstracted_position;
-                
+                  let abstracted_position = resource_management_loaded_data_as_array[index_of_array];
+                  model_placeholder_one_by_one_square.texture_coordinate_data[index_of_array] = parseFloat(abstracted_position.trim());
+                  
                   //next index
                   index_of_array = index_of_array + 1;
                 }
@@ -246,11 +246,52 @@
             }
           }else if(major_scene_prestage == 3)
           {
+            //compile vertex coordinates and texture coordinates into a x,y, x,y, interlaced format.
+            let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
+            let compiled_texture_vertex = new Float32Array(compiled_texture_vertex_length);
+            let compiled_texture_vertex_index = 0;
+            let vertex_coordinate_data_index = 0;
+            let texture_coordinate_data_index = 0;
+            
+            while(compiled_texture_vertex_index < compiled_texture_vertex_length)
+            {
+              //x vertex coordinate
+              compiled_texture_vertex[compiled_texture_vertex_index] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index];
+              
+              //y vertex coordinate
+              compiled_texture_vertex[compiled_texture_vertex_index+1] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+1];
+              
+             
+              //x texture
+              compiled_texture_vertex[compiled_texture_vertex_index+2] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index];
+              
+              //y texture
+              compiled_texture_vertex[compiled_texture_vertex_index+3] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index+1];
+              
+              //next index
+              compiled_texture_vertex_index = compiled_texture_vertex_index + 4;
+              vertex_coordinate_data_index = vertex_coordinate_data_index + 2;
+              texture_coordinate_data_index = texture_coordinate_data_index + 2;
+            }
+            
+            //set the compiled vertex and texture coordinates to the model placeholder.
+            model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data = compiled_texture_vertex;
+            model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data_loaded = true;
+            
+            
+            
+          }else if(major_scenr_prestage == 4)
+          {
+          
             /* 
                major scene prestage three
                is to load the image(red,green,blue) data.
             */
             //download the image file to be used for the texture.
+            let image_to_upload = document.getElementById("loaded_image");
+            
+            /*  MUTED TOP WILL BE DELETED BOTTOM WILL BE REUSED
+
             if(resource_management_status == 0)
             {
               //update resource management status before calling an asynchronous process
@@ -263,7 +304,7 @@
               /* place holder for alternative events
               resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
               resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
-              */
+              
               resource_management_xmlhttprequest.open("GET", ""+color_data_filelocation_start_image);
               resource_management_xmlhttprequest.responseType = "arraybuffer";
               resource_management_xmlhttprequest.send();
@@ -271,42 +312,52 @@
             {
               //move image data to a img DOM element.
               let bytes = new Uint8Array(resource_management_loaded_data);
+              let image_to_upload = document.getElementById("loaded_image");
+              image_to_upload.src = "data:image/png;base64, "+btoa(bytes);
+              
+              /*
               let image_to_upload = new Image();
               image_to_upload.src = "data:image/jpeg;base64,"+btoa(bytes);
+             let loaded_image = document.getElementById("loaded_image");
               
-              /* compile vertex coordinates with texture coordinates */
-              let compiled_texture_vertex = new Float32Array();
+              loaded_image.src = color_data_filelocation_start_image;
+              
+              
+              /* compile vertex coordinates with texture coordinates 
               let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
+              let compiled_texture_vertex = new Float32Array(compiled_texture_vertex_length);
               let compiled_texture_vertex_index = 0;
               let vertex_coordinate_data_index = 0;
-              let texture_coordinate_data_index = model_placeholder_one_by_one_square.vertex_coordinate_data.length-1;
+              let texture_coordinate_data_index = 0;
               
               while(compiled_texture_vertex_index < compiled_texture_vertex_length)
               {
-                //x
+                //x vertex coordinate
                 compiled_texture_vertex[compiled_texture_vertex_index] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index];
+                //console.log(model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index] );
                 
-                //y
+                //y vertex coordinate
                 compiled_texture_vertex[compiled_texture_vertex_index+1] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+1];
+                //console.log(model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+1]);
                 
-                //z
-                compiled_texture_vertex[compiled_texture_vertex_index+2] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+2];
+               
+                //x texture
+                compiled_texture_vertex[compiled_texture_vertex_index+2] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index];
+                console.log(model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index]);
                 
-                //x
-                compiled_texture_vertex[compiled_texture_vertex_index+3] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index];
-                
-                //y
-                compiled_texture_vertex[compiled_texture_vertex_index+4] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index+1];
+                //y texture
+                compiled_texture_vertex[compiled_texture_vertex_index+3] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index+1];
+                console.log(compiled_texture_vertex[compiled_texture_vertex_index+3] );
                 
                 //next index
-                compiled_texture_vertex_index = compiled_texture_vertex_index + 5;
-                vertex_coordinate_data_index = vertex_coordinate_data_index + 3;
+                compiled_texture_vertex_index = compiled_texture_vertex_index + 4;
+                vertex_coordinate_data_index = vertex_coordinate_data_index + 2;
                 texture_coordinate_data_index = texture_coordinate_data_index + 2;
               }
               
               console.log(compiled_texture_vertex);
               
-              /*temporary drawing proceedure area*/
+              /*temporary drawing proceedure area*
               //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
               interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
               interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
@@ -317,10 +368,18 @@
               interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, vertex_buffer_initial_start_image);
               interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, compiled_texture_vertex, interface_to_opengles_hardware.STATIC_DRAW);
               
+              
+              //notify the shader program which variables to use and in what manner to use them.
               let float_size = compiled_texture_vertex.BYTES_PER_ELEMENT;
+              
               let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_Position");
               interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
               interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
+              
+              let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_TexCoord");
+              interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
+              interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
+              
               
               
               //commit to uploading image data to gpu to be used as a referenceable variable.
@@ -365,6 +424,7 @@
               
               major_scene_prestage = 0;
             }
+            */
           }else if(major_scene_prestage == 0)
           {
             //execute logic of major scene.
@@ -396,6 +456,9 @@
   </head>
   <body onLoad="start_engine('canvas_for_opengles');">
     <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
+    <div id="reuseable_image_data">
+      <img id="loaded_image" style="display:none;width:0px;height:0px;"></img>
+    </div>
   </body>
 </html>
 
