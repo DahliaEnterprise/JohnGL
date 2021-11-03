@@ -33,7 +33,11 @@
         var resource_management_loaded_data = null;
         var resource_management_status = 0;
         
-        var image_resource_management = 0;
+        var image_resource_management_status = 0;
+        var image_resources = {
+                                
+                              };
+       
         
         /* model framework */
         var game_engine_model_datatypes = {
@@ -281,7 +285,7 @@
             
             //move on to major scene prestage four.
             major_scene_prestage = 4;
-            image_resource_management = 0;
+            image_resource_management_status = 0;
             
           }else if(major_scene_prestage == 4)
           {
@@ -290,22 +294,22 @@
                is to load the image(red,green,blue) data.
             */
             //download the image file to be used for the texture.
-            if(image_resource_management == 0)
+            if(image_resource_management_status == 0)
             {
-              let image_to_upload = document.getElementById("loaded_image");
-              image_to_upload.onload = function()
+              //insert new img tag to mamage the image data.
+              reuseable_image_data.innerHTML += '<img id="start_image" style="width:0px;height:0px;display:none;"></img>';
+              let start_image_to_upload = document.getElementById("start_image");
+              start_image_to_upload.onload = function()
               {
-                image_resource_management = 1;
+                image_resource_management_status = 1;
               }
               
-              image_to_upload.src = model_placeholder_one_by_one_square.image_filelocation;
+              start_image_to_upload.src = model_placeholder_one_by_one_square.image_filelocation;
               
-            }else if(image_resource_management == 1)
+            }else if(image_resource_management_status == 1)
             {
               major_scene_prestage = 5;
             }
-            
-         
           }else if(major_scene_prestage == 5)
           {
               /*temporary drawing proceedure area*/
@@ -333,7 +337,7 @@
               interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
               interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
               
-              let image_to_upload = document.getElementById("loaded_image");
+              let start_image_to_upload = document.getElementById("start_image");
               
               //commit to uploading image data to gpu to be used as a referenceable variable.
                 //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
@@ -357,7 +361,7 @@
                 interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
                 
                 //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
-                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, image_to_upload);
+                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, start_image_to_upload);
                 
                  //activate the render for this vertex.
                  interface_to_opengles_hardware.useProgram(shader_program_start_image);
@@ -396,7 +400,7 @@
   <body onLoad="start_engine('canvas_for_opengles');">
     <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
     <div id="reuseable_image_data">
-      <img id="loaded_image" style="display:none;width:0px;height:0px;"></img>
+      <!--<img id="loaded_image" style="display:none;width:0px;height:0px;"></img>-->
     </div>
   </body>
 </html>
