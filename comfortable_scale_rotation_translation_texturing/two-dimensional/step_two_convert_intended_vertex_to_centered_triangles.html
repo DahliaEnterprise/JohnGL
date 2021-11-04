@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Convert intended vertex to centered triangles</title>
+    <script type="text/javascript">
+      /* Venmo: Shane-Betz1990 */
+      var centered_triangles = null;
+      
+      //load the artists depiction of the two dimensional model.
+      var xml_http_request = new XMLHttpRequest();
+      xml_http_request.addEventListener("load", resource_loaded);
+      xml_http_request.open("GET", "./step_one_intended_vertex.opengl_xy_coordinates");
+      xml_http_request.send();
+      
+      function resource_loaded(event_data)
+      {
+        let response_data = event_data.target.response;
+        let response_data_array = response_data.split(",");
+        
+        centered_triangles = new Float32Array(response_data_array.length);
+        
+        let index = 0;
+        while(index < response_data_array.length)
+        {
+          
+          index = index + 2;
+        }
+      }
+      
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
