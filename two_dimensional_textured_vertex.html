@@ -76,7 +76,7 @@
           //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
           var triangle_and_texture_positions_vertex = new Float32Array([
                                  /* x,y vertex coordinates, x,y texture coordinate s */
-                                 -0.5, 0.5, 0.0, 1.0,
+                                 -0.5, 0.5, 0.0, 0.5,
                                  -0.5, -0.5, 0.0, 0.0,
                                  
                                  0.5, 0.5, 1.0, 1.0,
@@ -103,7 +103,7 @@
         
         
             var attribute_texture_coordinates = opengles.getAttribLocation(texture_shader_program, 'a_TexCoord');
-            opengles.vertexAttribPointer(attribute_texture_coordinates , 2, opengles.FLOAT, false, (float_size * 4), 0);
+            opengles.vertexAttribPointer(attribute_texture_coordinates , 2, opengles.FLOAT, false, (float_size * 4), (float_size * 2));
             opengles.enableVertexAttribArray(attribute_texture_coordinates);
             
            
@@ -134,7 +134,7 @@
              opengles.drawArrays(opengles.TRIANGLE_STRIP, 0, 4);
            }
            
-           image_data.src = "./Pictures/squiggles.png";
+           image_data.src = "./images/start_image.png";
       }
       
     </script>
