@@ -1,7 +1,0 @@
-The process to a comfortable scale rotation translation during a texturing process is to have a 2d (or 3d) model, have a automated process that 
-will move each triangle to a centered position, the triangle is then textured, then the triangle is placed back to its model defined position
-With the scale, rotation, translation applied to the texture for each triangle this will be called the "textured model".
-
-The textured model can then be scale, rotated, translated according to the game world scale, rotation, translation.
-
-Once this is done to each model in the game for the intended scene the projection view can be applied.
