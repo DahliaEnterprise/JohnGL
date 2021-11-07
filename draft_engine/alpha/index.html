@@ -41,6 +41,7 @@
         var game_engine_model_datatypes = {
                                             "two-dimensional-textured-vertex": 1
                                           };
+      
         /* end of model framework */
         
         /* models */
@@ -333,7 +334,7 @@
               interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
               
               let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_TexCoord");
-              interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
+              interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * ));
               interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
               
               let start_image_to_upload = document.getElementById("start_image");
