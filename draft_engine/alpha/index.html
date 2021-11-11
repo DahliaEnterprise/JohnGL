@@ -26,6 +26,17 @@
         var canvas_element_width = null;
         var canvas_element_height = null;
         
+        var frames_per_second = {
+                                  "sample_start_timestamp": null,
+                                  "sample_end_timestamp": null,
+                                  "maximum_frames_per_second": null,
+                                  "sample": null
+                                  
+                                };
+        var frames_per_second_average_per_thousand_miliseconds = null;
+        var frames_per_second_maximum_per_second = null;
+
+        
         var major_scene = 1;
         var major_scene_prestage = 1;
         
@@ -34,7 +45,11 @@
         var resource_management_status = 0;
         
         var image_resource_management_status = 0;
-        var image_resources = {};
+        var image_resources = {
+                                "start_image": {
+                                                 "image_filelocation": "./images/start_image.png"
+                                               }
+                              };
        
         
         /* model framework */
@@ -55,8 +70,7 @@
                                                     "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
                                                     "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates",
                                                     "image_filelocation": "./images/start_image.png",
-                                                    
-                                                    "texture_vertex_data": null
+                                                    "image_resources_id": "start_image"
                                                   };
         /* end of models */
         
@@ -71,6 +85,23 @@
         /* reuseable handleable variable(s) for the drawing process */
         var drawing_process_uniform_sampler_index_zero = null;
         /* end reuseable handleable variable(s) for the drawing process */
+        
+        /* major scene states */
+        var timestamp_last_frame_fully_rendered = null;
+        var major_scene_one_states = {
+                                        "start_image": {
+                                                          "scale_x": 0.0,
+                                                          "scale_y": 0.0,
+                                                          "zoom_animation_target_scale_x": 1.0,
+                                                          "zoom_animation_target_scale_y": 1.0,
+                                                          "zoom_animation_start_timestamp": null,
+                                                          "zoom_animation_end_timestamp": null,
+                                                          "zoom_animation_millisecond_duration": 1000,
+                                                          "zoom_animation_scale_x_increments": null,
+                                                          "zoom_animation_scale_y_increments": null
+                                                        }
+                                     };
+        /* end of major scene states */
         
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
@@ -97,7 +128,22 @@
           
           //manually define viewport dimensions within the associated context and hardware.
           interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
-        
+          
+        //initialize frames per second list
+          frames_per_second.sample_start_timestamp = Date.now() - 1000;
+          frames_per_second.sample_end_timestamp = Date.now();
+          frames_per_second.maximum_frames_per_second = 60;
+          frames_per_second.sample = [];
+          let index = 0;
+          while(index < frames_per_second.maximum_frames_per_second)
+          {
+            frames_per_second.sample[index] = frames_per_second.sample_start_timestamp;
+            
+            //next index
+            index = index + 1;
+          }
+          
+          
          /* temporary shader program data */
             var vertex_shader_source = "";
                 vertex_shader_source = vertex_shader_source + "attribute vec4 a_Position; \n";
@@ -137,12 +183,16 @@
             
         
         //game engine started, proceed to cycle engine(loop).
-        draw_loop_timestamp_last_draw = Date().time;
+        timestamp_last_frame_fully_rendered = Date.now()
         cycle_engine();
       }
       
       function cycle_engine()
       {
+        //time will pass as this function is executed, set time passed variable here to keep all states syncronized to the same instance.
+        let state_syncronization_timestamp = Date.now();
+        let milliseconds_since_last_fully_rendered_frame = state_syncronization_timestamp - timestamp_last_frame_fully_rendered;
+        
         /* determination of scene */
         if(major_scene == 1)
         {
@@ -304,7 +354,7 @@
                 image_resource_management_status = 1;
               }
               
-              start_image_to_upload.src = model_placeholder_one_by_one_square.image_filelocation;
+              start_image_to_upload.src = image_resources[""+model_placeholder_one_by_one_square.image_resources_id].image_filelocation;
               
             }else if(image_resource_management_status == 1)
             {
@@ -312,9 +362,51 @@
             }
           }else if(major_scene_prestage == 5)
           {
+            major_scene_one_states.start_image.zoom_animation_start_timestamp = state_syncronization_timestamp;
+            major_scene_one_states.start_image.zoom_animation_end_timestamp = state_syncronization_timestamp + major_scene_one_states.start_image.zoom_animation_millisecond_duration;
+           
+            major_scene_one_states.start_image.zoom_animation_scale_x_increments = major_scene_one_states.start_image.zoom_animation_target_scale_x / major_scene_one_states.start_image.zoom_animation_millisecond_duration;
+            major_scene_one_states.start_image.zoom_animation_scale_y_increments = major_scene_one_states.start_image.zoom_animation_target_scale_y / major_scene_one_states.start_image.zoom_animation_millisecond_duration;
+            
+            //move on to the major scene logic
+            major_scene_prestage = 0;
+          }else if(major_scene_prestage == 0)
+          {
+              //execute logic of major scene.
+                //increase scale of start image
+            
+                    
+                  //determine time passed since animation start
+                  let time_passed_since_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.zoom_animation_start_timestamp;
+                  
+                  //determine current scale based on time factors.
+                  major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_scale_x_increments * time_passed_since_animation_start;
+                  major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_scale_y_increments * time_passed_since_animation_start;
+              
+              
+                  //stop scaling when end timestamp has been reached.
+                  if(state_syncronization_timestamp >=  major_scene_one_states.start_image.zoom_animation_end_timestamp)
+                  {
+                    major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_target_scale_x;
+                    major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_target_scale_y;
+                  }
+                  
+                  
+                //reproduce the start image to the scaled state.
+                let start_image_vertex_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
+                let index = 0;
+                while(index < start_image_vertex_data.length)
+                {
+                  start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
+                  start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
+                  
+                  //next index
+                  index = index + 4;
+                }
+                
               /*temporary drawing proceedure area*/
               
-              //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
+              //Clear the viewport(screen) before drawing a new frame.
               interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
               interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
               interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
@@ -323,8 +415,7 @@
               //select vertex coordinate data and texture coordinate data.
               vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
               interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, vertex_buffer_initial_start_image);
-              interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data , interface_to_opengles_hardware.STATIC_DRAW);
-              
+              interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, start_image_vertex_data, interface_to_opengles_hardware.STATIC_DRAW);
               
               //notify the shader program which variables to use and in what manner to use them.
               let float_size = model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data.BYTES_PER_ELEMENT;
@@ -334,10 +425,10 @@
               interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
               
               let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_TexCoord");
-              interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * ));
+              interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
               interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
               
-              let start_image_to_upload = document.getElementById("start_image");
+              let start_image_to_upload_to_gpu = document.getElementById("start_image");
               
               //commit to uploading image data to gpu to be used as a referenceable variable.
                 //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
@@ -366,17 +457,18 @@
                 interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MAX_FILTER, interface_to_opengles_hardware.LINEAR);
                 
                 //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
-                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, start_image_to_upload);
+                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, start_image_to_upload_to_gpu);
                 
                 //activate the render for this vertex.
                 interface_to_opengles_hardware.useProgram(shader_program_start_image);
                 interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
                 
-          
-          }else if(major_scene_prestage == 0)
-          {
-            //execute logic of major scene.
-            
+                
+                /* delete buffers */
+                
+                /* end of delete buffers */
+                
+              /* end of temporary drawing proceedure area*/
           }
         }
         /* end of determination of scene */
@@ -384,12 +476,57 @@
         
         /* drawing procedures */
         
+        //to be determined...
         
         /* end of drawing proceedures */
         
         
         //commit to the loop paradigm.
-        setTimeout(cycle_engine, 100);
+          //remove longest ago timestamp from sample lost.
+          timestamp_last_frame_fully_rendered = Date.now();
+          let sorted_frames_per_second = frames_per_second.sample.sort();
+          let index = 0;
+          let sorted_frames_index = 1;
+          frames_per_second.sample = [];
+          while(sorted_frames_index < sorted_frames_per_second.length)
+          {
+            frames_per_second.sample[index] = sorted_frames_per_second[sorted_frames_index];
+            
+            //next index 
+            index = index + 1;
+            sorted_frames_index = sorted_frames_index + 1;
+          }
+          frames_per_second.sample[index] = timestamp_last_frame_fully_rendered;
+          
+          //determine frame rate variance and call next draw frame, break frames per second if averaged frame rate variance is higher(allow cpu gpu cool down time during this high load).
+          index = 0;
+          let total_milliseconds_between_frames = 0;
+          let total_frames_counted = 0;
+          while(index < sorted_frames_per_second.length)
+          {
+            if((index+1) < sorted_frames_per_second.length)
+            {
+              let milliseconds_between_frames = sorted_frames_per_second[index+1] - sorted_frames_per_second[index];
+              total_milliseconds_between_frames = total_milliseconds_between_frames + 1;
+              total_frames_counted = total_frames_counted + 1;
+            }
+            
+            //next index
+            index = index + 1;
+          }
+          
+          let average_milliseconds_between_frames = total_milliseconds_between_frames / total_frames_counted;
+          let milliseconds_between_frames_at_maximum_frame_rate = 1000 / frames_per_second.maximum_frames_per_second;
+          let next_cycle = 1;
+          if((average_milliseconds_between_frames+10) >= milliseconds_between_frames_at_maximum_frame_rate)
+          {
+            next_cycle = average_milliseconds_between_frames;
+          }else{
+            next_cycle = milliseconds_between_frames_at_maximum_frame_rate;
+          }
+          
+          //trigger another cycle of the engine.
+          setTimeout(cycle_engine, next_cycle);
       }
       
       /* resource management single threaded asynchronous control line */
@@ -400,6 +537,28 @@
         resource_management_status = 2;
       }
       /* end of resource management single threaded asynchronous control line */
+      
+      /* assistive math functions */
+      function scale_x(original_x, scale_factor)
+      {
+        let output_scaled_x = null;
+        
+        let scaled_x = original_x * scale_factor;
+        output_scaled_x = scaled_x;
+        
+        return output_scale d_x;
+      }
+      
+      function scale_y(original_y, scale_factor)
+      {
+        let output_scaled_y = null;
+        
+        let scaled_y = original_y * scale_factor;
+        output_scaled_y = scaled_y;
+        
+        return output_scaled_y;
+      }
+      /* end of assistive math functions */
     </script>
   </head>
   <body onLoad="start_engine('canvas_for_opengles');">
