@@ -30,11 +30,11 @@
                                   "sample_start_timestamp": null,
                                   "sample_end_timestamp": null,
                                   "maximum_frames_per_second": null,
-                                  "sample": null
-                                  
+                                  "sample": null,
+                                  "near_constants":{
+                                                      "target_milliseconds_between_frames_at_maximum_frame_rate": null
+                                                    }
                                 };
-        var frames_per_second_average_per_thousand_miliseconds = null;
-        var frames_per_second_maximum_per_second = null;
 
         
         var major_scene = 1;
@@ -106,6 +106,8 @@
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
       {
+        let out = rotate_x(0, 0, 6);
+        
         
         //canvas is a null element on the HTML dom.
         html_canvas_element = document.getElementById(""+html_dom_id_of_canvas_element);
@@ -142,6 +144,7 @@
             //next index
             index = index + 1;
           }
+          frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate = 1000 / frames_per_second.maximum_frames_per_second;
           
           
          /* temporary shader program data */
@@ -183,7 +186,7 @@
             
         
         //game engine started, proceed to cycle engine(loop).
-        timestamp_last_frame_fully_rendered = Date.now()
+        timestamp_last_frame_fully_rendered = Date.now();
         cycle_engine();
       }
       
@@ -271,7 +274,6 @@
               resource_management_xmlhttprequest.send();
             }else if(resource_management_status == 2)
             {
-              console.log(resource_management_loaded_data);
               //convert binary data (response, not responseText) to a Float32Array.
                 //split data for iteration
                 let resource_management_loaded_data_as_array = resource_management_loaded_data.split(",");
@@ -352,7 +354,7 @@
               start_image_to_upload.onload = function()
               {
                 image_resource_management_status = 1;
-              }
+              };
               
               start_image_to_upload.src = image_resources[""+model_placeholder_one_by_one_square.image_resources_id].image_filelocation;
               
@@ -482,7 +484,7 @@
         
         
         //commit to the loop paradigm.
-          //remove longest ago timestamp from sample lost.
+          //remove longest ago timestamp from sample.
           timestamp_last_frame_fully_rendered = Date.now();
           let sorted_frames_per_second = frames_per_second.sample.sort();
           let index = 0;
@@ -498,7 +500,7 @@
           }
           frames_per_second.sample[index] = timestamp_last_frame_fully_rendered;
           
-          //determine frame rate variance and call next draw frame, break frames per second if averaged frame rate variance is higher(allow cpu gpu cool down time during this high load).
+          //determine frame rate variance and call next draw frame.
           index = 0;
           let total_milliseconds_between_frames = 0;
           let total_frames_counted = 0;
@@ -515,16 +517,9 @@
             index = index + 1;
           }
           
-          let average_milliseconds_between_frames = total_milliseconds_between_frames / total_frames_counted;
-          let milliseconds_between_frames_at_maximum_frame_rate = 1000 / frames_per_second.maximum_frames_per_second;
-          let next_cycle = 1;
-          if((average_milliseconds_between_frames+10) >= milliseconds_between_frames_at_maximum_frame_rate)
-          {
-            next_cycle = average_milliseconds_between_frames;
-          }else{
-            next_cycle = milliseconds_between_frames_at_maximum_frame_rate;
-          }
           
+          let next_cycle =1;// frames_per_second["near_constants"]["target_milliseconds_between_frames_at_maximum_frame_rate"];
+         
           //trigger another cycle of the engine.
           setTimeout(cycle_engine, next_cycle);
       }
@@ -539,6 +534,40 @@
       /* end of resource management single threaded asynchronous control line */
       
       /* assistive math functions */
+      function rotate_x(original_x, angle_as_radians, digits_of_precision=1)
+      {
+        let output_new_x = original_x;
+        
+        let multiplier_to_achieve_effects_of_requested_precision = "";
+        let index = 0;
+        while(index < digits_of_precision)
+        {
+          multiplier_to_achieve_effects_of_requested_precision = multiplier_to_achieve_effects_of_requested_precision + "0";
+          
+          //next iteration.
+          index = index + 1;
+        }
+        
+        multiplier_to_achieve_effects_of_requested_precision = "1"+multiplier_to_achieve_effects_of_requested_precision;
+        multiplier_to_achieve_effects_of_requested_precision = parseInt(multiplier_to_achieve_effects_of_requested_precision);
+        
+        
+        //it cannot produce absolute zero or the rest of the translations in other functions will fail.
+        if((original_x*multiplier_to_achieve_effects_of_requested_precision) == 0)
+        {
+          output_new_x = 1.0 / multiplier_to_achieve_effects_of_requested_precision;
+        }
+        
+        //get hypotenues
+        
+        return output_new_x;
+      }
+      
+      /*function rotate_y(original_y, angle_as_radians)
+      {
+        
+      }*/
+      
       function scale_x(original_x, scale_factor)
       {
         let output_scaled_x = null;
@@ -546,7 +575,7 @@
         let scaled_x = original_x * scale_factor;
         output_scaled_x = scaled_x;
         
-        return output_scale d_x;
+        return output_scaled_x;
       }
       
       function scale_y(original_y, scale_factor)
