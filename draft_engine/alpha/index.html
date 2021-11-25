@@ -534,6 +534,128 @@
       /* end of resource management single threaded asynchronous control line */
       
       /* assistive math functions */
+      function get_angle_as_radians(source_x, source_y, target_x, target_y)
+      {
+      	let angle_as_radians = -1;
+      	
+      	if((source_x*100000) == 0){ source_x = 0.000001; }
+      	if((source_y*100000) == 0){ source_y = 0.000001; }
+      	if((target_x*100000) == 0){ target_x = 0.000001; }
+      	if((target_y*100000) == 0){ target_y = 0.000001; }
+      	
+      	let three_sixty_degrees_as_radians = 0;
+      	let quadrant = -1; //0 top right(0-90), 1 top left(90-180), 2 bottom-left(180-270), 3 bottom-right(270-360)
+      	let exact_plane = -1; //0 right(exact 0), 1 top(exact 90), 2 left(exact 180), 3 bottom(exact 270)
+      	
+      	let source_x_int = source_x*100000;
+      	let source_y_int = source_y*100000;
+      	let target_x_int = target_x*100000;
+      	let target_y_int = target_y*100000;
+      	
+      	if(source_x_int > target_x_int)
+      	{
+      		if(source_y_int > target_y_int)
+      		{
+      			//start is quadrant top right, target is bottom left
+      			quadrant = 2;
+      		}else if(source_y_int == target_y_int)
+      		{
+      			//start is exact right, target is exact left
+      			exact_plane = 2;
+      		}else if(source_y_int < target_y_int)
+      		{
+      			//start is quadrant bottom right, target is top left
+      			quadrant = 1;
+      		}
+      	}else if(source_x_int < target_x_int)
+      	{
+      		if(source_y_int > target_y_int)
+      		{
+      			//start is quadrant top left, target is bottom right.
+      			quadrant = 3;
+      		}else if(source_y_int == target_y_int)
+      		{
+      			//start is exact plane left, target is exact right
+      			exact_plane = 0;
+      		}else if(source_y_int < target_y_int)
+      		{
+      			//start is quadrant bottom left, target top right
+      			quadrant = 0;
+      		}
+      	}else if(source_x_int == target_x_int)
+      	{
+      		if(source_y_int > target_y_int)
+      		{
+      			//start is exact top, target is exact bottom.
+      			exact_plane = 3;
+      		}else if(source_y_int < target_y_int)
+      		{
+      			//start is exact bottom, target is exact top
+      			exact_plane = 1;
+      		}
+      	}
+      	
+      	let x_distance;
+      	let hypotenus;
+      	if(exact_plane != -1)
+      	{
+      		if(exact_plane == 0)
+      		{
+      			//zero degrees
+      			three_sixty_degrees_as_radians = 0.000000;
+      		}else if(exact_plane == 1)
+      		{
+      			//ninety degrees
+      			three_sixty_degrees_as_radians = 1.570796;
+      		}else if(exact_plane == 2)
+      		{
+      			//one hundred and eighty degrees
+      			three_sixty_degrees_as_radians = 3.141592;
+      		}else if(exact_plane == 3)
+      		{
+      			//two hundred and seventy degrees
+      			three_sixty_degrees_as_radians = 4.712388;
+      	  }
+      	}else if(quadrant != -1)
+      	{
+      		x_distance = Math.abs(source_x-target_x);
+      		
+      		let adjacent_squared = source_x-target_x;
+      		    adjacent_squared = Math.abs(adjacent_squared);
+      		    adjacent_squared = Math.pow(adjacent_squared,2);
+      		
+      		let opposite_squared = source_y-target_y;
+      		    opposite_squared = Math.abs(opposite_squared);
+      		    opposite_squared = Math.pow(opposite_squared,2);
+      		hypotenus = Math.sqrt(adjacent_squared+opposite_squared);
+      		
+      		if(quadrant == 0)
+      		{
+      			//zero to ninety, top right.
+      			three_sixty_degrees_as_radians = Math.acos(x_distance/hypotenus);
+      		}else if(quadrant == 1)
+      		{
+      			//ninety to one hundred and eighty, top left
+      			three_sixty_degrees_as_radians = 3.141592-Math.acos(x_distance/hypotenus);
+      		}else if(quadrant == 2)
+      		{
+      			//one hundred and eighty to two hundred and seventy, bottom left
+      			three_sixty_degrees_as_radians = 3.141592+Math.acos(x_distance/hypotenus);
+      		}else if(quadrant == 3)
+      		{
+      			// two hundred and seventy to three hundred and sixty bottom right
+      			three_sixty_degrees_as_radians = 3.141592+(3.141592-Math.acos(x_distance/hypotenus));
+      		}
+      	}
+      	/*console.log("x distance:"+x_distance);
+      	console.log("hypotenus:"+hypotenus);
+      	console.log("quad:"+quadrant);
+      	console.log("exact plane:"+exact_plane);*/
+      	angle_as_radians = three_sixty_degrees_as_radians;
+      	return angle_as_radians;
+      }
+
+      
       function rotate_x(original_x, angle_as_radians, digits_of_precision=1)
       {
         let output_new_x = original_x;
@@ -556,6 +678,9 @@
         if((original_x*multiplier_to_achieve_effects_of_requested_precision) == 0)
         {
           output_new_x = 1.0 / multiplier_to_achieve_effects_of_requested_precision;
+        }else if((original_x*multiplier_to_achieve_effects_of_requested_precision) != 0)
+        {
+          output_new_x = 
         }
         
         //get hypotenues
@@ -597,4 +722,3 @@
     </div>
   </body>
 </html>
-
