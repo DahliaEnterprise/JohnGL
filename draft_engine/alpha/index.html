@@ -98,7 +98,15 @@
                                                           "zoom_animation_end_timestamp": null,
                                                           "zoom_animation_millisecond_duration": 1000,
                                                           "zoom_animation_scale_x_increments": null,
-                                                          "zoom_animation_scale_y_increments": null
+                                                          "zoom_animation_scale_y_increments": null,
+                                                          
+                                                          "rotation_z": 0.000000,
+                                                          "rotation_animation_target_rotation_z": 12.566,
+                                                          "rotation_animation_start_timestamp": null,
+                                                          "rotation_animation_end_timestamp": null,
+                                                          "rotation_animation_millisecond_duration": 2000,
+                                                          "rotation_animation_rotation_z_increments": null,
+                                                          
                                                         }
                                      };
         /* end of major scene states */
@@ -106,7 +114,6 @@
       //function definitions
       function start_engine(html_dom_id_of_canvas_element)
       {
-        
         
         //canvas is a null element on the HTML dom.
         html_canvas_element = document.getElementById(""+html_dom_id_of_canvas_element);
@@ -369,20 +376,24 @@
             major_scene_one_states.start_image.zoom_animation_scale_x_increments = major_scene_one_states.start_image.zoom_animation_target_scale_x / major_scene_one_states.start_image.zoom_animation_millisecond_duration;
             major_scene_one_states.start_image.zoom_animation_scale_y_increments = major_scene_one_states.start_image.zoom_animation_target_scale_y / major_scene_one_states.start_image.zoom_animation_millisecond_duration;
             
+            major_scene_one_states.start_image.rotation_animation_start_timestamp = state_syncronization_timestamp;
+            major_scene_one_states.start_image.rotation_animation_end_timestamp = state_syncronization_timestamp + major_scene_one_states.start_image.rotation_animation_millisecond_duration;
+            
+            major_scene_one_states.start_image.rotation_animation_rotation_z_increments = major_scene_one_states.start_image.rotation_animation_target_rotation_z / major_scene_one_states.start_image.rotation_animation_millisecond_duration;
+            
+            
             //move on to the major scene logic
             major_scene_prestage = 0;
           }else if(major_scene_prestage == 0)
           {
               //execute logic of major scene.
                 //increase scale of start image
-            
-                    
                   //determine time passed since animation start
-                  let time_passed_since_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.zoom_animation_start_timestamp;
+                  let time_passed_since_zoom_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.zoom_animation_start_timestamp;
                   
                   //determine current scale based on time factors.
-                  major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_scale_x_increments * time_passed_since_animation_start;
-                  major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_scale_y_increments * time_passed_since_animation_start;
+                  major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_scale_x_increments * time_passed_since_zoom_animation_start;
+                  major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_scale_y_increments * time_passed_since_zoom_animation_start;
               
               
                   //stop scaling when end timestamp has been reached.
@@ -405,6 +416,33 @@
                   index = index + 4;
                 }
                 
+                /*
+                //increment rotation of start image
+                  //determine time passed since animation start
+                  let time_passed_since_rotation_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.rotation_animation_start_timestamp;
+
+                  //determine current rotation based on time factors
+                  major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_rotation_z_increment * time_passed_since_rotation_animation_start;
+                  
+                  //stop rotating when end timestamp has been reached
+                  if(state_syncronization_timestamp >= major_scene_one_states.start_image.rotation_animation_end_timestamp)
+                  {
+                    major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_target_rotation_z;
+                  }
+                  
+                  //reproduce the start image to the rotated state.
+                  index = 0;
+                  while(index < start_image_vertex_data.length)
+                  {
+                    let new_rotated_point = rotate_z_axis(start_image_vertex_data[index], start_image_vertex_data[index+1], major_scene_one_states.start_image.rotation_z);
+                    start_image_vertex_data[index] = new_rotated_point["x"];
+                    start_image_vertex_data[index+1] = new_rotated_point["y"];
+                    
+                    //next index
+                    index = index + 4;
+                  }
+                  */
+
               /*temporary drawing proceedure area*/
               
               //Clear the viewport(screen) before drawing a new frame.
@@ -533,7 +571,7 @@
       /* end of resource management single threaded asynchronous control line */
       
       /* assistive math functions */
-      function get_angle_as_radians(source_x, source_y, target_x, target_y)
+     /* function get_angle_as_radians(source_x, source_y, target_x, target_y)
       {
       	let angle_as_radians = -1;
       	
@@ -649,12 +687,13 @@
       	/*console.log("x distance:"+x_distance);
       	console.log("hypotenus:"+hypotenus);
       	console.log("quad:"+quadrant);
-      	console.log("exact plane:"+exact_plane);*/
+      	console.log("exact plane:"+exact_plane);*
       	angle_as_radians = three_sixty_degrees_as_radians;
       	return angle_as_radians;
       }
+      */
 
-      
+      /*
       function rotate_z_axis(original_x, original_y, requested_angle_as_radians)
       {
         //function assumes the center is zero, zero. move/translate the model accordingly is zero, zero as the rotation point of the model isnt satisfactory.
@@ -683,7 +722,7 @@
         
         return output;
       }
-      
+      */
       
       function scale_x(original_x, scale_factor)
       {
