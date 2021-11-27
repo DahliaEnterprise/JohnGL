@@ -656,42 +656,35 @@
       }
 
       
-      function rotate_x(original_x, angle_as_radians, digits_of_precision=1)
+      function rotate_z_axis(original_x, original_y, requested_angle_as_radians)
       {
-        let output_new_x = original_x;
+        //function assumes the center is zero, zero. move/translate the model accordingly is zero, zero as the rotation point of the model isnt satisfactory.
         
-        let multiplier_to_achieve_effects_of_requested_precision = "";
-        let index = 0;
-        while(index < digits_of_precision)
-        {
-          multiplier_to_achieve_effects_of_requested_precision = multiplier_to_achieve_effects_of_requested_precision + "0";
-          
-          //next iteration.
-          index = index + 1;
-        }
-        
-        multiplier_to_achieve_effects_of_requested_precision = "1"+multiplier_to_achieve_effects_of_requested_precision;
-        multiplier_to_achieve_effects_of_requested_precision = parseInt(multiplier_to_achieve_effects_of_requested_precision);
-        
-        
-        //it cannot produce absolute zero or the rest of the translations in other functions will fail.
-        if((original_x*multiplier_to_achieve_effects_of_requested_precision) == 0)
-        {
-          output_new_x = 1.0 / multiplier_to_achieve_effects_of_requested_precision;
-        }else if((original_x*multiplier_to_achieve_effects_of_requested_precision) != 0)
-        {
-          output_new_x = 
-        }
+        let output = {
+                       "x": null,
+                       "y": null
+                     };
         
         //get hypotenues
+        let hypotenus = Math.sqrt(Math.pow(Math.abs(original_x),2)+Math.pow(Math.abs(original_y), 2));
         
-        return output_new_x;
+        //get current angle as radians
+        let current_angle_as_radians = get_angle_as_radians(0.000000, 0.000000, original_x, original_y);
+        
+        //determine new rotation difference
+        let new_angle_as_radians = current_angle_as_radians + requested_angle_as_radians;
+        
+        //determine rotated x and y
+        let new_x = hypotenus * Math.cos(new_angle_as_radians);
+        let new_y = hypotenus * Math.sin(new_angle_as_radians);
+        
+        //define output.
+        output["x"] = new_x;
+        output["y"] = new_y;
+        
+        return output;
       }
       
-      /*function rotate_y(original_y, angle_as_radians)
-      {
-        
-      }*/
       
       function scale_x(original_x, scale_factor)
       {
