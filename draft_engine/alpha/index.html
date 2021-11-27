@@ -429,7 +429,7 @@
                   {
                     major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_target_rotation_z;
                   }
-                  console.log( major_scene_one_states.start_image.rotation_z);
+               
                   //reproduce the start image to the rotated state.
                   index = 0;
                   while(index < start_image_vertex_data.length)
@@ -504,7 +504,9 @@
                 
                 
                 /* delete buffers */
-                
+                //assuming changes will always differ per frame draw per exactly every item, delete buffers and their respective textures.
+                interface_to_opengles_hardware.deleteTexture(texture_initial_start_image);
+                interface_to_opengles_hardware.deleteBuffer(vertex_buffer_initial_start_image);
                 /* end of delete buffers */
                 
               /* end of temporary drawing proceedure area*/
