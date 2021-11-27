@@ -416,20 +416,20 @@
                   index = index + 4;
                 }
                 
-                /*
+                
                 //increment rotation of start image
                   //determine time passed since animation start
                   let time_passed_since_rotation_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.rotation_animation_start_timestamp;
 
                   //determine current rotation based on time factors
-                  major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_rotation_z_increment * time_passed_since_rotation_animation_start;
+                  major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_rotation_z_increments * time_passed_since_rotation_animation_start;
                   
                   //stop rotating when end timestamp has been reached
                   if(state_syncronization_timestamp >= major_scene_one_states.start_image.rotation_animation_end_timestamp)
                   {
                     major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_target_rotation_z;
                   }
-                  
+                  console.log( major_scene_one_states.start_image.rotation_z);
                   //reproduce the start image to the rotated state.
                   index = 0;
                   while(index < start_image_vertex_data.length)
@@ -441,7 +441,7 @@
                     //next index
                     index = index + 4;
                   }
-                  */
+                  
 
               /*temporary drawing proceedure area*/
               
@@ -571,7 +571,7 @@
       /* end of resource management single threaded asynchronous control line */
       
       /* assistive math functions */
-     /* function get_angle_as_radians(source_x, source_y, target_x, target_y)
+      function get_angle_as_radians(source_x, source_y, target_x, target_y)
       {
       	let angle_as_radians = -1;
       	
@@ -687,13 +687,13 @@
       	/*console.log("x distance:"+x_distance);
       	console.log("hypotenus:"+hypotenus);
       	console.log("quad:"+quadrant);
-      	console.log("exact plane:"+exact_plane);*
+      	console.log("exact plane:"+exact_plane);*/
       	angle_as_radians = three_sixty_degrees_as_radians;
       	return angle_as_radians;
       }
-      */
+      
 
-      /*
+      
       function rotate_z_axis(original_x, original_y, requested_angle_as_radians)
       {
         //function assumes the center is zero, zero. move/translate the model accordingly is zero, zero as the rotation point of the model isnt satisfactory.
@@ -722,7 +722,7 @@
         
         return output;
       }
-      */
+      
       
       function scale_x(original_x, scale_factor)
       {
