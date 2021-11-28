@@ -706,7 +706,24 @@
                      };
         
         //get hypotenues
-        let hypotenus = Math.sqrt(Math.pow(Math.abs(original_x),2)+Math.pow(Math.abs(original_y), 2));
+          //determine absolute(magnitude) of value original x
+          let hypotenus_contribution_abs_original_x = Math.abs(original_x);
+          //multiple absolute value of original x by it self two times.
+          let hypotenus_contribution_abs_and_power_of_two_original_x = Math.pow(hypotenus_contribution_abs_original_x, 2);
+        
+          //determine absolute(magnitude) of value original y
+          let hypotenus_contribution_abs_original_y = Math.abs(original_y);
+          //multiple absolute value of original y by it self two times.
+          let hypotenus_contribution_abs_and_power_of_two_original_y = Math.pow(hypotenus_contribution_abs_original_y, 2);
+        
+          //add "abs and power of two original x" and "abs and power of two original y" together.
+          let hypotenus_contribution_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y = hypotenus_contribution_abs_and_power_of_two_original_x + hypotenus_contribution_abs_and_power_of_two_original_y;
+        
+          //square root the sum of "abs and power of two original x" and "abs and power of two original y"
+          let hypotenus_contribution_square_root_of_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y = Math.sqrt(hypotenus_contribution_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y);
+       
+          //declare result
+          let hypotenus = hypotenus_contribution_square_root_of_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y;
         
         //get current angle as radians
         let current_angle_as_radians = get_angle_as_radians(0.000000, 0.000000, original_x, original_y);
