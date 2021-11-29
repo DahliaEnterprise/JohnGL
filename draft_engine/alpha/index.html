@@ -556,8 +556,14 @@
             index = index + 1;
           }
           
-          
-          let next_cycle =1;// frames_per_second["near_constants"]["target_milliseconds_between_frames_at_maximum_frame_rate"];
+          let timestamp_since_last_frame = sorted_frames_per_second.slice(-2);
+          let timepassed_since_last_frame = Date.now() - timestamp_since_last_frame;
+          let next_cycle = 1;
+          if(timepassed_since_last_frame < frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate)
+          {
+            let next_cycle_contribution_time_to_wait = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate - timepassed_since_last_frame;
+            next_cycle = next_cycle_contribution_time_to_wait;
+          }
          
           //trigger another cycle of the engine.
           setTimeout(cycle_engine, next_cycle);
