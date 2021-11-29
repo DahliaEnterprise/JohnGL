@@ -26,6 +26,11 @@
         var canvas_element_width = null;
         var canvas_element_height = null;
         
+        var canvas_touch = {
+                             "history":{}
+                             
+                           };
+        
         var frames_per_second = {
                                   "sample_start_timestamp": null,
                                   "sample_end_timestamp": null,
@@ -564,7 +569,7 @@
        
           let timestamp_since_last_frame = sorted_frames_per_second.slice(-1);
           let timepassed_since_last_frame = Date.now() - timestamp_since_last_frame;
-          let next_cycle = 1;
+          let next_cycle = null;
           if(timepassed_since_last_frame < frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate)
           {
             let next_cycle_contribution_time_to_wait = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate - timepassed_since_last_frame;
@@ -714,6 +719,7 @@
       
       function rotate_z_axis(original_x, original_y, requested_angle_as_radians)
       {
+        //function assumes the model is at zero, zero, zero rotation oriented.
         //function assumes the center is zero, zero. move/translate the model accordingly as zero, zero if the rotation point of the model isnt satisfactory.
         
         let output = {
