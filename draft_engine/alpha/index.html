@@ -143,7 +143,13 @@
           
           //manually define viewport dimensions within the associated context and hardware.
           interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
-          
+        
+        //register touch events to the canvas
+          html_canvas_element.addEventListener("touchstart", canvas_touch_start);
+          html_canvas_element.addEventListener("touchmove", canvas_touch_move);
+          html_canvas_element.addEventListener("touchend", canvas_touch_end);
+          html_canvas_element.addEventListener("touchcancel", canvas_touch_cancel);
+        
         //initialize frames per second list
           frames_per_second.sample_start_timestamp = Date.now() - 1000;
           frames_per_second.sample_end_timestamp = Date.now();
