@@ -32,7 +32,8 @@
                                   "maximum_frames_per_second": null,
                                   "sample": null,
                                   "near_constants":{
-                                                      "target_milliseconds_between_frames_at_maximum_frame_rate": null
+                                                      "target_milliseconds_between_frames_at_maximum_frame_rate": null,
+                                                      "minimum_in_between_time_milliseconds": null
                                                     }
                                 };
 
@@ -104,7 +105,7 @@
                                                           "rotation_animation_target_rotation_z": 12.566,
                                                           "rotation_animation_start_timestamp": null,
                                                           "rotation_animation_end_timestamp": null,
-                                                          "rotation_animation_millisecond_duration": 2000,
+                                                          "rotation_animation_millisecond_duration": 1000,
                                                           "rotation_animation_rotation_z_increments": null,
                                                           
                                                         }
@@ -151,6 +152,7 @@
             index = index + 1;
           }
           frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate = 1000 / frames_per_second.maximum_frames_per_second;
+          frames_per_second.near_constants.minimum_in_between_time_milliseconds = (frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate * 0.25);
           
           
          /* temporary shader program data */
@@ -563,6 +565,10 @@
           {
             let next_cycle_contribution_time_to_wait = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate - timepassed_since_last_frame;
             next_cycle = next_cycle_contribution_time_to_wait;
+          }else if(timepassed_since_last_frame >= frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate)
+          {
+            //****has not been previewed due to low polygon count****/
+            next_cycle = frames_per_second.near_constants.minimum_in_between_time_milliseconds;
           }
          
           //trigger another cycle of the engine.
