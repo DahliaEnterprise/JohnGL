@@ -558,7 +558,7 @@
             index = index + 1;
           }
           
-          let timestamp_since_last_frame = sorted_frames_per_second.slice(-2);
+          let timestamp_since_last_frame = sorted_frames_per_second.slice(-1);
           let timepassed_since_last_frame = Date.now() - timestamp_since_last_frame;
           let next_cycle = 1;
           if(timepassed_since_last_frame < frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate)
