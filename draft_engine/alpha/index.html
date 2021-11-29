@@ -27,8 +27,7 @@
         var canvas_element_height = null;
         
         var canvas_touch = {
-                             "history":{}
-                             
+                             "history": null
                            };
         
         var frames_per_second = {
@@ -149,6 +148,9 @@
           html_canvas_element.addEventListener("touchmove", canvas_touch_move);
           html_canvas_element.addEventListener("touchend", canvas_touch_end);
           html_canvas_element.addEventListener("touchcancel", canvas_touch_cancel);
+        
+        //initialize touch events
+          canvas_touch.history = {};
         
         //initialize frames per second list
           frames_per_second.sample_start_timestamp = Date.now() - 1000;
@@ -791,6 +793,29 @@
         return output_scaled_y;
       }
       /* end of assistive math functions */
+      
+      /* canvas touch event functions */
+      function touch_event_start(event_info)
+      {
+        let touches_index = 0;
+        while(touches_index < event_info.touches.length)
+        {
+          let touch_info = event_info.touches[touches_index];
+          
+          let touch_identifier = touch_info.identifier;
+         
+          let touch_history_record = {
+                                      "timestamp": Date.now(),
+                                      "x": touch_info.clientX,
+                                      "y": touch_info.clientY
+                                     };
+          
+          
+          //next touch info
+          touches_index = touches_index + 1;
+        }
+      }
+      /* end of canvas touch event functions */
     </script>
   </head>
   <body onLoad="start_engine('canvas_for_opengles');">
