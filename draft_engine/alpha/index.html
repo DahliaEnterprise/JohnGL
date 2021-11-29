@@ -34,7 +34,8 @@
                                   "near_constants":{
                                                       "target_milliseconds_between_frames_at_maximum_frame_rate": null,
                                                       "minimum_in_between_time_milliseconds": null
-                                                    }
+                                                    },
+                                  "average_milliseconds_between_frames": null
                                 };
 
         
@@ -153,6 +154,7 @@
           }
           frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate = 1000 / frames_per_second.maximum_frames_per_second;
           frames_per_second.near_constants.minimum_in_between_time_milliseconds = (frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate * 0.25);
+          frames_per_second.average_milliseconds_between_frames = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate;
           
           
          /* temporary shader program data */
@@ -200,7 +202,7 @@
       
       function cycle_engine()
       {
-        //time will pass as this function is executed, set time passed variable here to keep all states syncronized to the same instance.
+        //time will pass as this function is executed, set time synchronization variable here to keep all states syncronized to the same instance.
         let state_syncronization_timestamp = Date.now();
         let milliseconds_since_last_fully_rendered_frame = state_syncronization_timestamp - timestamp_last_frame_fully_rendered;
         
@@ -544,13 +546,13 @@
           //determine frame rate variance and call next draw frame.
           index = 0;
           let total_milliseconds_between_frames = 0;
-          let total_frames_counted = 0;
+          let total_frames_counted = sorted_frames_per_second.length - 1;
           while(index < sorted_frames_per_second.length)
           {
             if((index+1) < sorted_frames_per_second.length)
             {
               let milliseconds_between_frames = sorted_frames_per_second[index+1] - sorted_frames_per_second[index];
-              total_milliseconds_between_frames = total_milliseconds_between_frames + 1;
+              total_milliseconds_between_frames = total_milliseconds_between_frames + milliseconds_between_frames;
               total_frames_counted = total_frames_counted + 1;
             }
             
@@ -558,6 +560,8 @@
             index = index + 1;
           }
           
+          frames_per_second.average_milliseconds_between_frames = total_milliseconds_between_frames / total_frames_counted;
+       
           let timestamp_since_last_frame = sorted_frames_per_second.slice(-1);
           let timepassed_since_last_frame = Date.now() - timestamp_since_last_frame;
           let next_cycle = 1;
