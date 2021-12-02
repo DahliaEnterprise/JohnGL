@@ -144,11 +144,12 @@
           interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
         
         //register touch events to the canvas
+          /* placeholder
           html_canvas_element.addEventListener("touchstart", canvas_touch_start);
           html_canvas_element.addEventListener("touchmove", canvas_touch_move);
           html_canvas_element.addEventListener("touchend", canvas_touch_end);
           html_canvas_element.addEventListener("touchcancel", canvas_touch_cancel);
-        
+          */
         //initialize touch events
           canvas_touch.history = {};
         
@@ -602,7 +603,7 @@
       /* end of resource management single threaded asynchronous control line */
       
       /* assistive math functions */
-      function get_angle_as_radians(source_x, source_y, target_x, target_y)
+      function get_xy_angle_as_radians(source_x, source_y, target_x, target_y)
       {
       	let angle_as_radians = -1;
       	
@@ -756,7 +757,7 @@
           let hypotenus = hypotenus_contribution_square_root_of_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y;
         
         //get current angle as radians
-        let current_angle_as_radians = get_angle_as_radians(0.000000, 0.000000, original_x, original_y);
+        let current_angle_as_radians = get_xy_angle_as_radians(0.000000, 0.000000, original_x, original_y);
         
         //determine new rotation difference
         let new_angle_as_radians = current_angle_as_radians + requested_angle_as_radians;
