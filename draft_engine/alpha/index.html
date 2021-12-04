@@ -9,6 +9,12 @@
         //constant
         var html_canvas_element = null;
         var interface_to_opengles_hardware = null;
+        var game_engine_model_datatypes = {
+                                            "two-dimensional-textured-vertex": 1,
+                                            "three-dimensional-textured-vertex": 2
+                                          };
+      
+        
         
         //non constants.
         var webgl2_context_attributes = {
@@ -27,7 +33,8 @@
         var canvas_element_height = null;
         
         var canvas_touch = {
-                             "history": null
+                             "history": null,
+                             "last_id_used": null
                            };
         
         var frames_per_second = {
@@ -58,16 +65,9 @@
                               };
        
         
-        /* model framework */
-        var game_engine_model_datatypes = {
-                                            "two-dimensional-textured-vertex": 1
-                                          };
-      
-        /* end of model framework */
-        
         /* models */
         var model_placeholder_one_by_one_square = {
-                                                    "model_datatype": 1,
+                                                    "model_datatype": 2,
                                                     "vertex_coordinate_data": null,
                                                     "texture_coordinate_data": null,
                                                     "vertex_and_texture_coordinate_data": null,
@@ -144,14 +144,15 @@
           interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
         
         //register touch events to the canvas
-          /* placeholder
           html_canvas_element.addEventListener("touchstart", canvas_touch_start);
+          /* placeholder
           html_canvas_element.addEventListener("touchmove", canvas_touch_move);
           html_canvas_element.addEventListener("touchend", canvas_touch_end);
           html_canvas_element.addEventListener("touchcancel", canvas_touch_cancel);
           */
         //initialize touch events
           canvas_touch.history = {};
+          canvas_touch.last_id_used = 0;
         
         //initialize frames per second list
           frames_per_second.sample_start_timestamp = Date.now() - 1000;
@@ -462,7 +463,13 @@
                   
 
               /*temporary drawing proceedure area*/
-              
+              /* note:
+                      models dynamically added to a list if objects to render would iterate here,
+                      during scaffolding one model is temporary choosen along 
+                      with the logic that comes with not knowing which type render the model is.
+              */
+              if(model_placeholder_one_by_one_square.model_data_type == 1)
+              {
               //Clear the viewport(screen) before drawing a new frame.
               interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
               interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
@@ -526,7 +533,10 @@
                 interface_to_opengles_hardware.deleteTexture(texture_initial_start_image);
                 interface_to_opengles_hardware.deleteBuffer(vertex_buffer_initial_start_image);
                 /* end of delete buffers */
+              }else if(model_placeholder_one_by_one_square.model_data_type == 2)
+              {
                 
+              }
               /* end of temporary drawing proceedure area*/
           }
         }
@@ -724,7 +734,14 @@
       	return angle_as_radians;
       }
       
-
+      function get_yz_axis(source_y, source_z, target_y, target_z)
+      {
+        let angle_as_radians = null;
+        
+        
+        
+        return angle_as_radians;
+      }
       
       function rotate_z_axis(original_x, original_y, requested_angle_as_radians)
       {
@@ -806,7 +823,7 @@
       /* end of assistive math functions */
       
       /* canvas touch event functions */
-      function touch_event_start(event_info)
+      function canvas_touch_start(event_info)
       {
         let touches_index = 0;
         while(touches_index < event_info.touches.length)
@@ -820,11 +837,14 @@
                                       "x": touch_info.clientX,
                                       "y": touch_info.clientY
                                      };
-          
+          //append to history.
+          canvas_touch["last_id_used"] = canvas_touch["last_id_used"] + 1;
+          canvas_touch["history"][canvas_touch["last_id_used"]] = touch_history_record;
           
           //next touch info
           touches_index = touches_index + 1;
         }
+        
       }
       /* end of canvas touch event functions */
     </script>
