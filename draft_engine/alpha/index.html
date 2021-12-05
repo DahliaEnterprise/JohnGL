@@ -9,12 +9,6 @@
         //constant
         var html_canvas_element = null;
         var interface_to_opengles_hardware = null;
-        var game_engine_model_datatypes = {
-                                            "two-dimensional-textured-vertex": 1,
-                                            "three-dimensional-textured-vertex": 2
-                                          };
-      
-        
         
         //non constants.
         var webgl2_context_attributes = {
@@ -33,8 +27,7 @@
         var canvas_element_height = null;
         
         var canvas_touch = {
-                             "history": null,
-                             "last_id_used": null
+                             "history": null
                            };
         
         var frames_per_second = {
@@ -65,15 +58,22 @@
                               };
        
         
+        /* model framework */
+        var game_engine_model_datatypes = {
+                                            "two-dimensional-textured-vertex": 1
+                                          };
+      
+        /* end of model framework */
+        
         /* models */
         var model_placeholder_one_by_one_square = {
-                                                    "model_datatype": 2,
+                                                    "model_datatype": 1,
                                                     "vertex_coordinate_data": null,
                                                     "texture_coordinate_data": null,
                                                     "vertex_and_texture_coordinate_data": null,
                                                     "vertex_and_texture_coordinate_data_loaded": false,
                                                     
-                                                    "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xyz_coordinates", 
+                                                    "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
                                                     "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates",
                                                     "image_filelocation": "./images/start_image.png",
                                                     "image_resources_id": "start_image"
@@ -144,15 +144,14 @@
           interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
         
         //register touch events to the canvas
-          html_canvas_element.addEventListener("touchstart", canvas_touch_start);
           /* placeholder
+          html_canvas_element.addEventListener("touchstart", canvas_touch_start);
           html_canvas_element.addEventListener("touchmove", canvas_touch_move);
           html_canvas_element.addEventListener("touchend", canvas_touch_end);
           html_canvas_element.addEventListener("touchcancel", canvas_touch_cancel);
           */
         //initialize touch events
           canvas_touch.history = {};
-          canvas_touch.last_id_used = 0;
         
         //initialize frames per second list
           frames_per_second.sample_start_timestamp = Date.now() - 1000;
@@ -329,65 +328,31 @@
           }else if(major_scene_prestage == 3)
           {
             //compile vertex coordinates and texture coordinates into a x,y, x,y, interlaced format.
-            let compiled_texture_vertex = null;
-            if(model_placeholder_one_by_one_square.model_datatype == 1)
+            let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
+            let compiled_texture_vertex = new Float32Array(compiled_texture_vertex_length);
+            let compiled_texture_vertex_index = 0;
+            let vertex_coordinate_data_index = 0;
+            let texture_coordinate_data_index = 0;
+            
+            while(compiled_texture_vertex_index < compiled_texture_vertex_length)
             {
-              let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
-              compiled_texture_vertex = new Float32Array(compiled_texture_vertex_length);
-              let compiled_texture_vertex_index = 0;
-              let vertex_coordinate_data_index = 0;
-              let texture_coordinate_data_index = 0;
+              //x vertex coordinate
+              compiled_texture_vertex[compiled_texture_vertex_index] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index];
               
-              while(compiled_texture_vertex_index < compiled_texture_vertex_length)
-              {
-                //x vertex coordinate
-                compiled_texture_vertex[compiled_texture_vertex_index] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index];
-                
-                //y vertex coordinate
-                compiled_texture_vertex[compiled_texture_vertex_index+1] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+1];
-                
-               
-                //x texture
-                compiled_texture_vertex[compiled_texture_vertex_index+2] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index];
-                
-                //y texture
-                compiled_texture_vertex[compiled_texture_vertex_index+3] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index+1];
-                
-                //next index
-                compiled_texture_vertex_index = compiled_texture_vertex_index + 4;
-                vertex_coordinate_data_index = vertex_coordinate_data_index + 2;
-                texture_coordinate_data_index = texture_coordinate_data_index + 2;
-              }
-            }else if(model_placeholder_one_by_one_square.model_datatype == 2)
-            {
-               let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
-              compiled_texture_vertex = new Float32Array(compiled_texture_vertex_length);
-              let compiled_texture_vertex_index = 0;
-              let vertex_coordinate_data_index = 0;
-              let texture_coordinate_data_index = 0;
+              //y vertex coordinate
+              compiled_texture_vertex[compiled_texture_vertex_index+1] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+1];
               
-              while(compiled_texture_vertex_index < compiled_texture_vertex_length)
-              {
-                //x vertex coordinate
-                compiled_texture_vertex[compiled_texture_vertex_index] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index];
-                
-                //y vertex coordinate
-                compiled_texture_vertex[compiled_texture_vertex_index+1] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+1];
-                
-                //z vertex coordinate
-                compiled_texture_vertex[compiled_texture_vertex_index+2] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+2];
-               
-                //x texture
-                compiled_texture_vertex[compiled_texture_vertex_index+3] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index];
-                
-                //y texture
-                compiled_texture_vertex[compiled_texture_vertex_index+4] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index+1];
-                
-                //next index
-                compiled_texture_vertex_index = compiled_texture_vertex_index + 4;
-                vertex_coordinate_data_index = vertex_coordinate_data_index + 2;
-                texture_coordinate_data_index = texture_coordinate_data_index + 2;
-              }
+             
+              //x texture
+              compiled_texture_vertex[compiled_texture_vertex_index+2] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index];
+              
+              //y texture
+              compiled_texture_vertex[compiled_texture_vertex_index+3] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index+1];
+              
+              //next index
+              compiled_texture_vertex_index = compiled_texture_vertex_index + 4;
+              vertex_coordinate_data_index = vertex_coordinate_data_index + 2;
+              texture_coordinate_data_index = texture_coordinate_data_index + 2;
             }
             
             //set the compiled vertex and texture coordinates to the model placeholder.
@@ -464,9 +429,9 @@
                 {
                   start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
                   start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
-                
+                  
                   //next index
-                  index = index + 5;
+                  index = index + 4;
                 }
                 
                 
@@ -492,18 +457,12 @@
                     start_image_vertex_data[index+1] = new_rotated_point["y"];
                     
                     //next index
-                    index = index + 5;
+                    index = index + 4;
                   }
                   
 
               /*temporary drawing proceedure area*/
-              /* note:
-                      models dynamically added to a list if objects to render would iterate here,
-                      during scaffolding one model is temporary choosen along 
-                      with the logic that comes with not knowing which type render the model is.
-              */
-              if(model_placeholder_one_by_one_square.model_datatype == 1)
-              {
+              
               //Clear the viewport(screen) before drawing a new frame.
               interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
               interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
@@ -567,72 +526,7 @@
                 interface_to_opengles_hardware.deleteTexture(texture_initial_start_image);
                 interface_to_opengles_hardware.deleteBuffer(vertex_buffer_initial_start_image);
                 /* end of delete buffers */
-              }else if(model_placeholder_one_by_one_square.model_datatype == 2)
-              {
-                //Clear the viewport(screen) before drawing a new frame.
-                interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
-                interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
-                interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
                 
-                
-                //select vertex coordinate data and texture coordinate data.
-                vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
-                interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, vertex_buffer_initial_start_image);
-                interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, start_image_vertex_data, interface_to_opengles_hardware.STATIC_DRAW);
-                
-                //notify the shader program which variables to use and in what manner to use them.
-                let float_size = model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data.BYTES_PER_ELEMENT;
-                
-                let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_Position");
-                interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 3, interface_to_opengles_hardware.FLOAT, false, (float_size * 0), 0);
-                interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
-                
-                let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_TexCoord");
-                interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 0), (float_size * 0));
-                interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
-                
-                let start_image_to_upload_to_gpu = document.getElementById("start_image");
-                
-                //commit to uploading image data to gpu to be used as a referenceable variable.
-                  //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
-                  texture_initial_start_image = interface_to_opengles_hardware.createTexture();
-                  
-                  //image is expected to be loaded as a fliped orientation, flag here to indicate that a flip should occur in order to have the expected ortiented rotation.
-                  interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
-                   
-                  //flag gpu to use TEXTURE0 memory area within the gpu.
-                  interface_to_opengles_hardware.activeTexture(interface_to_opengles_hardware.TEXTURE0);
-                  
-                  interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, texture_initial_start_image);
-                  
-                  //allocate uniform sampler of index zero of the gpu.
-                  drawing_process_uniform_sampler_index_zero = interface_to_opengles_hardware.getUniformLocation(shader_program_start_image, "uniform_sampler");
-                  
-                  //declare which uniform sampler should be used by index(zero). this also creates an associated variable within the context between the developer' input and the gpu' shader render stage.
-                  interface_to_opengles_hardware.uniform1i(drawing_process_uniform_sampler_index_zero, 0);
-                  
-                  //stretch image to fit exactly.
-                  interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_WRAP_S, interface_to_opengles_hardware.REPEAT);
-                  interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_WRAP_T, interface_to_opengles_hardware.REPEAT);
-                  
-                  //declare which filtering the gpu should use during memory reads of interpoliated data within regards to the rendering stage of the gpu upon a cpu initiated draw call.
-                  interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
-                  interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MAX_FILTER, interface_to_opengles_hardware.LINEAR);
-                  
-                  //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
-                  interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, start_image_to_upload_to_gpu);
-                  
-                  //activate the render for this vertex.
-                  interface_to_opengles_hardware.useProgram(shader_program_start_image);
-                  interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
-                  
-                  
-                  /* delete buffers */
-                  //assuming changes will always differ per frame draw per exactly every item, delete buffers and their respective textures.
-                  interface_to_opengles_hardware.deleteTexture(texture_initial_start_image);
-                  interface_to_opengles_hardware.deleteBuffer(vertex_buffer_initial_start_image);
-                  /* end of delete buffers */
-              }
               /* end of temporary drawing proceedure area*/
           }
         }
@@ -830,14 +724,7 @@
       	return angle_as_radians;
       }
       
-      function get_yz_axis(source_y, source_z, target_y, target_z)
-      {
-        let angle_as_radians = null;
-        
-        
-        
-        return angle_as_radians;
-      }
+
       
       function rotate_z_axis(original_x, original_y, requested_angle_as_radians)
       {
@@ -919,7 +806,7 @@
       /* end of assistive math functions */
       
       /* canvas touch event functions */
-      function canvas_touch_start(event_info)
+      function touch_event_start(event_info)
       {
         let touches_index = 0;
         while(touches_index < event_info.touches.length)
@@ -933,14 +820,11 @@
                                       "x": touch_info.clientX,
                                       "y": touch_info.clientY
                                      };
-          //append to history.
-          canvas_touch["last_id_used"] = canvas_touch["last_id_used"] + 1;
-          canvas_touch["history"][canvas_touch["last_id_used"]] = touch_history_record;
+          
           
           //next touch info
           touches_index = touches_index + 1;
         }
-        
       }
       /* end of canvas touch event functions */
     </script>
