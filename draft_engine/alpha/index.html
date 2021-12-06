@@ -845,7 +845,7 @@
                        "y": null
                      };
         
-        //get hypotenues
+        //get hypotenues (chaining was not used in order to garuntee one to one usage of computation at the cpu transistor level, achieving consistant execution times)
           //determine absolute(magnitude) of value original x
           let hypotenus_contribution_abs_original_x = Math.abs(original_x);
           //multiple absolute value of original x by it self two times.
@@ -936,6 +936,10 @@
         }
       }
       /* end of canvas touch event functions */
+
+      /* generic rendering of models on scene functions */
+      function 
+      /* end of generic rendering of models on scene functions */
     </script>
   </head>
   <body onLoad="start_engine('canvas_for_opengles');">
