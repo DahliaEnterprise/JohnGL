@@ -81,13 +81,9 @@
                                                   };
         /* end of models */
         
-        /* handleable variable(s) of open gl format models */
-          //Start up/welcome image.
-          var vertex_buffer_initial_start_image = null;
-          var texture_initial_start_image = null;
-          var shader_program_start_image = null;
-           
-        /* end of open gl format of models */
+        /* list of shaders */
+          var generic_shader_for_two_dimensional_square_model = null;
+        /* list of shaders */
         
         /* reuseable handleable variable(s) for the drawing process */
         var drawing_process_uniform_sampler_index_zero = null;
@@ -176,7 +172,7 @@
           frames_per_second.average_milliseconds_between_frames = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate;
           
           
-         /* temporary shader program data */
+         /* temporary shader program data (to be placed within a loaded by file or network mechanism)*/
             var vertex_shader_source = "";
                 vertex_shader_source = vertex_shader_source + "attribute vec4 a_Position; \n";
                 vertex_shader_source = vertex_shader_source + "attribute vec2 a_TexCoord; \n";
@@ -203,11 +199,11 @@
                 interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader_source);
                 interface_to_opengles_hardware.compileShader(texture_fragment_shader);
             
-            shader_program_start_image = interface_to_opengles_hardware.createProgram();
-                interface_to_opengles_hardware.attachShader(shader_program_start_image, texture_vertex_shader);
-                interface_to_opengles_hardware.attachShader(shader_program_start_image, texture_fragment_shader);
-                interface_to_opengles_hardware.linkProgram(shader_program_start_image);
-                if(!interface_to_opengles_hardware.getProgramParameter(shader_program_start_image, interface_to_opengles_hardware.LINK_STATUS))
+            generic_shader_for_two_dimensional_square_model = interface_to_opengles_hardware.createProgram();
+                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_vertex_shader);
+                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_fragment_shader);
+                interface_to_opengles_hardware.linkProgram(generic_shader_for_two_dimensional_square_model);
+                if(!interface_to_opengles_hardware.getProgramParameter(generic_shader_for_two_dimensional_square_model, interface_to_opengles_hardware.LINK_STATUS))
                 {
                   alert("shader link failed");
                 }
@@ -472,7 +468,7 @@
               generic_render_clear_screen();
               
               //Render model(s). (To achieve layers, render farthest away first through nearest order of operations.)
-              generic_rendering_render_two_dimensional_model(start_image_vertex_data, shader_program_start_image, "start_image", 6);
+              generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model, "start_image", 6);
               
               //Define start timestamp and end timestamp based on stay amount as milliseconds.
               major_scene_one_states.stay_start_timestamp = Date.now();
@@ -502,7 +498,7 @@
               generic_render_clear_screen();
               
               //Render model(s). (To achieve layers, render farthest away first through nearest order of operations.)
-              generic_rendering_render_two_dimensional_model(start_image_vertex_data, shader_program_start_image, "start_image", 6);
+              generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model, "start_image", 6);
 
               //Determine if this microscene is finished.
               if((Date.now()) >= major_scene_one_states.stay_end_timestamp)
