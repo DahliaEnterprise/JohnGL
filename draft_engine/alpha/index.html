@@ -938,6 +938,16 @@
         interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
         interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
       }
+
+      function generic_rendering_render_two_dimensional_model(render_options=null)
+      {
+         /*The function assumes each model render options are compatible per each one usage
+          that is to say the developer must be aware of OpenGL ES drawing and shader rendering operations
+          within their own discrete and combination usage there of.
+          Any faults from using this function should indicate the creation of their own
+          Non generic rendering function or code block(s).
+         */
+      }
       /* end of generic rendering of models on scene functions */
     </script>
   </head>
