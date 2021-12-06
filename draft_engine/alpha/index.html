@@ -471,10 +471,7 @@
               /*temporary drawing proceedure area*/
               
               //Clear the viewport(screen) before drawing a new frame.
-              interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
-              interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
-              interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
-              
+              generic_render_clear_screen();
               
               //select vertex coordinate data and texture coordinate data.
               vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
@@ -563,10 +560,7 @@
                /*temporary drawing proceedure area*/
               
               //Clear the viewport(screen) before drawing a new frame.
-              interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
-              interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
-              interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
-              
+              generic_render_clear_screen();
               
               //select vertex coordinate data and texture coordinate data.
               vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
