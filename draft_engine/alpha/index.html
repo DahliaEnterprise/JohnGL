@@ -942,7 +942,7 @@
         interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
       }
 
-      function generic_rendering_render_two_dimensional_model(render_options=null)
+      function generic_rendering_render_two_dimensional_model(vertex_coordinate_and_texture_coordinate_data)
       {
          /*The function assumes each model render options are compatible per each one usage
           that is to say the developer must be aware of OpenGL ES drawing and shader rendering operations
