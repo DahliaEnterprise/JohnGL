@@ -474,7 +474,7 @@
               generic_render_clear_screen();
               
               //Render model(s). (To achieve layers, render farthest away first through nearest order of operations.)
-              //generic_rendering_render_two_dimensional_model();
+              generic_rendering_render_two_dimensional_model(start_image_vertex_data);
               /*
               //select vertex coordinate data and texture coordinate data.
               vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
