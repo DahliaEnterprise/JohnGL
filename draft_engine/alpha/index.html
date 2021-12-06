@@ -67,18 +67,25 @@
         /* end of model framework */
         
         /* models */
-        var model_placeholder_one_by_one_square = {
-                                                    "model_datatype": 1,
-                                                    "vertex_coordinate_data": null,
-                                                    "texture_coordinate_data": null,
-                                                    "vertex_and_texture_coordinate_data": null,
-                                                    "vertex_and_texture_coordinate_data_loaded": false,
+          /* placeholders for models (not all will be square) */
+          var model_placeholder_one_by_one_square = {
+                                                      "model_datatype": 1,
+                                                      "vertex_coordinate_data": null,
+                                                      "texture_coordinate_data": null,
+                                                      "vertex_and_texture_coordinate_data": null,
+                                                      "vertex_and_texture_coordinate_data_loaded": false,
                                                     
-                                                    "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
-                                                    "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates",
-                                                    "image_filelocation": "./images/start_image.png",
-                                                    "image_resources_id": "start_image"
-                                                  };
+                                                      "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
+                                                      "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates",
+                                                      "image_filelocation": "./images/start_image.png",
+                                                      "image_resources_id": "start_image"
+                                                    };
+          /* models */
+          var model_start_image = {
+                                    "vertex_and_texture_coordinate_data": null, 
+                                    "image_filelocation": "./images/start_image.png",
+                                    "image_resources_id": "start_image"
+                                  };
         /* end of models */
         
         /* list of shaders */
