@@ -999,12 +999,12 @@
                 
                 //activate the render for this vertex.
                 interface_to_opengles_hardware.useProgram(shader_program);
-                interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
+                interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, total_point_coordinate_and_texture_coordinate_pairs);
                 
                 
                 /* delete buffers *
                 These might need to be deleted at the end of the entire model render list,
-                MUTED TEMPORARILY
+                MUTED TEMPORARILY possible outcome from not managing memory is failure or crash of gpu hardware as a result of this temporary muting of deletions of memory
                 //assuming changes will always differ per frame draw per exactly every item, delete buffers and their respective textures.
                 interface_to_opengles_hardware.deleteTexture(texture_initial_start_image);
                 interface_to_opengles_hardware.deleteBuffer(vertex_buffer);
