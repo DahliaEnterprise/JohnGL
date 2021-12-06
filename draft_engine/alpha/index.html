@@ -474,7 +474,7 @@
               generic_render_clear_screen();
               
               //Render model(s). (To achieve layers, render farthest away first through nearest order of operations.)
-              generic_rendering_render_two_dimensional_model(start_image_vertex_data, shader_program_start_image, "start_image");
+              generic_rendering_render_two_dimensional_model(start_image_vertex_data, shader_program_start_image, "start_image", 6);
               /*
               //select vertex coordinate data and texture coordinate data.
               vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
@@ -942,7 +942,7 @@
         interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
       }
 
-      function generic_rendering_render_two_dimensional_model(vertex_coordinate_and_texture_coordinate_data, shader_program, img_id_to_be_used_as_texture)
+      function generic_rendering_render_two_dimensional_model(vertex_coordinate_and_texture_coordinate_data, shader_program, img_id_to_be_used_as_texture, total_point_coordinate_and_texture_coordinate_pairs)
       {
          /*The function assumes each model render options are compatible per each one usage
           that is to say the developer must be aware of OpenGL ES drawing and shader rendering operations
