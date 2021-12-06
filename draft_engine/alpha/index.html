@@ -627,7 +627,15 @@
                 /* end of delete buffers */
                 
               /* end of temporary drawing proceedure area*/
-       
+              //Determine if this microscene is finished.
+              if((Date.now()) >= major_scene_one_states.stay_end_timestamp)
+              {
+              //Micro scene is finished start the begining of game
+              micro_scene = 3;
+              }
+              }else if(micro_scene == 3)
+              {
+               //Start of game begins here.
               }
           }
         }
