@@ -938,7 +938,12 @@
       /* end of canvas touch event functions */
 
       /* generic rendering of models on scene functions */
-      function 
+      function generic_render_clear_screen(clear_screen_options=null)
+      {
+        interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
+        interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
+        interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
+      }
       /* end of generic rendering of models on scene functions */
     </script>
   </head>
