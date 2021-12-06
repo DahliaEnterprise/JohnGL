@@ -468,74 +468,12 @@
                   }
                   
 
-              /*temporary drawing proceedure area*/
-              
               //Clear the viewport(screen) before drawing a new frame.
               generic_render_clear_screen();
               
               //Render model(s). (To achieve layers, render farthest away first through nearest order of operations.)
               generic_rendering_render_two_dimensional_model(start_image_vertex_data, shader_program_start_image, "start_image", 6);
-              /*
-              //select vertex coordinate data and texture coordinate data.
-              vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
-              interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, vertex_buffer_initial_start_image);
-              interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, start_image_vertex_data, interface_to_opengles_hardware.STATIC_DRAW);
               
-              //notify the shader program which variables to use and in what manner to use them.
-              let float_size = model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data.BYTES_PER_ELEMENT;
-              
-              let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_Position");
-              interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
-              interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
-              
-              let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_TexCoord");
-              interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
-              interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
-              
-              let start_image_to_upload_to_gpu = document.getElementById("start_image");
-              
-              //commit to uploading image data to gpu to be used as a referenceable variable.
-                //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
-                texture_initial_start_image = interface_to_opengles_hardware.createTexture();
-                
-                //image is expected to be loaded as a fliped orientation, flag here to indicate that a flip should occur in order to have the expected ortiented rotation.
-                interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
-                 
-                //flag gpu to use TEXTURE0 memory area within the gpu.
-                interface_to_opengles_hardware.activeTexture(interface_to_opengles_hardware.TEXTURE0);
-                
-                interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, texture_initial_start_image);
-                
-                //allocate uniform sampler of index zero of the gpu.
-                drawing_process_uniform_sampler_index_zero = interface_to_opengles_hardware.getUniformLocation(shader_program_start_image, "uniform_sampler");
-                
-                //declare which uniform sampler should be used by index(zero). this also creates an associated variable within the context between the developer' input and the gpu' shader render stage.
-                interface_to_opengles_hardware.uniform1i(drawing_process_uniform_sampler_index_zero, 0);
-                
-                //stretch image to fit exactly.
-                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_WRAP_S, interface_to_opengles_hardware.REPEAT);
-                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_WRAP_T, interface_to_opengles_hardware.REPEAT);
-                
-                //declare which filtering the gpu should use during memory reads of interpoliated data within regards to the rendering stage of the gpu upon a cpu initiated draw call.
-                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
-                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MAX_FILTER, interface_to_opengles_hardware.LINEAR);
-                
-                //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
-                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, start_image_to_upload_to_gpu);
-                
-                //activate the render for this vertex.
-                interface_to_opengles_hardware.useProgram(shader_program_start_image);
-                interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
-                
-                
-                /* delete buffers */
-                //assuming changes will always differ per frame draw per exactly every item, delete buffers and their respective textures.
-                interface_to_opengles_hardware.deleteTexture(texture_initial_start_image);
-                interface_to_opengles_hardware.deleteBuffer(vertex_buffer_initial_start_image);
-                /* end of delete buffers */
-              */
-              /* end of temporary drawing proceedure area*/
-
               //Define start timestamp and end timestamp based on stay amount as milliseconds.
               major_scene_one_states.stay_start_timestamp = Date.now();
               major_scene_one_states.stay_end_timestamp = major_scene_one_states.stay_start_timestamp + major_scene_one_states.stay_total_milliseconds;
@@ -560,70 +498,12 @@
                 }
                
 
-               /*temporary drawing proceedure area*/
-              
               //Clear the viewport(screen) before drawing a new frame.
               generic_render_clear_screen();
               
-              //select vertex coordinate data and texture coordinate data.
-              vertex_buffer_initial_start_image = interface_to_opengles_hardware.createBuffer();
-              interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, vertex_buffer_initial_start_image);
-              interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, start_image_vertex_data, interface_to_opengles_hardware.STATIC_DRAW);
-              
-              //notify the shader program which variables to use and in what manner to use them.
-              let float_size = model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data.BYTES_PER_ELEMENT;
-              
-              let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_Position");
-              interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
-              interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
-              
-              let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program_start_image, "a_TexCoord");
-              interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
-              interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
-              
-              let start_image_to_upload_to_gpu = document.getElementById("start_image");
-              
-              //commit to uploading image data to gpu to be used as a referenceable variable.
-                //allocate texture memory area within the gpu referencable by the cpu as a developer' variable.
-                texture_initial_start_image = interface_to_opengles_hardware.createTexture();
-                
-                //image is expected to be loaded as a fliped orientation, flag here to indicate that a flip should occur in order to have the expected ortiented rotation.
-                interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
-                 
-                //flag gpu to use TEXTURE0 memory area within the gpu.
-                interface_to_opengles_hardware.activeTexture(interface_to_opengles_hardware.TEXTURE0);
-                
-                interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, texture_initial_start_image);
-                
-                //allocate uniform sampler of index zero of the gpu.
-                drawing_process_uniform_sampler_index_zero = interface_to_opengles_hardware.getUniformLocation(shader_program_start_image, "uniform_sampler");
-                
-                //declare which uniform sampler should be used by index(zero). this also creates an associated variable within the context between the developer' input and the gpu' shader render stage.
-                interface_to_opengles_hardware.uniform1i(drawing_process_uniform_sampler_index_zero, 0);
-                
-                //stretch image to fit exactly.
-                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_WRAP_S, interface_to_opengles_hardware.REPEAT);
-                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_WRAP_T, interface_to_opengles_hardware.REPEAT);
-                
-                //declare which filtering the gpu should use during memory reads of interpoliated data within regards to the rendering stage of the gpu upon a cpu initiated draw call.
-                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
-                interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MAX_FILTER, interface_to_opengles_hardware.LINEAR);
-                
-                //upload image data(red,green,blue) to the gpu to prepare for a draw call. rgb is used for non transparency, float instead of unsigned byte is used for a larger range of numbers in order to declare that a full range of colors(medium or high definition) should be taken account of during the render stage/render process.
-                interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, start_image_to_upload_to_gpu);
-                
-                //activate the render for this vertex.
-                interface_to_opengles_hardware.useProgram(shader_program_start_image);
-                interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
-                
-                
-                /* delete buffers */
-                //assuming changes will always differ per frame draw per exactly every item, delete buffers and their respective textures.
-                interface_to_opengles_hardware.deleteTexture(texture_initial_start_image);
-                interface_to_opengles_hardware.deleteBuffer(vertex_buffer_initial_start_image);
-                /* end of delete buffers */
-                
-              /* end of temporary drawing proceedure area*/
+              //Render model(s). (To achieve layers, render farthest away first through nearest order of operations.)
+              generic_rendering_render_two_dimensional_model(start_image_vertex_data, shader_program_start_image, "start_image", 6);
+
               //Determine if this microscene is finished.
               if((Date.now()) >= major_scene_one_states.stay_end_timestamp)
               {
