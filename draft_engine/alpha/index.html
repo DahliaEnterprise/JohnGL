@@ -535,6 +535,11 @@
                 /* end of delete buffers */
                 
               /* end of temporary drawing proceedure area*/
+
+              //Define start timestamp and end timestamp based on stay amount as milliseconds.
+              major_scene_one_states.stay_start_timestamp = Date.now();
+              major_scene_one_states.stay_end_timestamp = major_scene_one_states.stay_start_timestamp + major_scene_one_states.stay_total_milliseconds;
+              
               }else if(micro_scene == 2)
               {
                //render the start image as constantly there with out movement, scale, or rotation.
