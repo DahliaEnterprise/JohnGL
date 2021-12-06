@@ -538,7 +538,22 @@
               }else if(micro_scene == 2)
               {
                //render the start image as constantly there with out movement, scale, or rotation.
-/*temporary drawing proceedure area*/
+
+                //reproduce the start image to the scaled state.
+                //This is nessecary as a reminder that the original model might not be the end result scaled size.
+                let start_image_vertex_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
+                let index = 0;
+                while(index < start_image_vertex_data.length)
+                {
+                  start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
+                  start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
+                  
+                  //next index
+                  index = index + 4;
+                }
+               
+
+               /*temporary drawing proceedure area*/
               
               //Clear the viewport(screen) before drawing a new frame.
               interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
