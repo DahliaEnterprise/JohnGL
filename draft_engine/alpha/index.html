@@ -313,7 +313,23 @@
                and the one by one square fragment shader source
                to produce the (binary) shader program.
             */
-             
+                let texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, generic_shader_for_two_dimensional_square_model.vertex_shader_source);
+                interface_to_opengles_hardware.compileShader(texture_vertex_shader);
+           
+                let texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, generic_shader_for_two_dimensional_square_model.fragment_shader_source);
+                interface_to_opengles_hardware.compileShader(texture_fragment_shader);
+            
+                generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
+                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_vertex_shader);
+                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_fragment_shader);
+                interface_to_opengles_hardware.linkProgram(generic_shader_for_two_dimensional_square_model);
+                if(!interface_to_opengles_hardware.getProgramParameter(generic_shader_for_two_dimensional_square_model.compiled_shader_program, interface_to_opengles_hardware.LINK_STATUS))
+                {
+                  alert("shader link failed");
+                }
+         
           }else if(major_scene_prestage == 4)
           {
             /* major scene prestage four
@@ -565,7 +581,7 @@
               generic_render_clear_screen();
               
               //Render model(s). (To achieve layers, render farthest away first through nearest order of operations.)
-              generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model, "start_image", 6);
+              generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
               
               //Define start timestamp and end timestamp based on stay amount as milliseconds.
               major_scene_one_states.stay_start_timestamp = Date.now();
@@ -595,7 +611,7 @@
               generic_render_clear_screen();
               
               //Render model(s). (To achieve layers, render farthest away first through nearest order of operations.)
-              generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model, "start_image", 6);
+              generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
 
               //Determine if this microscene is finished.
               if((Date.now()) >= major_scene_one_states.stay_end_timestamp)
