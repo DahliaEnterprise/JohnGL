@@ -183,7 +183,7 @@
           frames_per_second.average_milliseconds_between_frames = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate;
           
           
-         /* temporary shader program data (to be placed within a loaded by file or network mechanism)*/
+         /* temporary shader program data (to be placed within a loaded by file or network mechanism)*
             var vertex_shader_source = "";
                 vertex_shader_source = vertex_shader_source + "attribute vec4 a_Position; \n";
                 vertex_shader_source = vertex_shader_source + "attribute vec2 a_TexCoord; \n";
@@ -308,6 +308,15 @@
           }else if(major_scene_prestage == 3)
           {
             /* major scene prestage three
+               is to compile the generic
+               one by one square vertex shader source
+               and the one by one square fragment shader source
+               to produce the (binary) shader program.
+            */
+             
+          }else if(major_scene_prestage == 4)
+          {
+            /* major scene prestage four
                is to load the one by one square
                vertex data.
             */
@@ -347,8 +356,8 @@
                   index_of_array = index_of_array + 1;
                 }
                 
-              //move on to major scene prestage four.
-              major_scene_prestage = 4;
+              //move on to major scene prestage five.
+              major_scene_prestage = 5;
               
               //reset resource management parameters
               resource_management_status = 0;
@@ -356,9 +365,9 @@
               resource_management_xmlhttprequest = null;
             }
           
-          }else if(major_scene_prestage == 4)
+          }else if(major_scene_prestage == 5)
           {
-            /* major scene prestage three
+            /* major scene prestage five
                is to load the one by one square
                texture coordinate data.
             */
@@ -398,17 +407,21 @@
                   index_of_array = index_of_array + 1;
                 }
                 
-              //move on to major scene prestage five.
-              major_scene_prestage = 5;
+              //move on to major scene prestage six.
+              major_scene_prestage = 6;
               
               //reset resource management parameters
               resource_management_status = 0;
               resource_management_loaded_data = null;
               resource_management_xmlhttprequest = null;
             }
-          }else if(major_scene_prestage == 5)
+          }else if(major_scene_prestage == 6)
           {
-            //compile vertex coordinates and texture coordinates into a x,y, x,y, interlaced format.
+            /* major scene prestage six
+               is to compile vertex coordinates 
+               and texture coordinates into a x,y, x,y,
+               interlaced format.
+            */
             let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
             let compiled_texture_vertex = new Float32Array(compiled_texture_vertex_length);
             let compiled_texture_vertex_index = 0;
@@ -443,14 +456,14 @@
             //Set model start image vertex coordinates and texture coordinates.
             model_start_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
 
-            //move on to major scene prestage six.
-            major_scene_prestage = 6;
+            //move on to major scene prestage seven.
+            major_scene_prestage = 7;
             image_resource_management_status = 0;
             
-          }else if(major_scene_prestage == 6)
+          }else if(major_scene_prestage == 7)
           {
             /* 
-               major scene prestage six
+               major scene prestage seven
                is to load the image(red,green,blue) data.
             */
             //download the image file to be used for the texture.
@@ -468,10 +481,10 @@
               
             }else if(image_resource_management_status == 1)
             {
-              //move on to major scene prestage seven
-              major_scene_prestage = 7;
+              //move on to major scene prestage eight
+              major_scene_prestage = 8;
             }
-          }else if(major_scene_prestage == 7)
+          }else if(major_scene_prestage == 8)
           {
             major_scene_one_states.start_image.zoom_animation_start_timestamp = state_syncronization_timestamp;
             major_scene_one_states.start_image.zoom_animation_end_timestamp = state_syncronization_timestamp + major_scene_one_states.start_image.zoom_animation_millisecond_duration;
