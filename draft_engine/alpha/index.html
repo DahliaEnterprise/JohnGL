@@ -181,46 +181,7 @@
           frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate = 1000 / frames_per_second.maximum_frames_per_second;
           frames_per_second.near_constants.minimum_in_between_time_milliseconds = (frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate * 0.25);
           frames_per_second.average_milliseconds_between_frames = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate;
-          
-          
-         /* temporary shader program data (to be placed within a loaded by file or network mechanism)*
-            var vertex_shader_source = "";
-                vertex_shader_source = vertex_shader_source + "attribute vec4 a_Position; \n";
-                vertex_shader_source = vertex_shader_source + "attribute vec2 a_TexCoord; \n";
-                vertex_shader_source = vertex_shader_source + "varying highp vec2 v_TexCoord; \n";
-                vertex_shader_source = vertex_shader_source + "void main(void) { \n";
-                vertex_shader_source = vertex_shader_source + "  gl_Position = a_Position; \n"; 
-                vertex_shader_source = vertex_shader_source + "  v_TexCoord = a_TexCoord; \n"; 
-                vertex_shader_source = vertex_shader_source + "} \n";
-            
-           
-            var fragment_shader_source = "";
-                fragment_shader_source = fragment_shader_source + "varying highp vec2 v_TexCoord; \n";
-                fragment_shader_source = fragment_shader_source + "uniform sampler2D uniform_sampler; \n";
-                fragment_shader_source = fragment_shader_source + "void main(void){ \n";
-                fragment_shader_source = fragment_shader_source + "  gl_FragColor = texture2D(uniform_sampler, v_TexCoord); \n";
-                fragment_shader_source = fragment_shader_source + "} \n";
-            
-            
-            var texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
-                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader_source);
-                interface_to_opengles_hardware.compileShader(texture_vertex_shader);
-           
-            var texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
-                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader_source);
-                interface_to_opengles_hardware.compileShader(texture_fragment_shader);
-            
-            generic_shader_for_two_dimensional_square_model = interface_to_opengles_hardware.createProgram();
-                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_vertex_shader);
-                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_fragment_shader);
-                interface_to_opengles_hardware.linkProgram(generic_shader_for_two_dimensional_square_model);
-                if(!interface_to_opengles_hardware.getProgramParameter(generic_shader_for_two_dimensional_square_model, interface_to_opengles_hardware.LINK_STATUS))
-                {
-                  alert("shader link failed");
-                }
-            /* end temporary shader program data */
-            
-        
+         
         //game engine started, proceed to cycle engine(loop).
         timestamp_last_frame_fully_rendered = Date.now();
         cycle_engine();
