@@ -239,7 +239,8 @@
           if(major_scene_prestage == 1)
           {
             /* major scene prestage one
-               is to load the vertex shader
+               is to load the one by one square
+               vertex shader
             */
             if(resource_management_status == 0)
             {
@@ -260,10 +261,20 @@
             {
               let resource_management_loaded_data_as_text = ""+resource_management_loaded_data;
               generic_shader_for_two_dimensional_square_model.vertex_shader_source = resource_management_loaded_data_as_text;
+
+              //move on to major scene prestage two
+              major_scene_prestage = 2;
             }
-          }else if(major_scene_prestage == 2)
+          }else if(major_scene_prestage == 4)
           {
-            /* major scene prestage two
+            /* major scene prestage four
+               is to load the one by one square
+               fragment shader
+            */
+
+          }else if(major_scene_prestage == 3)
+          {
+            /* major scene prestage three
                is to load the one by one square
                vertex data.
             */
@@ -303,8 +314,8 @@
                   index_of_array = index_of_array + 1;
                 }
                 
-              //move on to major scene prestage three.
-              major_scene_prestage = 3;
+              //move on to major scene prestage four.
+              major_scene_prestage = 4;
               
               //reset resource management parameters
               resource_management_status = 0;
@@ -312,7 +323,7 @@
               resource_management_xmlhttprequest = null;
             }
           
-          }else if(major_scene_prestage == 3)
+          }else if(major_scene_prestage == 4)
           {
             /* major scene prestage three
                is to load the one by one square
@@ -354,15 +365,15 @@
                   index_of_array = index_of_array + 1;
                 }
                 
-              //move on to major scene prestage four.
-              major_scene_prestage = 4;
+              //move on to major scene prestage five.
+              major_scene_prestage = 5;
               
               //reset resource management parameters
               resource_management_status = 0;
               resource_management_loaded_data = null;
               resource_management_xmlhttprequest = null;
             }
-          }else if(major_scene_prestage == 4)
+          }else if(major_scene_prestage == 5)
           {
             //compile vertex coordinates and texture coordinates into a x,y, x,y, interlaced format.
             let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
@@ -399,14 +410,14 @@
             //Set model start image vertex coordinates and texture coordinates.
             model_start_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
 
-            //move on to major scene prestage five.
-            major_scene_prestage = 5;
+            //move on to major scene prestage six.
+            major_scene_prestage = 6;
             image_resource_management_status = 0;
             
-          }else if(major_scene_prestage == 5)
+          }else if(major_scene_prestage == 6)
           {
             /* 
-               major scene prestage five
+               major scene prestage six
                is to load the image(red,green,blue) data.
             */
             //download the image file to be used for the texture.
@@ -424,10 +435,10 @@
               
             }else if(image_resource_management_status == 1)
             {
-              //move on to major scene prestage six
-              major_scene_prestage = 6;
+              //move on to major scene prestage seven
+              major_scene_prestage = 7;
             }
-          }else if(major_scene_prestage == 6)
+          }else if(major_scene_prestage == 7)
           {
             major_scene_one_states.start_image.zoom_animation_start_timestamp = state_syncronization_timestamp;
             major_scene_one_states.start_image.zoom_animation_end_timestamp = state_syncronization_timestamp + major_scene_one_states.start_image.zoom_animation_millisecond_duration;
