@@ -89,7 +89,9 @@
         /* list of shaders */
           var generic_shader_for_two_dimensional_square_model = {
                                                                   "vertex_shader_source_filelocation": "./shaders/vertex_shaders/generic_one_by_one_square.vertex_shader",
-                                                                  "fragment_shader_source_filelocation": "./shaders/"
+                                                                  "fragment_shader_source_filelocation": "./shaders/fragment_shaders/generic_one_by_one_square.fragment_shader",
+                                                                  "vertex_shader_source": null,
+                                                                  "fragment_shader_source": null,
                                                                   "compiled_shader_program": null
                                                                 };
         /* list of shaders */
@@ -252,8 +254,12 @@
               resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
               resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
               */
-              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.vertex_coordinate_filelocation);
+              resource_management_xmlhttprequest.open("GET", ""+generic_shader_for_two_dimensional_square_model.vertex_shader_source_filelocation);
               resource_management_xmlhttprequest.send();
+            }else if(resource_management_status == 2)
+            {
+              let resource_management_loaded_data_as_text = ""+resource_management_loaded_data;
+              generic_shader_for_two_dimensional_square_model.vertex_shader_source = resource_management_loaded_data_as_text;
             }
           }else if(major_scene_prestage == 2)
           {
