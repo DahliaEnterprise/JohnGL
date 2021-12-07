@@ -76,9 +76,7 @@
                                                       "vertex_and_texture_coordinate_data_loaded": false,
                                                     
                                                       "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
-                                                      "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates",
-                                                      "image_filelocation": "./images/start_image.png",
-                                                      "image_resources_id": "start_image"
+                                                      "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates"
                                                     };
           /* models */
           var model_start_image = {
@@ -367,6 +365,9 @@
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data = compiled_texture_vertex;
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data_loaded = true;
             
+            //Set model start image vertex coordinates and texture coordinates.
+            model_start_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
+
             //move on to major scene prestage four.
             major_scene_prestage = 4;
             image_resource_management_status = 0;
