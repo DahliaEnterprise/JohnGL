@@ -4,7 +4,21 @@
     <title>John GL Presents Game Engine</title>
     <script type="text/javascript">
       /* Venmo: Shane-Betz1990 */
-      
+      //shader source code
+      var vertex_shader_generic_one_by_one_square = "attribute vec4 a_Position; \n";
+          vertex_shader_generic_one_by_one_square += "attribute vec2 a_TexCoord; \n";
+          vertex_shader_generic_one_by_one_square += "varying highp vec2 v_TexCoord; \n";
+          vertex_shader_generic_one_by_one_square += "void main(void) { \n";
+          vertex_shader_generic_one_by_one_square += "gl_Position = a_Position; \n";
+          vertex_shader_generic_one_by_one_square += "v_TexCoord = a_TexCoord; \n";
+          vertex_shader_generic_one_by_one_square += "} \n";
+
+      var fragment_shader_generic_one_by_one_square = "varying highp vec2 v_TexCoord; \n";
+          fragment_shader_generic_one_by_one_square += "uniform sampler2D uniform_sampler; \n";
+          fragment_shader_generic_one_by_one_square += "void main(void) { \n";
+          fragment_shader_generic_one_by_one_square += "  gl_FragColor = texture2D(uniform_sampler, v_TexCoord); \n";
+          fragment_shader_generic_one_by_one_square += "} \n";
+
       //global variables
         //constant
         var html_canvas_element = null;
@@ -49,6 +63,7 @@
         
         var resource_management_xmlhttprequest = null;
         var resource_management_loaded_data = null;
+        var resource_management_loaded_text = null;
         var resource_management_status = 0;
         
         var image_resource_management_status = 0;
@@ -81,8 +96,6 @@
           var generic_shader_for_two_dimensional_square_model = {
                                                                   "vertex_shader_source_filelocation": "./shaders/vertex_shaders/generic_one_by_one_square.vertex_shader",
                                                                   "fragment_shader_source_filelocation": "./shaders/fragment_shaders/generic_one_by_one_square.fragment_shader",
-                                                                  "vertex_shader_source": null,
-                                                                  "fragment_shader_source": null,
                                                                   "compiled_shader_program": null
                                                                 };
         /* list of shaders */
@@ -192,95 +205,33 @@
           if(major_scene_prestage == 1)
           {
             /* major scene prestage one
-               is to load the one by one square
-               vertex shader
-            */
-            if(resource_management_status == 0)
-            {
-              //update resource management status before calling an asynchronous process
-              resource_management_status = 1;
-              
-              //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
-              resource_management_loaded_data = null;
-              resource_management_xmlhttprequest = new XMLHttpRequest();
-              resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
-              /* place holder for alternative events
-              resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
-              resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
-              */
-              resource_management_xmlhttprequest.open("GET", ""+generic_shader_for_two_dimensional_square_model.vertex_shader_source_filelocation);
-              resource_management_xmlhttprequest.send();
-            }else if(resource_management_status == 2)
-            {
-              let resource_management_loaded_data_as_text = ""+resource_management_loaded_data;
-              generic_shader_for_two_dimensional_square_model.vertex_shader_source = resource_management_loaded_data_as_text;
-
-              //move on to major scene prestage two
-              major_scene_prestage = 2;
-
-              //reset resource management parameters
-              resource_management_status = 0;
-              resource_management_loaded_data = null;
-              resource_management_xmlhttprequest = null;
-            }
-          }else if(major_scene_prestage == 2)
-          {
-            /* major scene prestage two
-               is to load the one by one square
-               fragment shader
-            */
-            if(resource_management_status == 0)
-            {
-              //update resource management status before calling an asynchronous process
-              resource_management_status = 1;
-              
-              //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
-              resource_management_loaded_data = null;
-              resource_management_xmlhttprequest = new XMLHttpRequest();
-              resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
-              /* place holder for alternative events
-              resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
-              resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
-              */
-              resource_management_xmlhttprequest.open("GET", ""+generic_shader_for_two_dimensional_square_model.fragment_shader_source_filelocation);
-              resource_management_xmlhttprequest.send();
-            }else if(resource_management_status == 2)
-            {
-              let resource_management_loaded_data_as_text = ""+resource_management_loaded_data;
-              generic_shader_for_two_dimensional_square_model.fragment_shader_source = resource_management_loaded_data_as_text;
-
-              //move on to major scene prestage two
-              major_scene_prestage = 3;
-
-              //reset resource management parameters
-              resource_management_status = 0;
-              resource_management_loaded_data = null;
-              resource_management_xmlhttprequest = null;
-
-            }
-          }else if(major_scene_prestage == 3)
-          {
-            /* major scene prestage three
                is to compile the generic
                one by one square vertex shader source
                and the one by one square fragment shader source
                to produce the (binary) shader program.
             */
+            
                 let texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
-                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, generic_shader_for_two_dimensional_square_model.vertex_shader_source);
+                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader_generic_one_by_one_square);
                 interface_to_opengles_hardware.compileShader(texture_vertex_shader);
            
                 let texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
-                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, generic_shader_for_two_dimensional_square_model.fragment_shader_source);
+                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader_generic_one_by_one_square);
                 interface_to_opengles_hardware.compileShader(texture_fragment_shader);
             
-                generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
-                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_vertex_shader);
-                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_fragment_shader);
-                interface_to_opengles_hardware.linkProgram(generic_shader_for_two_dimensional_square_model);
-                if(!interface_to_opengles_hardware.getProgramParameter(generic_shader_for_two_dimensional_square_model.compiled_shader_program, interface_to_opengles_hardware.LINK_STATUS))
+                //generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
+                let new_program = interface_to_opengles_hardware.createProgram();
+                interface_to_opengles_hardware.attachShader(new_program, texture_vertex_shader);
+                interface_to_opengles_hardware.attachShader(new_program, texture_fragment_shader);
+                interface_to_opengles_hardware.linkProgram(new_program);
+                if(!interface_to_opengles_hardware.getProgramParameter(new_program, interface_to_opengles_hardware.LINK_STATUS))
                 {
-                  alert("shader link failed");
+                  console.log("shader link failed");
+                }else{
+                	generic_shader_for_two_dimensional_square_model.compiled_shader_program = new_program;
+                	
+                	//move on to major prestage 4
+                	major_scene_prestage = 4;
                 }
          
           }else if(major_scene_prestage == 4)
@@ -353,6 +304,7 @@
               resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
               resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
               */
+              resource_management_xmlhttprequest.overrideMimeType("text/plain");
               resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.texture_coordinate_filelocation);
               resource_management_xmlhttprequest.send();
             }else if(resource_management_status == 2)
@@ -431,6 +383,7 @@
             
           }else if(major_scene_prestage == 7)
           {
+          	console.log("7");
             /* 
                major scene prestage seven
                is to load the image(red,green,blue) data.
@@ -446,7 +399,7 @@
                 image_resource_management_status = 1;
               };
               
-              start_image_to_upload.src = image_resources[""+model_placeholder_one_by_one_square.image_resources_id].image_filelocation;
+              start_image_to_upload.src = model_start_image.image_filelocation;
               
             }else if(image_resource_management_status == 1)
             {
@@ -544,6 +497,7 @@
               micro_scene = 2;
               }else if(micro_scene == 2)
               {
+              	console.log(2);
                //render the start image as constantly there with out movement, scale, or rotation.
 
                 //reproduce the start image to the scaled state.
@@ -645,7 +599,8 @@
       function resource_management_loaded(event_data)
       {
         resource_management_loaded_data = event_data.target.response;
-       
+        resource_management_loaded_text = event_data.target.responseText;
+        
         resource_management_status = 2;
       }
       /* end of resource management single threaded asynchronous control line */
@@ -900,11 +855,11 @@
               //notify the shader program which variables to use and in what manner to use them.
               let float_size = vertex_coordinate_and_texture_coordinate_data.BYTES_PER_ELEMENT;
               
-              let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program, "a_Position");
+              let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(generic_shader_for_two_dimensional_square_model.compiled_shader_program, "a_Position");
               interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
               interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
               
-              let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program, "a_TexCoord");
+              let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(generic_shader_for_two_dimensional_square_model.compiled_shader_program, "a_TexCoord");
               interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
               interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
               
@@ -960,6 +915,20 @@
     <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
     <div id="reuseable_image_data">
       <!--<img id="loaded_image" style="display:none;width:0px;height:0px;"></img>-->
+    </div>
+    <div id="shader_compilation_workbench">
+    	<div id="generic_one_by_one_square_vertex_shader" style="display:none;">
+
+    	</div>
+    	<div id="generic_one_by_one_square_fragment_shader" style="display:none;">
+varying highp vec2 v_TexCoord;
+attribute vec2 a_TexCoord;
+varying highp vec2 v_TexCoord;
+void main(void){
+gl_Position = a_Position;
+v_TexCoord = a_TexCoord;
+}
+    	</div>
     </div>
   </body>
 </html>
