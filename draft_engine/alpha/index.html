@@ -273,7 +273,7 @@
               //convert binary data (response, not responseText) to a Float32Array.
                 //split data for iteration
                 let resource_management_loaded_data_as_array = resource_management_loaded_data.split(",");
-                
+               
                 //allocate vertex data coordinate variable for one by one square
                 model_placeholder_one_by_one_square.vertex_coordinate_data = null;
                 model_placeholder_one_by_one_square.vertex_coordinate_data = new Float32Array(resource_management_loaded_data_as_array.length);
@@ -288,7 +288,6 @@
                   //next index
                   index_of_array = index_of_array + 1;
                 }
-                
               //move on to major scene prestage five.
               major_scene_prestage = 5;
               
@@ -382,7 +381,7 @@
               vertex_coordinate_data_index = vertex_coordinate_data_index + 2;
               texture_coordinate_data_index = texture_coordinate_data_index + 2;
             }
-            
+            console.log(compiled_texture_vertex);
             //set the compiled vertex and texture coordinates to the model placeholder.
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data = compiled_texture_vertex;
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data_loaded = true;
@@ -433,7 +432,6 @@
             
             major_scene_one_states.start_image.rotation_animation_rotation_z_increments = major_scene_one_states.start_image.rotation_animation_target_rotation_z / major_scene_one_states.start_image.rotation_animation_millisecond_duration;
             
-            
             //move on to the major scene logic
             major_scene_prestage = 0;
           }else if(major_scene_prestage == 0)
@@ -448,7 +446,7 @@
                   //determine current scale based on time factors.
                   major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_scale_x_increments * time_passed_since_zoom_animation_start;
                   major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_scale_y_increments * time_passed_since_zoom_animation_start;
-              
+              		console.log(major_scene_one_states.start_image.scale_x);
               
                   //stop scaling when end timestamp has been reached.
                   if(state_syncronization_timestamp >=  major_scene_one_states.start_image.zoom_animation_end_timestamp)
@@ -469,6 +467,7 @@
                   //next index
                   index = index + 4;
                 }
+                
                 
                 
                 //increment rotation of start image
@@ -508,13 +507,18 @@
                                 ]);
                                 
           //temporary triangle strip drawing
-
+					console.log(start_image_vertex_data);
+generic_render_clear_screen();
+ /*interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
+        interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
+        interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
+   */     
           //upload to gpu
           let triangle_and_texture_positions_vertex_buffer = interface_to_opengles_hardware.createBuffer();
             //tell gpu at assembly transistor level to open memory/buffer.
             interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
             //transfer cpu instructions and memory to gpu memory/buffer.
-            interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, triangle_and_texture_positions_vertex, interface_to_opengles_hardware.STATIC_DRAW);
+            interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, start_image_vertex_data, interface_to_opengles_hardware.STATIC_DRAW);
             
             let float_size = triangle_and_texture_positions_vertex.BYTES_PER_ELEMENT;
             
@@ -551,10 +555,10 @@
              
              //tell gpu what vertex to draw now that the texture to draw with it has been activated.
              interface_to_opengles_hardware.useProgram(texture_shader_program);
-             interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLE_STRIP, 0, 4);
+             interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 4);
                   
 
-             // micro_scene = 9;
+              //micro_scene = 9;
               }else if(micro_scene == 2)
               {
               	console.log(2);
