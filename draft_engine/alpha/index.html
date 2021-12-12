@@ -101,9 +101,9 @@
                                                                   "fragment_shader_source_filelocation": "./shaders/fragment_shaders/generic_one_by_one_square.fragment_shader",
                                                                   "compiled_shader_program": null
           };
-          var texture_vertex_shader = null;
-          var texture_fragment_shader = null;
-          var texture_shader_program = null;
+         // var texture_vertex_shader = null;
+         // var texture_fragment_shader = null;
+         // var texture_shader_program = null;
         /* list of shaders */
         
         /* reuseable handleable variable(s) for the drawing process */
@@ -150,14 +150,6 @@
         //open an associated context between the dom canvas element and openGL ES hardware.
         interface_to_opengles_hardware = html_canvas_element.getContext("webgl2", webgl2_context_attributes);
       
-       texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
-                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader_generic_one_by_one_square);
-                interface_to_opengles_hardware.compileShader(texture_vertex_shader);
-           
-                texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
-                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader_generic_one_by_one_square);
-                interface_to_opengles_hardware.compileShader(texture_fragment_shader);
-            
       
       
         //define canvas diemensions.
@@ -231,17 +223,25 @@
                to produce the (binary) shader program.
             */
             
+       				  let	texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader_generic_one_by_one_square);
+                interface_to_opengles_hardware.compileShader(texture_vertex_shader);
+           
+                let texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader_generic_one_by_one_square);
+                interface_to_opengles_hardware.compileShader(texture_fragment_shader);
+            
             
                 //generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
-                texture_shader_program = interface_to_opengles_hardware.createProgram();
-                interface_to_opengles_hardware.attachShader(texture_shader_program, texture_vertex_shader);
-                interface_to_opengles_hardware.attachShader(texture_shader_program, texture_fragment_shader);
-                interface_to_opengles_hardware.linkProgram(texture_shader_program);
-                if(!interface_to_opengles_hardware.getProgramParameter(texture_shader_program, interface_to_opengles_hardware.LINK_STATUS))
+                 generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
+                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model.compiled_shader_program, texture_vertex_shader);
+                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model.compiled_shader_program, texture_fragment_shader);
+                interface_to_opengles_hardware.linkProgram(generic_shader_for_two_dimensional_square_model.compiled_shader_program);
+                if(!interface_to_opengles_hardware.getProgramParameter(generic_shader_for_two_dimensional_square_model.compiled_shader_program, interface_to_opengles_hardware.LINK_STATUS))
                 {
                   console.log("shader link failed");
                 }else{
-                	generic_shader_for_two_dimensional_square_model.compiled_shader_program = texture_shader_program;
+                	//generic_shader_for_two_dimensional_square_model.compiled_shader_program = texture_shader_program;
                 	
                 	//move on to major prestage 4
                 	major_scene_prestage = 4;
@@ -508,13 +508,11 @@
                                 
           //temporary triangle strip drawing
 					console.log(start_image_vertex_data);
-generic_render_clear_screen();
- /*interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
-        interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
-        interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
-   */     
-          //upload to gpu
-          let triangle_and_texture_positions_vertex_buffer = interface_to_opengles_hardware.createBuffer();
+					generic_render_clear_screen();
+					
+					
+          	//upload to gpu
+       	    let triangle_and_texture_positions_vertex_buffer = interface_to_opengles_hardware.createBuffer();
             //tell gpu at assembly transistor level to open memory/buffer.
             interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
             //transfer cpu instructions and memory to gpu memory/buffer.
@@ -524,13 +522,13 @@ generic_render_clear_screen();
             
             
             //define shader program' parameters.
-            let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(texture_shader_program, "a_Position");
+            let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(generic_shader_for_two_dimensional_square_model.compiled_shader_program, "a_Position");
             interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
             interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
         
         
-            let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(texture_shader_program, 'a_TexCoord');
-            interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates , 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
+            let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(generic_shader_for_two_dimensional_square_model.compiled_shader_program, 'a_TexCoord');
+            interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
             interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
             
             let gpu_image_handle = interface_to_opengles_hardware.createTexture();
@@ -543,7 +541,7 @@ generic_render_clear_screen();
              
              interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, gpu_image_handle);
             
-             u_Sampler = interface_to_opengles_hardware.getUniformLocation(texture_shader_program, 'u_Sampler');
+             u_Sampler = interface_to_opengles_hardware.getUniformLocation(generic_shader_for_two_dimensional_square_model.compiled_shader_program, 'u_Sampler');
              //flag which sampler to use with uniform.
              interface_to_opengles_hardware.uniform1i(u_Sampler, 0);
              
@@ -554,8 +552,8 @@ generic_render_clear_screen();
           
              
              //tell gpu what vertex to draw now that the texture to draw with it has been activated.
-             interface_to_opengles_hardware.useProgram(texture_shader_program);
-             interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 4);
+             interface_to_opengles_hardware.useProgram(generic_shader_for_two_dimensional_square_model.compiled_shader_program);
+             interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
                   
 
               //micro_scene = 9;
