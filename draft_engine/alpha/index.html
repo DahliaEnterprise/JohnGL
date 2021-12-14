@@ -125,9 +125,12 @@
                                                           "rotation_animation_target_rotation_z": 12.566,
                                                           "rotation_animation_start_timestamp": null,
                                                           "rotation_animation_end_timestamp": null,
-                                                          "rotation_animation_millisecond_duration": 1000,
+                                                          "rotation_animation_millisecond_duration": 2000,
                                                           "rotation_animation_rotation_z_increments": null,
                                                           
+                                                          "total_milliseconds_to_wait_for_zoom_and_rotation_animation": 2000,
+                                                          
+                                                          "timestamp_to_start_stay_animation": null,
                                                           "stay_start_timestamp": null,
                                                           "stay_end_timestamp": null,
                                                           "stay_total_milliseconds": 2000
@@ -389,7 +392,6 @@
             
           }else if(major_scene_prestage == 7)
           {
-          	console.log("7");
             /* 
                major scene prestage seven
                is to load the image(red,green,blue) data.
@@ -425,7 +427,10 @@
             major_scene_one_states.start_image.rotation_animation_end_timestamp = state_syncronization_timestamp + major_scene_one_states.start_image.rotation_animation_millisecond_duration;
             
             major_scene_one_states.start_image.rotation_animation_rotation_z_increments = major_scene_one_states.start_image.rotation_animation_target_rotation_z / major_scene_one_states.start_image.rotation_animation_millisecond_duration;
-            
+          
+            major_scene_one_states.start_image.timestamp_to_start_stay_animation = state_syncronization_timestamp + major_scene_one_states.start_image.total_milliseconds_to_wait_for_zoom_and_rotation_animation;
+          
+           // console.log(major_scene_one_states);
             //move on to the major scene logic
             major_scene_prestage = 0;
           }else if(major_scene_prestage == 0)
@@ -492,55 +497,17 @@
 									generic_render_clear_screen();
 									generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
 					
-			         /* 	//upload to gpu
-			       	    let triangle_and_texture_positions_vertex_buffer = interface_to_opengles_hardware.createBuffer();
-			            //tell gpu at assembly transistor level to open memory/buffer.
-			            interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
-			            //transfer cpu instructions and memory to gpu memory/buffer.
-			            interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, start_image_vertex_data, interface_to_opengles_hardware.STATIC_DRAW);
-			            
-			            let float_size = triangle_and_texture_positions_vertex.BYTES_PER_ELEMENT;
-			            
-            
-			            //define shader program' parameters.
-			            let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(generic_shader_for_two_dimensional_square_model.compiled_shader_program, "a_Position");
-			            interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
-			            interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
-			        
-			        
-			            let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(generic_shader_for_two_dimensional_square_model.compiled_shader_program, 'a_TexCoord');
-			            interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
-			            interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
-			            
-			            let gpu_image_handle = interface_to_opengles_hardware.createTexture();
-			             
-			             //flip image
-			             interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
-			             
-			             //alert the gpu where to open and ready for unloading of texture data to gpu memory.
-			             interface_to_opengles_hardware.activeTexture(interface_to_opengles_hardware.TEXTURE0);
-			             
-			             interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, gpu_image_handle);
-			            
-			             u_Sampler = interface_to_opengles_hardware.getUniformLocation(generic_shader_for_two_dimensional_square_model.compiled_shader_program, 'u_Sampler');
-			             //flag which sampler to use with uniform.
-			             interface_to_opengles_hardware.uniform1i(u_Sampler, 0);
-			             
-			             interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
-			              
-			             //upload image data from motherboard ram to gpu ram through cpu instructions.
-			             interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, document.getElementById("start_image"));
-			          
-			             
-			             //tell gpu what vertex to draw now that the texture to draw with it has been activated.
-			             interface_to_opengles_hardware.useProgram(generic_shader_for_two_dimensional_square_model.compiled_shader_program);
-			             interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, 6);
-			                  
-*/
-              //micro_scene = 9;
+                  if(state_syncronization_timestamp >= major_scene_one_states.start_image.timestamp_to_start_stay_animation)
+                  {
+                  	//define syncronized state for stay "animation"
+				            major_scene_one_states.start_image.stay_start_timestamp = state_syncronization_timestamp;
+				            major_scene_one_states.start_image.stay_end_timestamp = major_scene_one_states.start_image.stay_start_timestamp + major_scene_one_states.start_image.stay_total_milliseconds;
+				            
+                    micro_scene = 2;
+                  }
+			    
               }else if(micro_scene == 2)
               {
-              	console.log(2);
                //render the start image as constantly there with out movement, scale, or rotation.
 
                 //reproduce the start image to the scaled state.
@@ -556,15 +523,21 @@
                   index = index + 4;
                 }
                 
-              //Determine if this microscene is finished.
-              if((Date.now()) >= major_scene_one_states.stay_end_timestamp)
-              {
-              //Micro scene is finished start the begining of game
-              micro_scene = 3;
-              }
+	               //render state
+									generic_render_clear_screen();
+									generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
+					
+	                
+	              //Determine if this microscene is finished.
+	              if((Date.now()) >=  major_scene_one_states.start_image.timestamp_to_start_stay_animation)
+	              {
+		              //Micro scene is finished start the begining of game
+		              micro_scene = 3;
+	              }
               }else if(micro_scene == 3)
               {
                //Start of game begins here.
+               //console.log(3);
               }
           }
         }
@@ -877,7 +850,6 @@
 
       function generic_rendering_render_two_dimensional_model(vertex_coordinate_and_texture_coordinate_data, shader_program, img_id_to_be_used_as_texture, total_point_coordinate_and_texture_coordinate_pairs)
       {
-      	console.log(vertex_coordinate_and_texture_coordinate_data);
          /*The function assumes each model render options are compatible per each one usage
           that is to say the developer must be aware of OpenGL ES drawing and shader rendering operations
           within their own discrete and combination usage there of.
