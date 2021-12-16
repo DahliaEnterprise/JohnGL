@@ -40,6 +40,10 @@
         var canvas_element_width = null;
         var canvas_element_height = null;
         
+        var canvas_touch_start = null;
+        var canvas_touch_move = null;
+        var canvas_touch_end = null;
+        var canvas_touch_cancel = null;
         var canvas_touch = {
                              "history": null
                            };
@@ -167,12 +171,11 @@
           interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
         
         //register touch events to the canvas
-          /* placeholder
-          html_canvas_element.addEventListener("touchstart", canvas_touch_start);
-          html_canvas_element.addEventListener("touchmove", canvas_touch_move);
-          html_canvas_element.addEventListener("touchend", canvas_touch_end);
-          html_canvas_element.addEventListener("touchcancel", canvas_touch_cancel);
-          */
+        html_canvas_element.addEventListener("touchstart", canvas_touch_start);
+        html_canvas_element.addEventListener("touchmove", canvas_touch_move);
+        html_canvas_element.addEventListener("touchend", canvas_touch_end);
+        html_canvas_element.addEventListener("touchcancel", canvas_touch_cancel);
+        
         //initialize touch events
           canvas_touch.history = {};
         
@@ -508,7 +511,7 @@
 			    
               }else if(micro_scene == 2)
               {
-               //render the start image as constantly there with out movement, scale, or rotation.
+               //render the start image as constantly there with out (animated) movement, scale, or rotation.
 
                 //reproduce the start image to the scaled state.
                 //This is nessecary as a reminder that the original model might not be the end result scaled size.
@@ -538,6 +541,7 @@
               {
                //Start of game begins here.
                //console.log(3);
+               
               }
           }
         }
@@ -818,7 +822,7 @@
       /* end of assistive math functions */
       
       /* canvas touch event functions */
-      function touch_event_start(event_info)
+      canvas_touch_start = function(event_info)
       {
         let touches_index = 0;
         while(touches_index < event_info.touches.length)
@@ -833,10 +837,78 @@
                                       "y": touch_info.clientY
                                      };
           
+        console.log(touch_history_record);
           
           //next touch info
           touches_index = touches_index + 1;
         }
+      }
+      
+      canvas_touch_move =function(event_info)
+      {
+      	let touches_index = 0;
+        while(touches_index < event_info.touches.length)
+        {
+          let touch_info = event_info.touches[touches_index];
+          
+          let touch_identifier = touch_info.identifier;
+         
+          let touch_history_record = {
+                                      "timestamp": Date.now(),
+                                      "x": touch_info.clientX,
+                                      "y": touch_info.clientY
+                                     };
+          
+        console.log(touch_history_record);
+          
+          //next touch info
+          touches_index = touches_index + 1;
+        }
+      }
+      
+      canvas_touch_end = function(event_info)
+      {
+      	let touches_index = 0;
+        while(touches_index < event_info.touches.length)
+        {
+          let touch_info = event_info.touches[touches_index];
+          
+          let touch_identifier = touch_info.identifier;
+         
+          let touch_history_record = {
+                                      "timestamp": Date.now(),
+                                      "x": touch_info.clientX,
+                                      "y": touch_info.clientY
+                                     };
+          
+        console.log(touch_history_record);
+          
+          //next touch info
+          touches_index = touches_index + 1;
+        }
+      }
+      
+      canvas_touch_cancel = function(event_info)
+      {
+      	let touches_index = 0;
+        while(touches_index < event_info.touches.length)
+        {
+          let touch_info = event_info.touches[touches_index];
+          
+          let touch_identifier = touch_info.identifier;
+         
+          let touch_history_record = {
+                                      "timestamp": Date.now(),
+                                      "x": touch_info.clientX,
+                                      "y": touch_info.clientY
+                                     };
+          
+        console.log(touch_history_record);
+          
+          //next touch info
+          touches_index = touches_index + 1;
+        }
+        
       }
       /* end of canvas touch event functions */
 
