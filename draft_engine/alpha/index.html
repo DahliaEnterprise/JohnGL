@@ -908,6 +908,13 @@
         
       }
       /* end of canvas touch event functions */
+      
+      /* enable fullscreen */
+      function request_fullscreen()
+      {
+      	document.getElementById("canvas_for_opengles").requestFullscreen();
+      }
+      /* end of enable fullscreen */
 
       /* generic rendering of models on scene functions */
       function generic_render_clear_screen(clear_screen_options=null)
@@ -975,6 +982,7 @@
   </head>
   <body onLoad="start_engine('canvas_for_opengles');">
     <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
+    <a href="javascript:void(0);" id="fullscreenbutton" onMouseDown="request_fullscreen();" style="width:100px;height:50px;">Request Fullscreen</a>
     <div id="reuseable_image_data">
       <!--<img id="loaded_image" style="display:none;width:0px;height:0px;"></img>-->
     </div>
