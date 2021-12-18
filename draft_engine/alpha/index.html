@@ -45,6 +45,7 @@
         var canvas_touch_end = null;
         var canvas_touch_cancel = null;
         var canvas_touch = {
+        	                   "last_id_used": -1,
                              "history": null
                            };
         
@@ -831,11 +832,13 @@
           let touch_history_record = {
                                       "timestamp": Date.now(),
                                       "x": touch_info.clientX,
-                                      "y": touch_info.clientY
+                                      "y": touch_info.clientY,
+                                      "type":"start"
                                      };
           
-        console.log(touch_history_record);
-          
+          canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
+          canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
           //next touch info
           touches_index = touches_index + 1;
         }
@@ -853,11 +856,13 @@
           let touch_history_record = {
                                       "timestamp": Date.now(),
                                       "x": touch_info.clientX,
-                                      "y": touch_info.clientY
+                                      "y": touch_info.clientY,
+                                      "type": "move"
                                      };
           
-        console.log(touch_history_record);
-          
+          canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
+          canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
           //next touch info
           touches_index = touches_index + 1;
         }
@@ -875,11 +880,14 @@
           let touch_history_record = {
                                       "timestamp": Date.now(),
                                       "x": touch_info.clientX,
-                                      "y": touch_info.clientY
+                                      "y": touch_info.clientY,
+                                      "type": "end"
                                      };
           
-        console.log(touch_history_record);
-          
+          canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
+          canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
+        
           //next touch info
           touches_index = touches_index + 1;
         }
@@ -897,11 +905,13 @@
           let touch_history_record = {
                                       "timestamp": Date.now(),
                                       "x": touch_info.clientX,
-                                      "y": touch_info.clientY
+                                      "y": touch_info.clientY,
+                                      "type": "cancel"
                                      };
           
-        console.log(touch_history_record);
-          
+          canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
+          canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
           //next touch info
           touches_index = touches_index + 1;
         }
