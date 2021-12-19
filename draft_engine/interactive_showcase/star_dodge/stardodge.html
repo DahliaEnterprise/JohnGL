@@ -72,11 +72,7 @@
         var resource_management_status = 0;
         
         var image_resource_management_status = 0;
-        var image_resources = {
-                                "start_image": {
-                                                 "image_filelocation": "./images/start_image.png"
-                                               }
-                              };
+        
         /* Tobe loaded via external mechanism */
         /* models */
           /* placeholders for models (not all will be square) */
@@ -397,112 +393,79 @@
             major_scene_prestage = 0;
           }else if(major_scene_prestage == 0)
           {
-              if(micro_scene == 1)
-              {
-              	/*
-              //execute logic of major scene.
-                //increase scale of start image
-                  //determine time passed since animation start
-                  let time_passed_since_zoom_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.zoom_animation_start_timestamp;
-                  
-                  //determine current scale based on time factors.
-                  major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_scale_x_increments * time_passed_since_zoom_animation_start;
-                  major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_scale_y_increments * time_passed_since_zoom_animation_start;
-              
-                  //stop scaling when end timestamp has been reached.
-                  if(state_syncronization_timestamp >=  major_scene_one_states.start_image.zoom_animation_end_timestamp)
-                  {
-                    major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_target_scale_x;
-                    major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_target_scale_y;
-                  }
-                  
-                  
-                //reproduce the start image to the scaled state.
-                let start_image_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
-                let index = 0;
-                while(index < start_image_vertex_data.length)
+            if(micro_scene == 1)
+            {
+            	/*
+            //execute logic of major scene.
+              //increase scale of start image
+                //determine time passed since animation start
+                let time_passed_since_zoom_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.zoom_animation_start_timestamp;
+                
+                //determine current scale based on time factors.
+                major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_scale_x_increments * time_passed_since_zoom_animation_start;
+                major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_scale_y_increments * time_passed_since_zoom_animation_start;
+            
+                //stop scaling when end timestamp has been reached.
+                if(state_syncronization_timestamp >=  major_scene_one_states.start_image.zoom_animation_end_timestamp)
                 {
-                  start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
-                  start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
-                  
-                  //next index
-                  index = index + 4;
+                  major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_target_scale_x;
+                  major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_target_scale_y;
                 }
                 
                 
-                
-                //increment rotation of start image
-                  //determine time passed since animation start
-                  let time_passed_since_rotation_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.rotation_animation_start_timestamp;
-
-                  //determine current rotation based on time factors
-                  major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_rotation_z_increments * time_passed_since_rotation_animation_start;
-                  
-                  //stop rotating when end timestamp has been reached
-                  if(state_syncronization_timestamp >= major_scene_one_states.start_image.rotation_animation_end_timestamp)
-                  {
-                    major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_target_rotation_z;
-                  }
-               
-                  //reproduce the start image to the rotated state.
-                  index = 0;
-                  while(index < start_image_vertex_data.length)
-                  {
-                    let new_rotated_point = rotate_z_axis(start_image_vertex_data[index], start_image_vertex_data[index+1], major_scene_one_states.start_image.rotation_z);
-                    start_image_vertex_data[index] = new_rotated_point["x"];
-                    start_image_vertex_data[index+1] = new_rotated_point["y"];
-                    
-                    //next index
-                    index = index + 4;
-                  }
-                  
-                  //render state
-									generic_render_clear_screen();
-									generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
-					
-                  if(state_syncronization_timestamp >= major_scene_one_states.start_image.timestamp_to_start_stay_animation)
-                  {
-                  	//define syncronized state for stay "animation"
-				            major_scene_one_states.start_image.stay_start_timestamp = state_syncronization_timestamp;
-				            major_scene_one_states.start_image.stay_end_timestamp = major_scene_one_states.start_image.stay_start_timestamp + major_scene_one_states.start_image.stay_total_milliseconds;
-				            
-                    micro_scene = 2;
-                  }
-			          */
-              }else if(micro_scene == 2)
+              //reproduce the start image to the scaled state.
+              let start_image_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
+              let index = 0;
+              while(index < start_image_vertex_data.length)
               {
-               //render the start image as constantly there with out (animated) movement, scale, or rotation.
-
-                //reproduce the start image to the scaled state.
-                //This is nessecary as a reminder that the original model might not be the end result scaled size.
-                let start_image_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
-                let index = 0;
-                while(index < start_image_vertex_data.length)
-                {
-                  start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
-                  start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
-                  
-                  //next index
-                  index = index + 4;
-                }
+                start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
+                start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
                 
-	               //render state
-									generic_render_clear_screen();
-									generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
-					
-	                
-	              //Determine if this microscene is finished.
-	              if(state_syncronization_timestamp >=  major_scene_one_states.start_image.timestamp_to_start_stay_animation)
-	              {
-		              //Micro scene is finished start the begining of game
-		              micro_scene = 3;
-	              }
-              }else if(micro_scene == 3)
-              {
-               //Start of game begins here.
-               //console.log(3);
-               
+                //next index
+                index = index + 4;
               }
+              
+              
+              
+              //increment rotation of start image
+                //determine time passed since animation start
+                let time_passed_since_rotation_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.rotation_animation_start_timestamp;
+
+                //determine current rotation based on time factors
+                major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_rotation_z_increments * time_passed_since_rotation_animation_start;
+                
+                //stop rotating when end timestamp has been reached
+                if(state_syncronization_timestamp >= major_scene_one_states.start_image.rotation_animation_end_timestamp)
+                {
+                  major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_target_rotation_z;
+                }
+             
+                //reproduce the start image to the rotated state.
+                index = 0;
+                while(index < start_image_vertex_data.length)
+                {
+                  let new_rotated_point = rotate_z_axis(start_image_vertex_data[index], start_image_vertex_data[index+1], major_scene_one_states.start_image.rotation_z);
+                  start_image_vertex_data[index] = new_rotated_point["x"];
+                  start_image_vertex_data[index+1] = new_rotated_point["y"];
+                  
+                  //next index
+                  index = index + 4;
+                }
+                
+                //render state
+								generic_render_clear_screen();
+								generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
+				
+                if(state_syncronization_timestamp >= major_scene_one_states.start_image.timestamp_to_start_stay_animation)
+                {
+                	//define syncronized state for stay "animation"
+			            major_scene_one_states.start_image.stay_start_timestamp = state_syncronization_timestamp;
+			            major_scene_one_states.start_image.stay_end_timestamp = major_scene_one_states.start_image.stay_start_timestamp + major_scene_one_states.start_image.stay_total_milliseconds;
+			            
+                  micro_scene = 2;
+                }
+		          */
+            }
           }
         }
         /* end of determination of scene */
