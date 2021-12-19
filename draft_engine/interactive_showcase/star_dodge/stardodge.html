@@ -90,23 +90,18 @@
                                                       "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates"
                                                     };
           /* models */
-          var model_start_image = {
+          var model_star_image = {
                                     "vertex_and_texture_coordinate_data": null, 
                                     "image_filelocation": "./images/star.png",
-                                    "image_resources_id": "star"
+                                    "image_resource_id": "star"
                                   };
         /* end of models */
         
         /* list of shaders */
           var generic_shader_for_two_dimensional_square_model = {
-                                                                  "vertex_shader_source_filelocation": "./shaders/vertex_shaders/generic_one_by_one_square.vertex_shader",
-                                                                  "fragment_shader_source_filelocation": "./shaders/fragment_shaders/generic_one_by_one_square.fragment_shader",
                                                                   "compiled_shader_program": null
-          };
-         // var texture_vertex_shader = null;
-         // var texture_fragment_shader = null;
-         // var texture_shader_program = null;
-        /* list of shaders */
+          																											};
+        /* end list of shaders */
         
         /* reuseable handleable variable(s) for the drawing process */
         var drawing_process_uniform_sampler_index_zero = null;
@@ -115,37 +110,12 @@
         /* major scene states */
         var timestamp_last_frame_fully_rendered = null;
         var major_scene_one_states = {
-                                        "start_image": {
-                                                          "scale_x": 0.0,
-                                                          "scale_y": 0.0,
-                                                          "zoom_animation_target_scale_x": 1.0,
-                                                          "zoom_animation_target_scale_y": 1.0,
-                                                          "zoom_animation_start_timestamp": null,
-                                                          "zoom_animation_end_timestamp": null,
-                                                          "zoom_animation_millisecond_duration": 1000,
-                                                          "zoom_animation_scale_x_increments": null,
-                                                          "zoom_animation_scale_y_increments": null,
-                                                          
-                                                          "rotation_z": 0.000000,
-                                                          "rotation_animation_target_rotation_z": 12.566,
-                                                          "rotation_animation_start_timestamp": null,
-                                                          "rotation_animation_end_timestamp": null,
-                                                          "rotation_animation_millisecond_duration": 2000,
-                                                          "rotation_animation_rotation_z_increments": null,
-                                                          
-                                                          "total_milliseconds_to_wait_for_zoom_and_rotation_animation": 2000,
-                                                          
-                                                          "timestamp_to_start_stay_animation": null,
-                                                          "stay_start_timestamp": null,
-                                                          "stay_end_timestamp": null,
-                                                          "stay_total_milliseconds": 2000
-                                                        }
-                                         
+                                        "stars":{
+                                										"last_id_used": -1,
+                                										"list_of_stars":null
+                                  								}
                                      };
                                      
-        var major_scene_two_states = {
-        																
-        													  	};
         /* end of major scene states */
         /* End Tobe loaded via external mechanism */
 
@@ -389,7 +359,7 @@
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data_loaded = true;
             
             //Set model start image vertex coordinates and texture coordinates.
-            model_start_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
+            model_star_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
 
             //move on to major scene prestage seven.
             major_scene_prestage = 7;
@@ -405,14 +375,14 @@
             if(image_resource_management_status == 0)
             {
               //insert new img tag to manage the image data.
-              reuseable_image_data.innerHTML += '<img id="start_image" style=""></img>';
-              let start_image_to_upload = document.getElementById("start_image");
-              start_image_to_upload.onload = function()
+              reuseable_image_data.innerHTML += '<img id="'+model_star_image.image_resource_id+'" style=""></img>';
+              let star_image_to_upload = document.getElementById(""+model_star_image.image_resource_id);
+              star_image_to_upload.onload = function()
               {
                 image_resource_management_status = 1;
               };
               
-              start_image_to_upload.src = model_start_image.image_filelocation;
+              star_image_to_upload.src = model_star_image.image_filelocation;
               
             }else if(image_resource_management_status == 1)
             {
@@ -421,27 +391,15 @@
             }
           }else if(major_scene_prestage == 8)
           {
-          	//determine animation states.
-            major_scene_one_states.start_image.zoom_animation_start_timestamp = state_syncronization_timestamp;
-            major_scene_one_states.start_image.zoom_animation_end_timestamp = state_syncronization_timestamp + major_scene_one_states.start_image.zoom_animation_millisecond_duration;
-           
-            major_scene_one_states.start_image.zoom_animation_scale_x_increments = major_scene_one_states.start_image.zoom_animation_target_scale_x / major_scene_one_states.start_image.zoom_animation_millisecond_duration;
-            major_scene_one_states.start_image.zoom_animation_scale_y_increments = major_scene_one_states.start_image.zoom_animation_target_scale_y / major_scene_one_states.start_image.zoom_animation_millisecond_duration;
-            
-            major_scene_one_states.start_image.rotation_animation_start_timestamp = state_syncronization_timestamp;
-            major_scene_one_states.start_image.rotation_animation_end_timestamp = state_syncronization_timestamp + major_scene_one_states.start_image.rotation_animation_millisecond_duration;
-            
-            major_scene_one_states.start_image.rotation_animation_rotation_z_increments = major_scene_one_states.start_image.rotation_animation_target_rotation_z / major_scene_one_states.start_image.rotation_animation_millisecond_duration;
-          
-            major_scene_one_states.start_image.timestamp_to_start_stay_animation = state_syncronization_timestamp + major_scene_one_states.start_image.total_milliseconds_to_wait_for_zoom_and_rotation_animation;
-          
-           // console.log(major_scene_one_states);
+          	major_scene_one_states.list_of_stars = {};
+          	
             //move on to the major scene logic
             major_scene_prestage = 0;
           }else if(major_scene_prestage == 0)
           {
               if(micro_scene == 1)
               {
+              	/*
               //execute logic of major scene.
                 //increase scale of start image
                   //determine time passed since animation start
@@ -460,7 +418,7 @@
                   
                   
                 //reproduce the start image to the scaled state.
-                let start_image_vertex_data = new Float32Array(model_start_image.vertex_and_texture_coordinate_data);
+                let start_image_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
                 let index = 0;
                 while(index < start_image_vertex_data.length)
                 {
@@ -510,41 +468,7 @@
 				            
                     micro_scene = 2;
                   }
-			    
-              }else if(micro_scene == 2)
-              {
-               //render the start image as constantly there with out (animated) movement, scale, or rotation.
-
-                //reproduce the start image to the scaled state.
-                //This is nessecary as a reminder that the original model might not be the end result scaled size.
-                let start_image_vertex_data = new Float32Array(model_start_image.vertex_and_texture_coordinate_data);
-                let index = 0;
-                while(index < start_image_vertex_data.length)
-                {
-                  start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
-                  start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
-                  
-                  //next index
-                  index = index + 4;
-                }
-                
-	               //render state
-									generic_render_clear_screen();
-									generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
-					
-	                
-	              //Determine if this microscene is finished.
-	              if(state_syncronization_timestamp >=  major_scene_one_states.start_image.timestamp_to_start_stay_animation)
-	              {
-		              //Micro scene is finished start the begining of game
-		              micro_scene = 3;
-	              }
-              }else if(micro_scene == 3)
-              {
-               //Start of game begins here.
-               //console.log(3);
-               
-              }
+			          */
           }
         }
         /* end of determination of scene */
