@@ -469,6 +469,40 @@
                     micro_scene = 2;
                   }
 			          */
+              }else if(micro_scene == 2)
+              {
+               //render the start image as constantly there with out (animated) movement, scale, or rotation.
+
+                //reproduce the start image to the scaled state.
+                //This is nessecary as a reminder that the original model might not be the end result scaled size.
+                let start_image_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
+                let index = 0;
+                while(index < start_image_vertex_data.length)
+                {
+                  start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
+                  start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
+                  
+                  //next index
+                  index = index + 4;
+                }
+                
+	               //render state
+									generic_render_clear_screen();
+									generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
+					
+	                
+	              //Determine if this microscene is finished.
+	              if(state_syncronization_timestamp >=  major_scene_one_states.start_image.timestamp_to_start_stay_animation)
+	              {
+		              //Micro scene is finished start the begining of game
+		              micro_scene = 3;
+	              }
+              }else if(micro_scene == 3)
+              {
+               //Start of game begins here.
+               //console.log(3);
+               
+              }
           }
         }
         /* end of determination of scene */
