@@ -356,6 +356,10 @@
               texture_coordinate_data_index = texture_coordinate_data_index + 2;
             }
             
+            //clear ram/short-term-fast memory.
+            model_placeholder_one_by_one_square.vertex_coordinate_data = null;
+            model_placeholder_one_by_one_square.texture_coordinate_data = null;
+            
             //set the compiled vertex and texture coordinates to the model placeholder.
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data = compiled_texture_vertex;
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data_loaded = true;
