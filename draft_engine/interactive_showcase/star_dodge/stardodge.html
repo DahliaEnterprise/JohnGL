@@ -91,6 +91,12 @@
                                     "image_filelocation": "./images/star.png",
                                     "image_resource_id": "star"
                                   };
+                                  
+          var model_ship_image = {
+                                    "vertex_and_texture_coordinate_data": null, 
+                                    "image_filelocation": "./images/ship.png",
+                                    "image_resource_id": "ship"
+         												 };
         /* end of models */
         
         /* list of shaders */
@@ -349,14 +355,17 @@
               vertex_coordinate_data_index = vertex_coordinate_data_index + 2;
               texture_coordinate_data_index = texture_coordinate_data_index + 2;
             }
-            console.log(compiled_texture_vertex);
+            
             //set the compiled vertex and texture coordinates to the model placeholder.
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data = compiled_texture_vertex;
             model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data_loaded = true;
             
-            //Set model start image vertex coordinates and texture coordinates.
+            //Set model star image vertex coordinates and texture coordinates.
             model_star_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
 
+						//Set model ship 
+						model_ship_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
+						
             //move on to major scene prestage seven.
             major_scene_prestage = 7;
             image_resource_management_status = 0;
@@ -382,11 +391,39 @@
               
             }else if(image_resource_management_status == 1)
             {
+            	//reset to start status
+							image_resource_management_status = 0;
+            	
               //move on to major scene prestage eight
               major_scene_prestage = 8;
             }
           }else if(major_scene_prestage == 8)
           {
+            /* 
+               major scene prestage eight
+               is to load the image(red,green,blue) data.
+            */
+            //download the image file to be used for the texture.
+            if(image_resource_management_status == 0)
+            {
+              //insert new img tag to manage the image data.
+              reuseable_image_data.innerHTML += '<img id="'+model_ship_image.image_resource_id+'" style=""></img>';
+              let ship_image_to_upload = document.getElementById(""+model_ship_image.image_resource_id);
+              ship_image_to_upload.onload = function()
+              {
+                image_resource_management_status = 1;
+              };
+              
+              ship_image_to_upload.src = model_ship_image.image_filelocation;
+              
+            }else if(image_resource_management_status == 1)
+            {
+            	
+            }
+          	
+          }else if(major_scene_prestage == 9)
+          {
+          	//initialalize stars to dodge
           	major_scene_one_states.list_of_stars = {};
           	
             //move on to the major scene logic
