@@ -543,9 +543,20 @@
 		          */
 		          
 		          //begin simulate motion physics
-		          //set each star' next frame x and next frame y
-
-              //set ship' next frame x and next frame y
+		         		 //set each star' next frame x and next frame y
+								 let universal_speed_per_millisecond_glformat = 0.001;
+								 let star_ids = Object.keys(major_scene_one_states.stars);
+								 for(key in star_ids)
+								 {
+								 		if(star_ids.hasOwnProperty(key) == true)
+								 		{
+								 			//make star go towards bottom of screen
+										  major_scene_one_states.stars[key]["next_frame_y"] = major_scene_one_states.stars[key]["next_frame_y"] - (universal_speed_per_millisecond_glformat * milliseconds_since_last_fully_rendered_frame);
+								 		}
+								 }
+								 
+             		 //set ship' next frame x and next frame y
+								 		
 
               //end of simulate motions physics
 
