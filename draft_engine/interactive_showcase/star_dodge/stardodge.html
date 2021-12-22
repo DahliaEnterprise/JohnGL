@@ -428,10 +428,9 @@
               //move on to major scene prestage eight
               major_scene_prestage = 9;
             }
-          	console.log("yes1");
           }else if(major_scene_prestage == 9)
           {
-          	console.log("yes");
+          	
           	//initialalize stars to dodge
           	major_scene_one_states.stars.list_of_stars = {};
           	major_scene_one_states.stars.last_id_used = -1;
@@ -452,19 +451,22 @@
             	}
             	
             	major_scene_one_states.stars.last_id_used = major_scene_one_states.stars.last_id_used + 1;
-            	major_scene_one_states.stars.list_of_stars[""+major_scene_one_states.stars.last_id_used] = {
-            																																								"x": star_x,
-            																																								"y": star_y
-            																																							};
-            	
+            	major_scene_one_states.stars.list_of_stars[""+major_scene_one_states.starslast_id_used] = {
+							            																																								"current_x": star_x,
+							            																																								"current_y": star_y,
+							            																																								"next_frame_x": star_x,
+							            																																								"next_frame_y": star_y
+							            																																							};
+							            	
             	//next star
 							index = index + 1;
             }
             
-          	console.log(major_scene_one_states);
           	
             //move on to the major scene logic
             major_scene_prestage = 0;
+            
+            
           }else if(major_scene_prestage == 0)
           {
             if(micro_scene == 1)
@@ -539,6 +541,17 @@
                   micro_scene = 2;
                 }
 		          */
+		          
+		          //begin simulate motion physics
+		          //set each star' next frame x and next frame y
+
+              //set ship' next frame x and next frame y
+
+              //end of simulate motions physics
+
+              //begin hit test logic (this is where physics simulation continues however bounce and colission logic is applied here)
+           
+              //end hit test logic
             }
           }
         }
