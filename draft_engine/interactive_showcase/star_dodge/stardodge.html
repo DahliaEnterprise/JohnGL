@@ -208,7 +208,7 @@
             
             
                 //generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
-                 generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
+                generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
                 interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model.compiled_shader_program, texture_vertex_shader);
                 interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model.compiled_shader_program, texture_fragment_shader);
                 interface_to_opengles_hardware.linkProgram(generic_shader_for_two_dimensional_square_model.compiled_shader_program);
@@ -395,7 +395,7 @@
               
             }else if(image_resource_management_status == 1)
             {
-            	//reset to start status
+            	//reset status
 							image_resource_management_status = 0;
             	
               //move on to major scene prestage eight
@@ -422,13 +422,46 @@
               
             }else if(image_resource_management_status == 1)
             {
+            	//reset to start status
+							image_resource_management_status = 0;
             	
+              //move on to major scene prestage eight
+              major_scene_prestage = 9;
             }
-          	
+          	console.log("yes1");
           }else if(major_scene_prestage == 9)
           {
+          	console.log("yes");
           	//initialalize stars to dodge
-          	major_scene_one_states.list_of_stars = {};
+          	major_scene_one_states.stars.list_of_stars = {};
+          	major_scene_one_states.stars.last_id_used = -1;
+          	
+          	//create stars in random positions to dodge
+            let star_y_generation_range_top = 1.0;
+            let star_y_generation_range_bottom = 0.0;
+            let total_stars = 10;
+            let index = 0;
+            while(index < total_stars)
+            {
+            	let star_x = Math.random();
+            	let star_y = Math.random();
+            	let make_star_y_negative = Math.random();
+            	if((make_star_y_negative * 100) > (0.50*100))
+            	{
+            		star_y = (0-star_y);
+            	}
+            	
+            	major_scene_one_states.stars.last_id_used = major_scene_one_states.stars.last_id_used + 1;
+            	major_scene_one_states.stars.list_of_stars[""+major_scene_one_states.stars.last_id_used] = {
+            																																								"x": star_x,
+            																																								"y": star_y
+            																																							};
+            	
+            	//next star
+							index = index + 1;
+            }
+            
+          	console.log(major_scene_one_states);
           	
             //move on to the major scene logic
             major_scene_prestage = 0;
