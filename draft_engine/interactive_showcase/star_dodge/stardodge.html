@@ -438,7 +438,7 @@
           	//create stars in random positions to dodge
             let star_y_generation_range_top = 1.0;
             let star_y_generation_range_bottom = 0.0;
-            let total_stars = 10;
+            let total_stars = 1;
             let index = 0;
             while(index < total_stars)
             {
@@ -451,7 +451,7 @@
             	}
             	
             	major_scene_one_states.stars.last_id_used = major_scene_one_states.stars.last_id_used + 1;
-            	major_scene_one_states.stars.list_of_stars[""+major_scene_one_states.starslast_id_used] = {
+            	major_scene_one_states.stars.list_of_stars[""+major_scene_one_states.stars.last_id_used] = {
 							            																																								"current_x": star_x,
 							            																																								"current_y": star_y,
 							            																																								"next_frame_x": star_x,
@@ -462,7 +462,7 @@
 							index = index + 1;
             }
             
-          	
+            
             //move on to the major scene logic
             major_scene_prestage = 0;
             
@@ -545,18 +545,22 @@
 		          //begin simulate motion physics
 		         		 //set each star' next frame x and next frame y
 								 let universal_speed_per_millisecond_glformat = 0.001;
-								 let star_ids = Object.keys(major_scene_one_states.stars);
-								 for(key in star_ids)
+								 let star_ids = Object.keys(major_scene_one_states.stars.list_of_stars);
+								
+								 for(const key in star_ids)
 								 {
 								 		if(star_ids.hasOwnProperty(key) == true)
 								 		{
 								 			//make star go towards bottom of screen
-										  major_scene_one_states.stars[key]["next_frame_y"] = major_scene_one_states.stars[key]["next_frame_y"] - (universal_speed_per_millisecond_glformat * milliseconds_since_last_fully_rendered_frame);
+										  //console.log(major_scene_one_states.stars.list_of_stars[key]["next_frame_y"]);
+										  major_scene_one_states.stars.list_of_stars[key]["next_frame_y"] = major_scene_one_states.stars.list_of_stars[key]["next_frame_y"] - (universal_speed_per_millisecond_glformat * milliseconds_since_last_fully_rendered_frame);
+										  //console.log(major_scene_one_states.stars[star_id[key]]["next_frame_y"]);
 								 		}
 								 }
 								 
              		 //set ship' next frame x and next frame y
-								 		
+								 let universal_max_speed_per_millisecond_glformat = 0.01;
+								 
 
               //end of simulate motions physics
 
@@ -614,6 +618,7 @@
        
           let timestamp_since_last_frame = sorted_frames_per_second.slice(-1);
           let timepassed_since_last_frame = Date.now() - timestamp_since_last_frame;
+          //next cycle must be atleast one millisecond in order for motion/physics systems to occur(when using time passed as a calculation component)
           let next_cycle = null;
           if(timepassed_since_last_frame < frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate)
           {
@@ -852,6 +857,8 @@
           
           canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
           canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
+          console.log(touch_history_record);
         
           //next touch info
           touches_index = touches_index + 1;
