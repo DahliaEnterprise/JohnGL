@@ -544,7 +544,7 @@
 		          
 		          //begin simulate motion physics
 		         		 //set each star' next frame x and next frame y
-								 let universal_speed_per_millisecond_glformat = 0.001;
+								 let universal_speed_per_millisecond_glformat = 0.00001;
 								 let star_ids = Object.keys(major_scene_one_states.stars.list_of_stars);
 								
 								 for(const key in star_ids)
@@ -559,7 +559,32 @@
 								 }
 								 
              		 //set ship' next frame x and next frame y
-								 let universal_max_speed_per_millisecond_glformat = 0.01;
+								     //get last "move" or "start" touch position.
+								     let detected_touch_position_x = null;//to do xhange to ship current position.
+								     let touch_ids = Object.keys(canvas_touch["history"]);
+								     
+								     for(const key in touch_ids)
+								     {
+									     	if(touch_ids.hasOwnProperty(key) == true)
+									     	{
+									     		//console.log(canvas_touch["history"][key]);
+									     		let applicable_touch_type = 0;
+									     		if(canvas_touch["history"][key]["type"] == "start")
+									     		{
+									     			applicable_touch_type = 1;
+									     		}else if(canvas_touch["history"][key]["type"] == "move")
+									     		{
+									     			applicable_touch_type = 1;
+									     		}
+									     		if(applicable_touch_type == 1)
+									     		{
+									     			detected_touch_position_x = canvas_touch["history"][key]["x"];
+									     		}
+									     	}
+								     }
+								     
+								     //do set
+								 		 let universal_max_speed_per_millisecond_glformat = 0.001;
 								 
 
               //end of simulate motions physics
@@ -631,6 +656,7 @@
           }
          
           //trigger another cycle of the engine.
+          next_cycle = 1000;
           setTimeout(cycle_engine, next_cycle);
       }
       
@@ -858,7 +884,6 @@
           canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
           canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
         
-          console.log(touch_history_record);
         
           //next touch info
           touches_index = touches_index + 1;
@@ -955,7 +980,7 @@
         interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
       }
 
-      function generic_rendering_render_two_dimensional_model(vertex_coordinate_and_texture_coordinate_data, shader_program, img_id_to_be_used_as_texture, total_point_coordinate_and_texture_coordinate_pairs)
+      function generic_render_two_dimensional_model(vertex_coordinate_and_texture_coordinate_data, shader_program, img_id_to_be_used_as_texture, total_point_coordinate_and_texture_coordinate_pairs)
       {
          /*The function assumes each model render options are compatible per each one usage
           that is to say the developer must be aware of OpenGL ES drawing and shader rendering operations
