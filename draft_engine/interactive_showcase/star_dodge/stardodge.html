@@ -595,7 +595,14 @@
 								 		     if((detected_touch_position_x * 1000000) < (half_of_detectable_touch_position * 1000000))
 								 		     {
 								 		         detected_touch_position_x_openglformat = (0 - (1.0 - (canvas_touch_to_opengl_coordinate_space_resolution * detected_touch_position_x)));
-								 		         console.log(detected_touch_position_x_openglformat);
+								 		        
+								 		     }else if((detected_touch_position_x * 1000000) == (half_of_detectable_touch_position * 1000000))
+								 		     {
+								 		         detected_touch_position_x_openglformat = 0.00;
+								 		     }else if((detected_touch_position_x * 1000000) > (half_of_detectable_touch_position * 1000000))
+								 		     {
+								 		         detected_touch_position_x_openglformat = ((canvas_touch_to_opengl_coordinate_space_resolution * detected_touch_position_x) - 1.0);
+								 		        
 								 		     }
 								 		     
 								 		 let universal_max_speed_per_millisecond_glformat = 0.001;
