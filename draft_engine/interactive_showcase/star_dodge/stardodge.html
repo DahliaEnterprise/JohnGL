@@ -576,6 +576,7 @@
 									     		{
 									     			applicable_touch_type = 1;
 									     		}
+									     		
 									     		if(applicable_touch_type == 1)
 									     		{
 									     			detected_touch_position_x = canvas_touch["history"][key]["x"];
@@ -584,8 +585,21 @@
 								     }
 								     
 								     //do set
+								 		     //convert touch position to opengl coordinate space format.
+								 		     let canvas_touch_to_opengl_coordinate_space_leftside_size = 1.0;
+								 		     let canvas_touch_to_opengl_coordinate_space_rightside_size = 1.0;
+								 		     let canvas_touch_to_opengl_coordinate_space_resolution = ((canvas_touch_to_opengl_coordinate_space_leftside_size + canvas_touch_to_opengl_coordinate_space_rightside_size) / canvas_element_width);
+								 		     let half_of_detectable_touch_position = (canvas_element_width * 0.50);
+								 		     
+								 		     let detected_touch_position_x_openglformat = null;
+								 		     if((detected_touch_position_x * 1000000) < (half_of_detectable_touch_position * 1000000))
+								 		     {
+								 		         detected_touch_position_x_openglformat = (0 - (1.0 - (canvas_touch_to_opengl_coordinate_space_resolution * detected_touch_position_x)));
+								 		         console.log(detected_touch_position_x_openglformat);
+								 		     }
+								 		     
 								 		 let universal_max_speed_per_millisecond_glformat = 0.001;
-								 
+								 		 
 
               //end of simulate motions physics
 
