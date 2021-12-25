@@ -641,6 +641,11 @@
               //begin hit test logic (this is where physics simulation continues however bounce and colission logic is applied here)
            
               //end hit test logic
+
+              //begin temporary drawing procedure
+              generic_render_clear_screen();
+              generic_render_two_dimensional_model(model_ship_image.vertex_and_texture_coordinate_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
+              //end temporary drawing procedure
             }
           }
         }
@@ -704,8 +709,7 @@
             next_cycle = frames_per_second.near_constants.minimum_in_between_time_milliseconds;
           }
          
-          //trigger another cycle of the engine.
-          next_cycle = 1000;
+          //trigger another cycle of the engine
           setTimeout(cycle_engine, next_cycle);
       }
       
