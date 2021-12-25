@@ -114,8 +114,14 @@
         var major_scene_one_states = {
                                         "stars":{
                                 										"last_id_used": -1,
-                                										"list_of_stars":null
-                                  								}
+                                										"list_of_stars": null
+                                  								},
+                                  		  "ship":{
+                                  		  	         "current_x": null,
+                                  		  	         "current_y": null,
+                                  		  	         "next_frame_x": null,
+                                  		  	         "next_frame_y": null
+                                  		         }
                                      };
                                      
         /* end of major scene states */
@@ -435,6 +441,11 @@
           	major_scene_one_states.stars.list_of_stars = {};
           	major_scene_one_states.stars.last_id_used = -1;
           	
+          	major_scene_one_states.ship.current_x = 0.00;
+          	major_scene_one_states.ship.current_y = -0.8;
+          	major_scene_one_states.ship.next_frame_x = major_scene_one_states.ship.current_x;
+          	major_scene_one_states.ship.next_frame_x = major_scene_one_states.ship.current_y;
+          	
           	//create stars in random positions to dodge
             let star_y_generation_range_top = 1.0;
             let star_y_generation_range_bottom = 0.0;
@@ -575,6 +586,9 @@
 									     		}else if(canvas_touch["history"][key]["type"] == "move")
 									     		{
 									     			applicable_touch_type = 1;
+									     		}else if(canvas_touch["history"][key]["type"] == "end")
+									     		{
+									     			applicable_touch_type = 1;
 									     		}
 									     		
 									     		if(applicable_touch_type == 1)
@@ -605,7 +619,9 @@
 								 		        
 								 		     }
 								 		     
-								 		 let universal_max_speed_per_millisecond_glformat = 0.001;
+								 		     //determine next frame x to ship
+								 			   let universal_max_speed_per_millisecond_glformat = 0.001;
+								 		     
 								 		 
 
               //end of simulate motions physics
