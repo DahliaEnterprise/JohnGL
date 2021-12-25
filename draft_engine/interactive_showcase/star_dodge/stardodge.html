@@ -444,7 +444,7 @@
           	major_scene_one_states.ship.current_x = 0.00;
           	major_scene_one_states.ship.current_y = -0.8;
           	major_scene_one_states.ship.next_frame_x = major_scene_one_states.ship.current_x;
-          	major_scene_one_states.ship.next_frame_x = major_scene_one_states.ship.current_y;
+          	major_scene_one_states.ship.next_frame_y = major_scene_one_states.ship.current_y;
           	
           	//create stars in random positions to dodge
             let star_y_generation_range_top = 1.0;
@@ -643,8 +643,37 @@
               //end hit test logic
 
               //begin temporary drawing procedure
-              generic_render_clear_screen();
-              generic_render_two_dimensional_model(model_ship_image.vertex_and_texture_coordinate_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
+                  //clear frame
+                  generic_render_clear_screen();
+                  
+                  //draw ship
+                      //reproduce the ship image to the scaled state.
+				              let intended_ship_vertex_data = new Float32Array(model_ship_image.vertex_and_texture_coordinate_data);
+				              let index = 0;
+				              while(index < intended_ship_vertex_data.length)
+				              {
+				                intended_ship_vertex_data[index] = scale_x(intended_ship_vertex_data[index], 0.5);
+				                intended_ship_vertex_data[index+1] = scale_y(intended_ship_vertex_data[index+1],  0.2);
+				                
+				                //next index
+				                index = index + 4;
+				              }
+					              
+				              //reproduce the ship to the next frame x and next frame y position
+				              index = 0;
+				              while(index < intended_ship_vertex_data.length)
+				              {
+				                intended_ship_vertex_data[index] = (intended_ship_vertex_data[index] + major_scene_one_states.ship.next_frame_x);
+				                intended_ship_vertex_data[index+1] = (intended_ship_vertex_data[index+1] + major_scene_one_states.ship.next_frame_y);
+				                
+				                //next index
+				                index = index + 4;
+				              }
+                      
+				              //do render of ship
+              		    generic_render_two_dimensional_model(intended_ship_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
+              		    
+              		    
               //end temporary drawing procedure
             }
           }
