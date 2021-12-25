@@ -557,15 +557,14 @@
 		         		 //set each star' next frame x and next frame y
 								 let universal_speed_per_millisecond_glformat = 0.00001;
 								 let star_ids = Object.keys(major_scene_one_states.stars.list_of_stars);
-								
+						
 								 for(const key in star_ids)
 								 {
 								 		if(star_ids.hasOwnProperty(key) == true)
 								 		{
 								 			//make star go towards bottom of screen
-										  //console.log(major_scene_one_states.stars.list_of_stars[key]["next_frame_y"]);
 										  major_scene_one_states.stars.list_of_stars[key]["next_frame_y"] = major_scene_one_states.stars.list_of_stars[key]["next_frame_y"] - (universal_speed_per_millisecond_glformat * milliseconds_since_last_fully_rendered_frame);
-										  //console.log(major_scene_one_states.stars[star_id[key]]["next_frame_y"]);
+										
 								 		}
 								 }
 								 
@@ -639,12 +638,65 @@
               //end of simulate motions physics
 
               //begin hit test logic (this is where physics simulation continues however bounce and colission logic is applied here)
-           
+							 
+							 
               //end hit test logic
+
+              //begin commit current x and current y as their respective next frame x and next frame y.
+                  //commit star position
+		              for(const key in star_ids)
+									 {
+									 		if(star_ids.hasOwnProperty(key) == true)
+									 		{
+									 			//commit star position
+											  major_scene_one_states["stars"]["list_of_stars"][key]["current_x"] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_x"];
+											  major_scene_one_states["stars"]["list_of_stars"][key]["current_y"] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_y"];
+									 		}
+									 }
+                  
+                  
+                  //commit ship position
+                  major_scene_one_states["ship"]["current_x"] = major_scene_one_states["ship"]["next_frame_x"];
+                  major_scene_one_states["ship"]["current_y"] = major_scene_one_states["ship"]["next_frame_y"];
+                  
+              //end commit current x and current y as their respective next frame x and next frame y.
 
               //begin temporary drawing procedure
                   //clear frame
                   generic_render_clear_screen();
+                  
+                  //draw star
+                  for(const key in star_ids)
+									 {
+									 		if(star_ids.hasOwnProperty(key) == true)
+									 		{
+									 		    //reproduce the star image to the scales state.
+						              let intended_star_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
+						              let index = 0;
+						              /*while(index < intended_star_vertex_data.length)
+						              {
+						                intended_star_vertex_data[index] = scale_x(intended_star_vertex_data[index], 1.0);
+						                intended_star_vertex_data[index+1] = scale_y(intended_star_vertex_data[index+1], 1.0);
+						                
+						                //next index
+						                index = index + 4;
+						              }*/
+						              
+									 		    //reproduce the star image to the next frame x and next frame y.
+						             /* index = 0;
+						              while(index < intended_star_vertex_data.length)
+						              {
+						                intended_star_vertex_data[index] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_x"];
+						                intended_star_vertex_data[index+1] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_y"];
+						                
+						                //next index
+						                index = index + 4;
+						              }*/
+									 		    
+									 		    //do draw of star
+                          generic_render_two_dimensional_model(intended_star_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "star", 6);
+									 		}
+									 }
                   
                   //draw ship
                       //reproduce the ship image to the scaled state.
