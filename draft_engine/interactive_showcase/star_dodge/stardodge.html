@@ -120,7 +120,9 @@
                                   		  	         "current_x": null,
                                   		  	         "current_y": null,
                                   		  	         "next_frame_x": null,
-                                  		  	         "next_frame_y": null
+                                  		  	         "next_frame_y": null,
+                                  		  	         "opengl_vertex_buffer": null,
+                                  		  	         "opengl_texture_buffer": null
                                   		         }
                                      };
                                      
@@ -466,7 +468,9 @@
 							            																																								"current_x": star_x,
 							            																																								"current_y": star_y,
 							            																																								"next_frame_x": star_x,
-							            																																								"next_frame_y": star_y
+							            																																								"next_frame_y": star_y,
+							            																																								"opengl_vertex_buffer": null,
+							            																																								"openhl_texture_buffer": null
 							            																																							};
 							            	
             	//next star
@@ -673,17 +677,17 @@
 									 		    //reproduce the star image to the scales state.
 						              let intended_star_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
 						              let index = 0;
-						              /*while(index < intended_star_vertex_data.length)
+						              while(index < intended_star_vertex_data.length)
 						              {
 						                intended_star_vertex_data[index] = scale_x(intended_star_vertex_data[index], 1.0);
 						                intended_star_vertex_data[index+1] = scale_y(intended_star_vertex_data[index+1], 1.0);
 						                
 						                //next index
 						                index = index + 4;
-						              }*/
+						              }
 						              
 									 		    //reproduce the star image to the next frame x and next frame y.
-						             /* index = 0;
+						              index = 0;
 						              while(index < intended_star_vertex_data.length)
 						              {
 						                intended_star_vertex_data[index] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_x"];
@@ -691,7 +695,7 @@
 						                
 						                //next index
 						                index = index + 4;
-						              }*/
+						              }
 									 		    
 									 		    //do draw of star
                           generic_render_two_dimensional_model(intended_star_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "star", 6);
@@ -723,7 +727,7 @@
 				              }
                       
 				              //do render of ship
-              		    generic_render_two_dimensional_model(intended_ship_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
+              		    //generic_render_two_dimensional_model(intended_ship_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
               		    
               		    
               //end temporary drawing procedure
@@ -1165,6 +1169,11 @@
            //tell gpu what vertex to draw now that the texture to draw with it has been activated.
            interface_to_opengles_hardware.useProgram(shader_program);
            interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, total_point_coordinate_and_texture_coordinate_pairs);
+           
+           //delete buffers
+          // interface_to_opengles_hardware.deleteBuffer(triangle_and_texture_positions_vertex_buffer);
+           //interface_to_opengles_hardware.deleteTexture(gpu_image_handle);
+           
           
       }
       /* end of generic rendering of models on scene functions */
