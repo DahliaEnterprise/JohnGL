@@ -609,21 +609,33 @@
 								 		     if((detected_touch_position_x * 1000000) < (half_of_detectable_touch_position * 1000000))
 								 		     {
 								 		         detected_touch_position_x_openglformat = (0 - (1.0 - (canvas_touch_to_opengl_coordinate_space_resolution * detected_touch_position_x)));
-								 		        
-								 		     }else if((detected_touch_position_x * 1000000) == (half_of_detectable_touch_position * 1000000))
-								 		     {
-								 		         detected_touch_position_x_openglformat = 0.00;
 								 		     }else if((detected_touch_position_x * 1000000) > (half_of_detectable_touch_position * 1000000))
 								 		     {
 								 		         detected_touch_position_x_openglformat = ((canvas_touch_to_opengl_coordinate_space_resolution * detected_touch_position_x) - 1.0);
-								 		        
+								 		     }else if((detected_touch_position_x * 1000000) == (half_of_detectable_touch_position * 1000000))
+								 		     {
+								 		         detected_touch_position_x_openglformat = 0.00;
 								 		     }
 								 		     
 								 		     //determine next frame x to ship
 								 			   let universal_max_speed_per_millisecond_glformat = 0.001;
-								 		     
-								 		 
-
+								 		     if((detected_touch_position_x_openglformat * 1000000) > (major_scene_one_states.ship.current_x * 1000000))
+                         {
+                         	   //move closer to touch target, be exact when passing touch target.
+                             major_scene_one_states.ship.next_frame_x = (major_scene_one_states.ship.current_x + universal_max_speed_per_millisecond_glformat);
+                             if((major_scene_one_states.ship.next_frame_x * 1000000) > (detected_touch_position_x_openglformat * 1000000))
+                             {
+                                 major_scene_one_states.ship.next_frame_x = detected_touch_position_x_openglformat;
+                             }
+                         }else if((detected_touch_position_x_openglformat * 1000000) < (major_scene_one_states.ship.current_x * 1000000))
+								 		     {
+                         	   //move closer to touch target, be exact when passing touch target.
+                             major_scene_one_states.ship.next_frame_x = (major_scene_one_states.ship.current_x - universal_max_speed_per_millisecond_glformat);
+                             if((major_scene_one_states.ship.next_frame_x * 1000000) < (detected_touch_position_x_openglformat * 1000000))
+                             {
+                                 major_scene_one_states.ship.next_frame_x = detected_touch_position_x_openglformat;
+                             }
+								 		     }
               //end of simulate motions physics
 
               //begin hit test logic (this is where physics simulation continues however bounce and colission logic is applied here)
