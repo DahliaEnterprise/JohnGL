@@ -679,8 +679,8 @@
 						              let index = 0;
 						              while(index < intended_star_vertex_data.length)
 						              {
-						                intended_star_vertex_data[index] = scale_x(intended_star_vertex_data[index], 1.0);
-						                intended_star_vertex_data[index+1] = scale_y(intended_star_vertex_data[index+1], 1.0);
+						                intended_star_vertex_data[index] = scale_x(intended_star_vertex_data[index], 0.01);
+						                intended_star_vertex_data[index+1] = scale_y(intended_star_vertex_data[index+1], 0.01);
 						                
 						                //next index
 						                index = index + 4;
@@ -690,15 +690,21 @@
 						              index = 0;
 						              while(index < intended_star_vertex_data.length)
 						              {
-						                intended_star_vertex_data[index] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_x"];
-						                intended_star_vertex_data[index+1] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_y"];
-						                
+						                intended_star_vertex_data[index] = (intended_star_vertex_data[index] + major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_x"]);
+						                intended_star_vertex_data[index+1] = (intended_star_vertex_data[index+1] + major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_y"]);
+						                //console.log(intended_star_vertex_data[index]);
+						                console.log(intended_star_vertex_data[index+1]);
 						                //next index
 						                index = index + 4;
 						              }
 									 		    
 									 		    //do draw of star
-                          generic_render_two_dimensional_model(intended_star_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "star", 6);
+                          let opengl_buffers = generic_render_two_dimensional_model(intended_star_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "star", 6);
+                          major_scene_one_states["stars"]["list_of_stars"][key]["opengl_vertex_buffer"] = opengl_buffers["vertex_buffer_handle"];
+                          major_scene_one_states["stars"]["list_of_stars"][key]["opengl_texture_buffer"] = opengl_buffers["texture_buffer_handle"];
+                          
+                          //
+                          
 									 		}
 									 }
                   
@@ -727,9 +733,23 @@
 				              }
                       
 				              //do render of ship
-              		    //generic_render_two_dimensional_model(intended_ship_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
+              		    generic_render_two_dimensional_model(intended_ship_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
               		    
-              		    
+                  /* end of drawing
+                     begin delete buffers
+                  */
+                      //delete star buffers
+                      for(const key in star_ids)
+									    {
+										 		if(star_ids.hasOwnProperty(key) == true)
+										 		{
+										 			interface_to_opengles_hardware.deleteBuffer(major_scene_one_states["stars"]["list_of_stars"][key]["opengl_vertex_buffer"]);
+										 			interface_to_opengles_hardware.deleteTexture(major_scene_one_states["stars"]["list_of_stars"][key]["opengl_texture_buffer"]);
+										 		}
+									    }
+                  /* end delete buffer */
+                  
+                  
               //end temporary drawing procedure
             }
           }
@@ -1126,6 +1146,11 @@
           Any faults from using this function should indicate the creation of their own
           Non generic rendering function or code block(s).
          */
+          let output = {
+          							"vertex_buffer_handle":null,
+          							"texture_buffer_handle":null
+          			 			};
+         
       		//upload to gpu
      	    let triangle_and_texture_positions_vertex_buffer = interface_to_opengles_hardware.createBuffer();
           //tell gpu at assembly transistor level to open memory/buffer.
@@ -1170,11 +1195,11 @@
            interface_to_opengles_hardware.useProgram(shader_program);
            interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, total_point_coordinate_and_texture_coordinate_pairs);
            
-           //delete buffers
-          // interface_to_opengles_hardware.deleteBuffer(triangle_and_texture_positions_vertex_buffer);
-           //interface_to_opengles_hardware.deleteTexture(gpu_image_handle);
-           
+           //output buffer handles to keep alive(prevent dangling pointers)
+           output["vertex_buffer_handle"] = triangle_and_texture_positions_vertex_buffer;
+           output["texture_buffer_handle"] = gpu_image_handle;
           
+           return output;
       }
       /* end of generic rendering of models on scene functions */
     </script>
