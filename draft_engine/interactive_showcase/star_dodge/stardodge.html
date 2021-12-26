@@ -451,7 +451,7 @@
           	//create stars in random positions to dodge
             let star_y_generation_range_top = 1.0;
             let star_y_generation_range_bottom = 0.0;
-            let total_stars = 1;
+            let total_stars = 10;
             let index = 0;
             while(index < total_stars)
             {
@@ -674,6 +674,7 @@
 									 {
 									 		if(star_ids.hasOwnProperty(key) == true)
 									 		{
+									 	  		console.log(key);
 									 		    //reproduce the star image to the scales state.
 						              let intended_star_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
 						              let index = 0;
@@ -692,8 +693,7 @@
 						              {
 						                intended_star_vertex_data[index] = (intended_star_vertex_data[index] + major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_x"]);
 						                intended_star_vertex_data[index+1] = (intended_star_vertex_data[index+1] + major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_y"]);
-						                //console.log(intended_star_vertex_data[index]);
-						                console.log(intended_star_vertex_data[index+1]);
+						               
 						                //next index
 						                index = index + 4;
 						              }
@@ -702,8 +702,6 @@
                           let opengl_buffers = generic_render_two_dimensional_model(intended_star_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "star", 6);
                           major_scene_one_states["stars"]["list_of_stars"][key]["opengl_vertex_buffer"] = opengl_buffers["vertex_buffer_handle"];
                           major_scene_one_states["stars"]["list_of_stars"][key]["opengl_texture_buffer"] = opengl_buffers["texture_buffer_handle"];
-                          
-                          //
                           
 									 		}
 									 }
@@ -733,7 +731,9 @@
 				              }
                       
 				              //do render of ship
-              		    generic_render_two_dimensional_model(intended_ship_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
+              		    let opengl_buffers = generic_render_two_dimensional_model(intended_ship_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
+              		    major_scene_one_states["ship"]["opengl_vertex_buffer"] = opengl_buffers["vertex_buffer_handle"];
+              		    major_scene_one_states["ship"]["opengl_texture_buffer"] = opengl_buffers["texture_buffer_handle"];
               		    
                   /* end of drawing
                      begin delete buffers
@@ -747,6 +747,11 @@
 										 			interface_to_opengles_hardware.deleteTexture(major_scene_one_states["stars"]["list_of_stars"][key]["opengl_texture_buffer"]);
 										 		}
 									    }
+									    
+									    //delete ship buffers
+								 			interface_to_opengles_hardware.deleteBuffer(major_scene_one_states["ship"]["opengl_vertex_buffer"]);
+								 			interface_to_opengles_hardware.deleteTexture(major_scene_one_states["ship"]["opengl_texture_buffer"]);
+										
                   /* end delete buffer */
                   
                   
