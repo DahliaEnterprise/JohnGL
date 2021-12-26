@@ -457,10 +457,10 @@
             {
             	let star_x = Math.random();
             	let star_y = Math.random();
-            	let make_star_y_negative = Math.random();
-            	if((make_star_y_negative * 100) > (0.50*100))
+            	let make_star_x_negative = Math.random();
+            	if((make_star_x_negative * 1000000) > (0.50*1000000))
             	{
-            		star_y = (0-star_y);
+            		star_x = (0-star_x);
             	}
             	
             	major_scene_one_states.stars.last_id_used = major_scene_one_states.stars.last_id_used + 1;
@@ -559,7 +559,7 @@
 		          
 		          //begin simulate motion physics
 		         		 //set each star' next frame x and next frame y
-								 let universal_speed_per_millisecond_glformat = 0.00001;
+								 let universal_speed_per_millisecond_glformat = 0.001;
 								 let star_ids = Object.keys(major_scene_one_states.stars.list_of_stars);
 						
 								 for(const key in star_ids)
@@ -603,10 +603,11 @@
 								     
 								     //do set
 								 		     //convert touch position to opengl coordinate space format.
+								 		     /*
 								 		     let canvas_touch_to_opengl_coordinate_space_leftside_size = 1.0;
 								 		     let canvas_touch_to_opengl_coordinate_space_rightside_size = 1.0;
-								 		     let canvas_touch_to_opengl_coordinate_space_resolution = ((canvas_touch_to_opengl_coordinate_space_leftside_size + canvas_touch_to_opengl_coordinate_space_rightside_size) / canvas_element_width);
-								 		     let half_of_detectable_touch_position = (canvas_element_width * 0.50);
+								 		     let canvas_touch_to_opengl_coordinate_space_resolution = (canvas_touch_to_opengl_coordinate_space_leftside_size / (canvas_element_width / 2.0));
+								 		     let half_of_detectable_touch_position = (canvas_element_width / 2.0);
 								 		     
 								 		     let detected_touch_position_x_openglformat = null;
 								 		     if((detected_touch_position_x * 1000000) < (half_of_detectable_touch_position * 1000000))
@@ -619,25 +620,47 @@
 								 		     {
 								 		         detected_touch_position_x_openglformat = 0.00;
 								 		     }
+								 		     */
+								 		     //determine resolution of x space touch ratio in order to achieve consistant translation from canvas coordinates to opengl space coordinates.
+								 		     let total_opengl_x_space = 2.0;
+								 		     let exact_x_resolution_ratio = (total_opengl_x_space / canvas_element_width);
+								 		     
+								 		     //translate canvas touch coordinate to opengl coordinate space.
+								 		     let half_of_canvas_element_width = (canvas_element_width / 2.0);
+								 		     let touch_position_x_openglformat = null;
+								 		     if(detected_touch_position_x > half_of_canvas_element_width)
+								 		     {
+								 		         //touch is on right side of opengl space
+                             touch_position_x_openglformat = ((detected_touch_position_x - half_of_canvas_element_width) * exact_x_resolution_ratio);
+								 		     }else if(detected_touch_position_x < half_of_canvas_element_width)
+								 		     {
+								 		         //touch is on left side of opengl space
+								 		     	   touch_position_x_openglformat = (0.0 - (1.0 - (detected_touch_position_x * exact_x_resolution_ratio)));
+								 		     }
+								 		     console.log(detected_touch_position_x);
 								 		     
 								 		     //determine next frame x to ship
-								 			   let universal_max_speed_per_millisecond_glformat = 0.001;
-								 		     if((detected_touch_position_x_openglformat * 1000000) > (major_scene_one_states.ship.current_x * 1000000))
+								 			   let universal_max_speed_per_millisecond_glformat = 0.1;
+								 		     if((touch_position_x_openglformat * 1000000) > (major_scene_one_states.ship.current_x * 1000000))
                          {
                          	   //move closer to touch target, be exact when passing touch target.
                              major_scene_one_states.ship.next_frame_x = (major_scene_one_states.ship.current_x + universal_max_speed_per_millisecond_glformat);
-                             if((major_scene_one_states.ship.next_frame_x * 1000000) > (detected_touch_position_x_openglformat * 1000000))
+                             
+                             if((major_scene_one_states.ship.next_frame_x * 1000000) > (touch_position_x_openglformat * 1000000))
                              {
-                                 major_scene_one_states.ship.next_frame_x = detected_touch_position_x_openglformat;
+                                 major_scene_one_states.ship.next_frame_x = touch_position_x_openglformat;
                              }
-                         }else if((detected_touch_position_x_openglformat * 1000000) < (major_scene_one_states.ship.current_x * 1000000))
+                             
+                         }else if((touch_position_x_openglformat * 1000000) < (major_scene_one_states.ship.current_x * 1000000))
 								 		     {
                          	   //move closer to touch target, be exact when passing touch target.
                              major_scene_one_states.ship.next_frame_x = (major_scene_one_states.ship.current_x - universal_max_speed_per_millisecond_glformat);
-                             if((major_scene_one_states.ship.next_frame_x * 1000000) < (detected_touch_position_x_openglformat * 1000000))
+                            
+                             if((major_scene_one_states.ship.next_frame_x * 1000000) < (touch_position_x_openglformat * 1000000))
                              {
-                                 major_scene_one_states.ship.next_frame_x = detected_touch_position_x_openglformat;
+                                 major_scene_one_states.ship.next_frame_x = touch_position_x_openglformat;
                              }
+                             
 								 		     }
               //end of simulate motions physics
 
@@ -674,7 +697,6 @@
 									 {
 									 		if(star_ids.hasOwnProperty(key) == true)
 									 		{
-									 	  		console.log(key);
 									 		    //reproduce the star image to the scales state.
 						              let intended_star_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
 						              let index = 0;
@@ -712,8 +734,8 @@
 				              let index = 0;
 				              while(index < intended_ship_vertex_data.length)
 				              {
-				                intended_ship_vertex_data[index] = scale_x(intended_ship_vertex_data[index], 0.5);
-				                intended_ship_vertex_data[index+1] = scale_y(intended_ship_vertex_data[index+1],  0.2);
+				                intended_ship_vertex_data[index] = scale_x(intended_ship_vertex_data[index], 0.2);
+				                intended_ship_vertex_data[index+1] = scale_y(intended_ship_vertex_data[index+1],  0.05);
 				                
 				                //next index
 				                index = index + 4;
