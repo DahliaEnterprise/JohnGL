@@ -1,0 +1,1255 @@
+<!doctype html>
+<html>
+  <head>
+    <title>John GL Presents Game Engine</title>
+    <script type="text/javascript">
+      /* Venmo: Shane-Betz1990 */
+      //shader source code
+      var vertex_shader_generic_one_by_one_square = "attribute vec4 a_Position; \n";
+          vertex_shader_generic_one_by_one_square += "attribute vec2 a_TexCoord; \n";
+          vertex_shader_generic_one_by_one_square += "varying highp vec2 v_TexCoord; \n";
+          vertex_shader_generic_one_by_one_square += "void main(void) { \n";
+          vertex_shader_generic_one_by_one_square += "gl_Position = a_Position; \n";
+          vertex_shader_generic_one_by_one_square += "v_TexCoord = a_TexCoord; \n";
+          vertex_shader_generic_one_by_one_square += "} \n";
+
+      var fragment_shader_generic_one_by_one_square = "varying highp vec2 v_TexCoord; \n";
+          fragment_shader_generic_one_by_one_square += "uniform sampler2D uniform_sampler; \n";
+          fragment_shader_generic_one_by_one_square += "void main(void) { \n";
+          fragment_shader_generic_one_by_one_square += "  gl_FragColor = texture2D(uniform_sampler, v_TexCoord); \n";
+          fragment_shader_generic_one_by_one_square += "} \n";
+
+      //global variables
+        //constant
+        var html_canvas_element = null;
+        var interface_to_opengles_hardware = null;
+        
+        //non constants.
+        var webgl2_context_attributes = {
+                                          alpha: false,
+                                          desynchronized: true,
+                                          antialiasing: false,
+                                          depth: true,
+                                          failIfMajorPerformanceCaveat: true,
+                                          powerPreference: "high-performance",
+                                          premultipliedAlpha: false,
+                                          preserveDrawingBuffer: true,
+                                          stencil: false
+                                       };
+                                       
+        var canvas_element_width = null;
+        var canvas_element_height = null;
+        
+        var canvas_touch_start = null;
+        var canvas_touch_move = null;
+        var canvas_touch_end = null;
+        var canvas_touch_cancel = null;
+        var canvas_touch = {
+        	                   "last_id_used": -1,
+                             "history": null
+                           };
+        
+        var frames_per_second = {
+                                  "sample_start_timestamp": null,
+                                  "sample_end_timestamp": null,
+                                  "maximum_frames_per_second": null,
+                                  "sample": null,
+                                  "near_constants":{
+                                                      "target_milliseconds_between_frames_at_maximum_frame_rate": null,
+                                                      "minimum_in_between_time_milliseconds": null
+                                                    },
+                                  "average_milliseconds_between_frames": null
+                                };
+
+        
+        var major_scene = 1;
+        var major_scene_prestage = 1;
+        var micro_scene = 1;
+        
+        var resource_management_xmlhttprequest = null;
+        var resource_management_loaded_data = null;
+        var resource_management_loaded_text = null;
+        var resource_management_status = 0;
+        
+        var image_resource_management_status = 0;
+        
+        /* Tobe loaded via external mechanism */
+        /* models */
+          /* placeholders for models (not all will be square) */
+          var model_placeholder_one_by_one_square = {
+                                                      "vertex_coordinate_data": null,
+                                                      "texture_coordinate_data": null,
+                                                      "vertex_and_texture_coordinate_data": null,
+                                                      "vertex_and_texture_coordinate_data_loaded": false,
+                                                    
+                                                      "vertex_coordinate_filelocation": "./models/one_by_one_square.opengl_xy_coordinates", 
+                                                      "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates"
+                                                    };
+          /* models */
+          var model_star_image = {
+                                    "vertex_and_texture_coordinate_data": null, 
+                                    "image_filelocation": "./images/star.png",
+                                    "image_resource_id": "star"
+                                  };
+                                  
+          var model_ship_image = {
+                                    "vertex_and_texture_coordinate_data": null, 
+                                    "image_filelocation": "./images/ship.png",
+                                    "image_resource_id": "ship"
+         												 };
+        /* end of models */
+        
+        /* list of shaders */
+          var generic_shader_for_two_dimensional_square_model = {
+                                                                  "compiled_shader_program": null
+          																											};
+        /* end list of shaders */
+        
+        /* reuseable handleable variable(s) for the drawing process */
+        var drawing_process_uniform_sampler_index_zero = null;
+        /* end reuseable handleable variable(s) for the drawing process */
+        
+        /* major scene states */
+        var timestamp_last_frame_fully_rendered = null;
+        var major_scene_one_states = {
+                                        "stars":{
+                                										"last_id_used": -1,
+                                										"list_of_stars": null
+                                  								},
+                                  		  "ship":{
+                                  		  	         "current_x": null,
+                                  		  	         "current_y": null,
+                                  		  	         "next_frame_x": null,
+                                  		  	         "next_frame_y": null,
+                                  		  	         "opengl_vertex_buffer": null,
+                                  		  	         "opengl_texture_buffer": null
+                                  		         }
+                                     };
+                                     
+        /* end of major scene states */
+        /* End Tobe loaded via external mechanism */
+
+      //function definitions
+      function start_engine(html_dom_id_of_canvas_element)
+      {
+        
+        //canvas is a null element on the HTML dom.
+        html_canvas_element = document.getElementById(""+html_dom_id_of_canvas_element);
+       
+        //open an associated context between the dom canvas element and openGL ES hardware.
+        interface_to_opengles_hardware = html_canvas_element.getContext("webgl2", webgl2_context_attributes);
+      
+        //define canvas diemensions.
+          //define state
+          canvas_element_width = 500;
+          canvas_element_height = 500;
+          
+          //define DOM element diemensions according to updated canvas element state.
+          document.getElementById("canvas_for_opengles").style.width = canvas_element_width;
+          document.getElementById("canvas_for_opengles").style.height = canvas_element_height;
+          
+          //set the diemensions within the opengl engine and the DOM.
+          interface_to_opengles_hardware.viewportWidth = canvas_element_width;
+          interface_to_opengles_hardware.viewportHeight = canvas_element_height;
+          
+          //manually define viewport dimensions within the associated context and hardware.
+          interface_to_opengles_hardware.viewport(0, 0, canvas_element_width, canvas_element_height);
+        
+        //register touch events to the canvas
+        html_canvas_element.addEventListener("touchstart", canvas_touch_start);
+        html_canvas_element.addEventListener("touchmove", canvas_touch_move);
+        html_canvas_element.addEventListener("touchend", canvas_touch_end);
+        html_canvas_element.addEventListener("touchcancel", canvas_touch_cancel);
+        
+        //initialize touch events
+          canvas_touch.history = {};
+        
+        //initialize frames per second list
+          frames_per_second.sample_start_timestamp = Date.now() - 1000;
+          frames_per_second.sample_end_timestamp = Date.now();
+          frames_per_second.maximum_frames_per_second = 60;
+          frames_per_second.sample = [];
+          let index = 0;
+          while(index < frames_per_second.maximum_frames_per_second)
+          {
+            frames_per_second.sample[index] = frames_per_second.sample_start_timestamp;
+            
+            //next index
+            index = index + 1;
+          }
+          frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate = 1000 / frames_per_second.maximum_frames_per_second;
+          frames_per_second.near_constants.minimum_in_between_time_milliseconds = (frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate * 0.25);
+          frames_per_second.average_milliseconds_between_frames = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate;
+         
+        //game engine started, proceed to cycle engine(loop).
+        timestamp_last_frame_fully_rendered = Date.now();
+        cycle_engine();
+      }
+      
+      
+      function cycle_engine()
+      {
+        //time will pass as this function is executed, set time synchronization variable here to keep all states syncronized to the same instance.
+        let state_syncronization_timestamp = Date.now();
+        let milliseconds_since_last_fully_rendered_frame = state_syncronization_timestamp - timestamp_last_frame_fully_rendered;
+        
+        /* determination of scene */
+        if(major_scene == 1)
+        {
+          //initalize major scene
+          if(major_scene_prestage == 1)
+          {
+            /* major scene prestage one
+               is to compile the generic
+               one by one square vertex shader source
+               and the one by one square fragment shader source
+               to produce the (binary) shader program.
+            */
+            
+       				  let	texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader_generic_one_by_one_square);
+                interface_to_opengles_hardware.compileShader(texture_vertex_shader);
+           
+                let texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader_generic_one_by_one_square);
+                interface_to_opengles_hardware.compileShader(texture_fragment_shader);
+            
+            
+                //generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
+                generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
+                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model.compiled_shader_program, texture_vertex_shader);
+                interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model.compiled_shader_program, texture_fragment_shader);
+                interface_to_opengles_hardware.linkProgram(generic_shader_for_two_dimensional_square_model.compiled_shader_program);
+                if(!interface_to_opengles_hardware.getProgramParameter(generic_shader_for_two_dimensional_square_model.compiled_shader_program, interface_to_opengles_hardware.LINK_STATUS))
+                {
+                  console.log("shader link failed");
+                }else{
+                	
+                	//move on to major prestage 4
+                	major_scene_prestage = 4;
+                }
+         
+          }else if(major_scene_prestage == 4)
+          {
+            /* major scene prestage four
+               is to load the one by one square
+               vertex data.
+            */
+            if(resource_management_status == 0)
+            {
+              //update resource management status before calling an asynchronous process
+              resource_management_status = 1;
+              
+              //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = new XMLHttpRequest();
+              resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
+              /* place holder for alternative events
+              resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
+              resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
+              */
+              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.vertex_coordinate_filelocation);
+              resource_management_xmlhttprequest.send();
+            }else if(resource_management_status == 2)
+            {
+              //convert binary data (response, not responseText) to a Float32Array.
+                //split data for iteration
+                let resource_management_loaded_data_as_array = resource_management_loaded_data.split(",");
+               
+                //allocate vertex data coordinate variable for one by one square
+                model_placeholder_one_by_one_square.vertex_coordinate_data = null;
+                model_placeholder_one_by_one_square.vertex_coordinate_data = new Float32Array(resource_management_loaded_data_as_array.length);
+              
+                //fill array
+                let index_of_array = 0;
+                while(index_of_array < resource_management_loaded_data_as_array.length)
+                {
+                  let abstracted_position = resource_management_loaded_data_as_array[index_of_array];
+                  model_placeholder_one_by_one_square.vertex_coordinate_data[index_of_array] = parseFloat(abstracted_position.trim());
+                 
+                  //next index
+                  index_of_array = index_of_array + 1;
+                }
+              //move on to major scene prestage five.
+              major_scene_prestage = 5;
+              
+              //reset resource management parameters
+              resource_management_status = 0;
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = null;
+            }
+          
+          }else if(major_scene_prestage == 5)
+          {
+            /* major scene prestage five
+               is to load the one by one square
+               texture coordinate data.
+            */
+            if(resource_management_status == 0)
+            {
+              //update resource management status before calling an asynchronous process
+              resource_management_status = 1;
+              
+              //call asynchronous process that will return vertex coordinate data when the network has streamed(loaded) the data.
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = new XMLHttpRequest();
+              resource_management_xmlhttprequest.addEventListener("load", resource_management_loaded);
+              /* place holder for alternative events
+              resource_management_xmlhttprequest.addEventListener("error", resource_management_loaded);
+              resource_management_xmlhttprequest.addEventListener("progress", resource_management_loaded);
+              */
+              resource_management_xmlhttprequest.overrideMimeType("text/plain");
+              resource_management_xmlhttprequest.open("GET", ""+model_placeholder_one_by_one_square.texture_coordinate_filelocation);
+              resource_management_xmlhttprequest.send();
+            }else if(resource_management_status == 2)
+            {
+              //convert binary data (response, not responseText) to a Float32Array.
+                //split data for iteration
+                let resource_management_loaded_data_as_array = resource_management_loaded_data.split(",");
+                
+                //allocate texture data coordinate variable for one by one square
+                model_placeholder_one_by_one_square.texture_coordinate_data = null;
+                model_placeholder_one_by_one_square.texture_coordinate_data = new Float32Array(resource_management_loaded_data_as_array.length);
+              
+                //fill array
+                let index_of_array = 0;
+                while(index_of_array < resource_management_loaded_data_as_array.length)
+                {
+                  let abstracted_position = resource_management_loaded_data_as_array[index_of_array];
+                  model_placeholder_one_by_one_square.texture_coordinate_data[index_of_array] = parseFloat(abstracted_position.trim());
+                  
+                  //next index
+                  index_of_array = index_of_array + 1;
+                }
+                
+              //move on to major scene prestage six.
+              major_scene_prestage = 6;
+              
+              //reset resource management parameters
+              resource_management_status = 0;
+              resource_management_loaded_data = null;
+              resource_management_xmlhttprequest = null;
+            }
+          }else if(major_scene_prestage == 6)
+          {
+            /* major scene prestage six
+               is to compile vertex coordinates 
+               and texture coordinates into a x,y, x,y,
+               interlaced format.
+            */
+            let compiled_texture_vertex_length = model_placeholder_one_by_one_square.vertex_coordinate_data.length+model_placeholder_one_by_one_square.texture_coordinate_data.length;
+            let compiled_texture_vertex = new Float32Array(compiled_texture_vertex_length);
+            let compiled_texture_vertex_index = 0;
+            let vertex_coordinate_data_index = 0;
+            let texture_coordinate_data_index = 0;
+            
+            while(compiled_texture_vertex_index < compiled_texture_vertex_length)
+            {
+              //x vertex coordinate
+              compiled_texture_vertex[compiled_texture_vertex_index] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index];
+              
+              //y vertex coordinate
+              compiled_texture_vertex[compiled_texture_vertex_index+1] = model_placeholder_one_by_one_square.vertex_coordinate_data[vertex_coordinate_data_index+1];
+              
+             
+              //x texture
+              compiled_texture_vertex[compiled_texture_vertex_index+2] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index];
+              
+              //y texture
+              compiled_texture_vertex[compiled_texture_vertex_index+3] = model_placeholder_one_by_one_square.texture_coordinate_data[texture_coordinate_data_index+1];
+              
+              //next index
+              compiled_texture_vertex_index = compiled_texture_vertex_index + 4;
+              vertex_coordinate_data_index = vertex_coordinate_data_index + 2;
+              texture_coordinate_data_index = texture_coordinate_data_index + 2;
+            }
+            
+            //clear ram/short-term-fast memory.
+            model_placeholder_one_by_one_square.vertex_coordinate_data = null;
+            model_placeholder_one_by_one_square.texture_coordinate_data = null;
+            
+            //set the compiled vertex and texture coordinates to the model placeholder.
+            model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data = compiled_texture_vertex;
+            model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data_loaded = true;
+            
+            //Set model star image vertex coordinates and texture coordinates.
+            model_star_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
+
+						//Set model ship 
+						model_ship_image.vertex_and_texture_coordinate_data = new Float32Array(model_placeholder_one_by_one_square.vertex_and_texture_coordinate_data);
+						
+            //move on to major scene prestage seven.
+            major_scene_prestage = 7;
+            image_resource_management_status = 0;
+            
+          }else if(major_scene_prestage == 7)
+          {
+            /* 
+               major scene prestage seven
+               is to load the image(red,green,blue) data.
+            */
+            //download the image file to be used for the texture.
+            if(image_resource_management_status == 0)
+            {
+              //insert new img tag to manage the image data.
+              reuseable_image_data.innerHTML += '<img id="'+model_star_image.image_resource_id+'" style=""></img>';
+              let star_image_to_upload = document.getElementById(""+model_star_image.image_resource_id);
+              star_image_to_upload.onload = function()
+              {
+                image_resource_management_status = 1;
+              };
+              
+              star_image_to_upload.src = model_star_image.image_filelocation;
+              
+            }else if(image_resource_management_status == 1)
+            {
+            	//reset status
+							image_resource_management_status = 0;
+            	
+              //move on to major scene prestage eight
+              major_scene_prestage = 8;
+            }
+          }else if(major_scene_prestage == 8)
+          {
+            /* 
+               major scene prestage eight
+               is to load the image(red,green,blue) data.
+            */
+            //download the image file to be used for the texture.
+            if(image_resource_management_status == 0)
+            {
+              //insert new img tag to manage the image data.
+              reuseable_image_data.innerHTML += '<img id="'+model_ship_image.image_resource_id+'" style=""></img>';
+              let ship_image_to_upload = document.getElementById(""+model_ship_image.image_resource_id);
+              ship_image_to_upload.onload = function()
+              {
+                image_resource_management_status = 1;
+              };
+              
+              ship_image_to_upload.src = model_ship_image.image_filelocation;
+              
+            }else if(image_resource_management_status == 1)
+            {
+            	//reset to start status
+							image_resource_management_status = 0;
+            	
+              //move on to major scene prestage eight
+              major_scene_prestage = 9;
+            }
+          }else if(major_scene_prestage == 9)
+          {
+          	
+          	//initialalize stars to dodge
+          	major_scene_one_states.stars.list_of_stars = {};
+          	major_scene_one_states.stars.last_id_used = -1;
+          	
+          	major_scene_one_states.ship.current_x = 0.00;
+          	major_scene_one_states.ship.current_y = -0.8;
+          	major_scene_one_states.ship.next_frame_x = major_scene_one_states.ship.current_x;
+          	major_scene_one_states.ship.next_frame_y = major_scene_one_states.ship.current_y;
+          	
+          	//create stars in random positions to dodge
+            let star_y_generation_range_top = 1.0;
+            let star_y_generation_range_bottom = 0.0;
+            let total_stars = 10;
+            let index = 0;
+            while(index < total_stars)
+            {
+            	let star_x = Math.random();
+            	let star_y = Math.random();
+            	let make_star_x_negative = Math.random();
+            	if((make_star_x_negative * 1000000) > (0.50*1000000))
+            	{
+            		star_x = (0-star_x);
+            	}
+            	
+            	major_scene_one_states.stars.last_id_used = major_scene_one_states.stars.last_id_used + 1;
+            	major_scene_one_states.stars.list_of_stars[""+major_scene_one_states.stars.last_id_used] = {
+							            																																								"current_x": star_x,
+							            																																								"current_y": star_y,
+							            																																								"next_frame_x": star_x,
+							            																																								"next_frame_y": star_y,
+							            																																								"opengl_vertex_buffer": null,
+							            																																								"openhl_texture_buffer": null
+							            																																							};
+							            	
+            	//next star
+							index = index + 1;
+            }
+            
+            
+            //move on to the major scene logic
+            major_scene_prestage = 0;
+            
+            
+          }else if(major_scene_prestage == 0)
+          {
+            if(micro_scene == 1)
+            {
+            	/*
+            //execute logic of major scene.
+              //increase scale of start image
+                //determine time passed since animation start
+                let time_passed_since_zoom_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.zoom_animation_start_timestamp;
+                
+                //determine current scale based on time factors.
+                major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_scale_x_increments * time_passed_since_zoom_animation_start;
+                major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_scale_y_increments * time_passed_since_zoom_animation_start;
+            
+                //stop scaling when end timestamp has been reached.
+                if(state_syncronization_timestamp >=  major_scene_one_states.start_image.zoom_animation_end_timestamp)
+                {
+                  major_scene_one_states.start_image.scale_x = major_scene_one_states.start_image.zoom_animation_target_scale_x;
+                  major_scene_one_states.start_image.scale_y = major_scene_one_states.start_image.zoom_animation_target_scale_y;
+                }
+                
+                
+              //reproduce the start image to the scaled state.
+              let start_image_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
+              let index = 0;
+              while(index < start_image_vertex_data.length)
+              {
+                start_image_vertex_data[index] = scale_x(start_image_vertex_data[index],  major_scene_one_states.start_image.scale_x);
+                start_image_vertex_data[index+1] = scale_y(start_image_vertex_data[index+1],  major_scene_one_states.start_image.scale_y);
+                
+                //next index
+                index = index + 4;
+              }
+              
+              
+              
+              //increment rotation of start image
+                //determine time passed since animation start
+                let time_passed_since_rotation_animation_start = state_syncronization_timestamp - major_scene_one_states.start_image.rotation_animation_start_timestamp;
+
+                //determine current rotation based on time factors
+                major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_rotation_z_increments * time_passed_since_rotation_animation_start;
+                
+                //stop rotating when end timestamp has been reached
+                if(state_syncronization_timestamp >= major_scene_one_states.start_image.rotation_animation_end_timestamp)
+                {
+                  major_scene_one_states.start_image.rotation_z = major_scene_one_states.start_image.rotation_animation_target_rotation_z;
+                }
+             
+                //reproduce the start image to the rotated state.
+                index = 0;
+                while(index < start_image_vertex_data.length)
+                {
+                  let new_rotated_point = rotate_z_axis(start_image_vertex_data[index], start_image_vertex_data[index+1], major_scene_one_states.start_image.rotation_z);
+                  start_image_vertex_data[index] = new_rotated_point["x"];
+                  start_image_vertex_data[index+1] = new_rotated_point["y"];
+                  
+                  //next index
+                  index = index + 4;
+                }
+                
+                //render state
+								generic_render_clear_screen();
+								generic_rendering_render_two_dimensional_model(start_image_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "start_image", 6);
+				
+                if(state_syncronization_timestamp >= major_scene_one_states.start_image.timestamp_to_start_stay_animation)
+                {
+                	//define syncronized state for stay "animation"
+			            major_scene_one_states.start_image.stay_start_timestamp = state_syncronization_timestamp;
+			            major_scene_one_states.start_image.stay_end_timestamp = major_scene_one_states.start_image.stay_start_timestamp + major_scene_one_states.start_image.stay_total_milliseconds;
+			            
+                  micro_scene = 2;
+                }
+		          */
+		          
+		          //begin simulate motion physics
+		         		 //set each star' next frame x and next frame y
+								 let universal_speed_per_millisecond_glformat = 0.001;
+								 let star_ids = Object.keys(major_scene_one_states.stars.list_of_stars);
+						
+								 for(const key in star_ids)
+								 {
+								 		if(star_ids.hasOwnProperty(key) == true)
+								 		{
+								 			//make star go towards bottom of screen
+										  major_scene_one_states.stars.list_of_stars[key]["next_frame_y"] = major_scene_one_states.stars.list_of_stars[key]["next_frame_y"] - (universal_speed_per_millisecond_glformat * milliseconds_since_last_fully_rendered_frame);
+										
+								 		}
+								 }
+								 
+             		 //set ship' next frame x and next frame y
+								     //get last "move" or "start" touch position.
+								     let detected_touch_position_x = null;//to do xhange to ship current position.
+								     let touch_ids = Object.keys(canvas_touch["history"]);
+								     
+								     for(const key in touch_ids)
+								     {
+									     	if(touch_ids.hasOwnProperty(key) == true)
+									     	{
+									     		//console.log(canvas_touch["history"][key]);
+									     		let applicable_touch_type = 0;
+									     		if(canvas_touch["history"][key]["type"] == "start")
+									     		{
+									     			applicable_touch_type = 1;
+									     		}else if(canvas_touch["history"][key]["type"] == "move")
+									     		{
+									     			applicable_touch_type = 1;
+									     		}else if(canvas_touch["history"][key]["type"] == "end")
+									     		{
+									     			applicable_touch_type = 1;
+									     		}
+									     		
+									     		if(applicable_touch_type == 1)
+									     		{
+									     			detected_touch_position_x = canvas_touch["history"][key]["x"];
+									     		}
+									     	}
+								     }
+								     
+								     //do set
+								 		     //convert touch position to opengl coordinate space format.
+								 		     /*
+								 		     let canvas_touch_to_opengl_coordinate_space_leftside_size = 1.0;
+								 		     let canvas_touch_to_opengl_coordinate_space_rightside_size = 1.0;
+								 		     let canvas_touch_to_opengl_coordinate_space_resolution = (canvas_touch_to_opengl_coordinate_space_leftside_size / (canvas_element_width / 2.0));
+								 		     let half_of_detectable_touch_position = (canvas_element_width / 2.0);
+								 		     
+								 		     let detected_touch_position_x_openglformat = null;
+								 		     if((detected_touch_position_x * 1000000) < (half_of_detectable_touch_position * 1000000))
+								 		     {
+								 		         detected_touch_position_x_openglformat = (0 - (1.0 - (canvas_touch_to_opengl_coordinate_space_resolution * detected_touch_position_x)));
+								 		     }else if((detected_touch_position_x * 1000000) > (half_of_detectable_touch_position * 1000000))
+								 		     {
+								 		         detected_touch_position_x_openglformat = ((canvas_touch_to_opengl_coordinate_space_resolution * detected_touch_position_x) - 1.0);
+								 		     }else if((detected_touch_position_x * 1000000) == (half_of_detectable_touch_position * 1000000))
+								 		     {
+								 		         detected_touch_position_x_openglformat = 0.00;
+								 		     }
+								 		     */
+								 		     //determine resolution of x space touch ratio in order to achieve consistant translation from canvas coordinates to opengl space coordinates.
+								 		     let total_opengl_x_space = 2.0;
+								 		     let exact_x_resolution_ratio = (total_opengl_x_space / canvas_element_width);
+								 		     
+								 		     //translate canvas touch coordinate to opengl coordinate space.
+								 		     let half_of_canvas_element_width = (canvas_element_width / 2.0);
+								 		     let touch_position_x_openglformat = null;
+								 		     if(detected_touch_position_x > half_of_canvas_element_width)
+								 		     {
+								 		         //touch is on right side of opengl space
+                             touch_position_x_openglformat = ((detected_touch_position_x - half_of_canvas_element_width) * exact_x_resolution_ratio);
+								 		     }else if(detected_touch_position_x < half_of_canvas_element_width)
+								 		     {
+								 		         //touch is on left side of opengl space
+								 		     	   touch_position_x_openglformat = (0.0 - (1.0 - (detected_touch_position_x * exact_x_resolution_ratio)));
+								 		     }
+								 		     console.log(detected_touch_position_x);
+								 		     
+								 		     //determine next frame x to ship
+								 			   let universal_max_speed_per_millisecond_glformat = 0.1;
+								 		     if((touch_position_x_openglformat * 1000000) > (major_scene_one_states.ship.current_x * 1000000))
+                         {
+                         	   //move closer to touch target, be exact when passing touch target.
+                             major_scene_one_states.ship.next_frame_x = (major_scene_one_states.ship.current_x + universal_max_speed_per_millisecond_glformat);
+                             
+                             if((major_scene_one_states.ship.next_frame_x * 1000000) > (touch_position_x_openglformat * 1000000))
+                             {
+                                 major_scene_one_states.ship.next_frame_x = touch_position_x_openglformat;
+                             }
+                             
+                         }else if((touch_position_x_openglformat * 1000000) < (major_scene_one_states.ship.current_x * 1000000))
+								 		     {
+                         	   //move closer to touch target, be exact when passing touch target.
+                             major_scene_one_states.ship.next_frame_x = (major_scene_one_states.ship.current_x - universal_max_speed_per_millisecond_glformat);
+                            
+                             if((major_scene_one_states.ship.next_frame_x * 1000000) < (touch_position_x_openglformat * 1000000))
+                             {
+                                 major_scene_one_states.ship.next_frame_x = touch_position_x_openglformat;
+                             }
+                             
+								 		     }
+              //end of simulate motions physics
+
+              //begin hit test logic (this is where physics simulation continues however bounce and colission logic is applied here)
+							 
+							 
+              //end hit test logic
+
+              //begin commit current x and current y as their respective next frame x and next frame y.
+                  //commit star position
+		              for(const key in star_ids)
+									 {
+									 		if(star_ids.hasOwnProperty(key) == true)
+									 		{
+									 			//commit star position
+											  major_scene_one_states["stars"]["list_of_stars"][key]["current_x"] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_x"];
+											  major_scene_one_states["stars"]["list_of_stars"][key]["current_y"] = major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_y"];
+									 		}
+									 }
+                  
+                  
+                  //commit ship position
+                  major_scene_one_states["ship"]["current_x"] = major_scene_one_states["ship"]["next_frame_x"];
+                  major_scene_one_states["ship"]["current_y"] = major_scene_one_states["ship"]["next_frame_y"];
+                  
+              //end commit current x and current y as their respective next frame x and next frame y.
+
+              //begin temporary drawing procedure
+                  //clear frame
+                  generic_render_clear_screen();
+                  
+                  //draw star
+                  for(const key in star_ids)
+									 {
+									 		if(star_ids.hasOwnProperty(key) == true)
+									 		{
+									 		    //reproduce the star image to the scales state.
+						              let intended_star_vertex_data = new Float32Array(model_star_image.vertex_and_texture_coordinate_data);
+						              let index = 0;
+						              while(index < intended_star_vertex_data.length)
+						              {
+						                intended_star_vertex_data[index] = scale_x(intended_star_vertex_data[index], 0.01);
+						                intended_star_vertex_data[index+1] = scale_y(intended_star_vertex_data[index+1], 0.01);
+						                
+						                //next index
+						                index = index + 4;
+						              }
+						              
+									 		    //reproduce the star image to the next frame x and next frame y.
+						              index = 0;
+						              while(index < intended_star_vertex_data.length)
+						              {
+						                intended_star_vertex_data[index] = (intended_star_vertex_data[index] + major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_x"]);
+						                intended_star_vertex_data[index+1] = (intended_star_vertex_data[index+1] + major_scene_one_states["stars"]["list_of_stars"][key]["next_frame_y"]);
+						               
+						                //next index
+						                index = index + 4;
+						              }
+									 		    
+									 		    //do draw of star
+                          let opengl_buffers = generic_render_two_dimensional_model(intended_star_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "star", 6);
+                          major_scene_one_states["stars"]["list_of_stars"][key]["opengl_vertex_buffer"] = opengl_buffers["vertex_buffer_handle"];
+                          major_scene_one_states["stars"]["list_of_stars"][key]["opengl_texture_buffer"] = opengl_buffers["texture_buffer_handle"];
+                          
+									 		}
+									 }
+                  
+                  //draw ship
+                      //reproduce the ship image to the scaled state.
+				              let intended_ship_vertex_data = new Float32Array(model_ship_image.vertex_and_texture_coordinate_data);
+				              let index = 0;
+				              while(index < intended_ship_vertex_data.length)
+				              {
+				                intended_ship_vertex_data[index] = scale_x(intended_ship_vertex_data[index], 0.2);
+				                intended_ship_vertex_data[index+1] = scale_y(intended_ship_vertex_data[index+1],  0.05);
+				                
+				                //next index
+				                index = index + 4;
+				              }
+					              
+				              //reproduce the ship to the next frame x and next frame y position
+				              index = 0;
+				              while(index < intended_ship_vertex_data.length)
+				              {
+				                intended_ship_vertex_data[index] = (intended_ship_vertex_data[index] + major_scene_one_states.ship.next_frame_x);
+				                intended_ship_vertex_data[index+1] = (intended_ship_vertex_data[index+1] + major_scene_one_states.ship.next_frame_y);
+				                
+				                //next index
+				                index = index + 4;
+				              }
+                      
+				              //do render of ship
+              		    let opengl_buffers = generic_render_two_dimensional_model(intended_ship_vertex_data, generic_shader_for_two_dimensional_square_model.compiled_shader_program, "ship", 6);
+              		    major_scene_one_states["ship"]["opengl_vertex_buffer"] = opengl_buffers["vertex_buffer_handle"];
+              		    major_scene_one_states["ship"]["opengl_texture_buffer"] = opengl_buffers["texture_buffer_handle"];
+              		    
+                  /* end of drawing
+                     begin delete buffers
+                  */
+                      //delete star buffers
+                      for(const key in star_ids)
+									    {
+										 		if(star_ids.hasOwnProperty(key) == true)
+										 		{
+										 			interface_to_opengles_hardware.deleteBuffer(major_scene_one_states["stars"]["list_of_stars"][key]["opengl_vertex_buffer"]);
+										 			interface_to_opengles_hardware.deleteTexture(major_scene_one_states["stars"]["list_of_stars"][key]["opengl_texture_buffer"]);
+										 		}
+									    }
+									    
+									    //delete ship buffers
+								 			interface_to_opengles_hardware.deleteBuffer(major_scene_one_states["ship"]["opengl_vertex_buffer"]);
+								 			interface_to_opengles_hardware.deleteTexture(major_scene_one_states["ship"]["opengl_texture_buffer"]);
+										
+                  /* end delete buffer */
+                  
+                  
+              //end temporary drawing procedure
+            }
+          }
+        }
+        /* end of determination of scene */
+        
+        
+        /* drawing procedures */
+        
+        //to be determined...
+        
+        /* end of drawing proceedures */
+        
+        
+        //commit to the loop paradigm.
+          //remove longest ago timestamp from sample.
+          timestamp_last_frame_fully_rendered = Date.now();
+          let sorted_frames_per_second = frames_per_second.sample.sort();
+          let index = 0;
+          let sorted_frames_index = 1;
+          frames_per_second.sample = [];
+          while(sorted_frames_index < sorted_frames_per_second.length)
+          {
+            frames_per_second.sample[index] = sorted_frames_per_second[sorted_frames_index];
+            
+            //next index 
+            index = index + 1;
+            sorted_frames_index = sorted_frames_index + 1;
+          }
+          frames_per_second.sample[index] = timestamp_last_frame_fully_rendered;
+          
+          //determine frame rate variance and call next draw frame.
+          index = 0;
+          let total_milliseconds_between_frames = 0;
+          let total_frames_counted = sorted_frames_per_second.length - 1;
+          while(index < sorted_frames_per_second.length)
+          {
+            if((index+1) < sorted_frames_per_second.length)
+            {
+              let milliseconds_between_frames = sorted_frames_per_second[index+1] - sorted_frames_per_second[index];
+              total_milliseconds_between_frames = total_milliseconds_between_frames + milliseconds_between_frames;
+              total_frames_counted = total_frames_counted + 1;
+            }
+            
+            //next index
+            index = index + 1;
+          }
+          
+          frames_per_second.average_milliseconds_between_frames = total_milliseconds_between_frames / total_frames_counted;
+       
+          let timestamp_since_last_frame = sorted_frames_per_second.slice(-1);
+          let timepassed_since_last_frame = Date.now() - timestamp_since_last_frame;
+          //next cycle must be atleast one millisecond in order for motion/physics systems to occur(when using time passed as a calculation component)
+          let next_cycle = null;
+          if(timepassed_since_last_frame < frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate)
+          {
+            let next_cycle_contribution_time_to_wait = frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate - timepassed_since_last_frame;
+            next_cycle = next_cycle_contribution_time_to_wait;
+          }else if(timepassed_since_last_frame >= frames_per_second.near_constants.target_milliseconds_between_frames_at_maximum_frame_rate)
+          {
+            //****has not been previewed due to low polygon count****/
+            next_cycle = frames_per_second.near_constants.minimum_in_between_time_milliseconds;
+          }
+         
+          //trigger another cycle of the engine
+          setTimeout(cycle_engine, next_cycle);
+      }
+      
+      /* resource management single threaded asynchronous control line */
+      function resource_management_loaded(event_data)
+      {
+        resource_management_loaded_data = event_data.target.response;
+        resource_management_loaded_text = event_data.target.responseText;
+        
+        resource_management_status = 2;
+      }
+      /* end of resource management single threaded asynchronous control line */
+      
+      /* assistive math functions */
+      function get_xy_angle_as_radians(source_x, source_y, target_x, target_y)
+      {
+      	let angle_as_radians = -1;
+      	
+      	if((source_x*100000) == 0){ source_x = 0.000001; }
+      	if((source_y*100000) == 0){ source_y = 0.000001; }
+      	if((target_x*100000) == 0){ target_x = 0.000001; }
+      	if((target_y*100000) == 0){ target_y = 0.000001; }
+      	
+      	let three_sixty_degrees_as_radians = 0;
+      	let quadrant = -1; //0 top right(0-90), 1 top left(90-180), 2 bottom-left(180-270), 3 bottom-right(270-360)
+      	let exact_plane = -1; //0 right(exact 0), 1 top(exact 90), 2 left(exact 180), 3 bottom(exact 270)
+      	
+      	let source_x_int = source_x*100000;
+      	let source_y_int = source_y*100000;
+      	let target_x_int = target_x*100000;
+      	let target_y_int = target_y*100000;
+      	
+      	if(source_x_int > target_x_int)
+      	{
+      		if(source_y_int > target_y_int)
+      		{
+      			//start is quadrant top right, target is bottom left
+      			quadrant = 2;
+      		}else if(source_y_int == target_y_int)
+      		{
+      			//start is exact right, target is exact left
+      			exact_plane = 2;
+      		}else if(source_y_int < target_y_int)
+      		{
+      			//start is quadrant bottom right, target is top left
+      			quadrant = 1;
+      		}
+      	}else if(source_x_int < target_x_int)
+      	{
+      		if(source_y_int > target_y_int)
+      		{
+      			//start is quadrant top left, target is bottom right.
+      			quadrant = 3;
+      		}else if(source_y_int == target_y_int)
+      		{
+      			//start is exact plane left, target is exact right
+      			exact_plane = 0;
+      		}else if(source_y_int < target_y_int)
+      		{
+      			//start is quadrant bottom left, target top right
+      			quadrant = 0;
+      		}
+      	}else if(source_x_int == target_x_int)
+      	{
+      		if(source_y_int > target_y_int)
+      		{
+      			//start is exact top, target is exact bottom.
+      			exact_plane = 3;
+      		}else if(source_y_int < target_y_int)
+      		{
+      			//start is exact bottom, target is exact top
+      			exact_plane = 1;
+      		}
+      	}
+      	
+      	let x_distance;
+      	let hypotenus;
+      	if(exact_plane != -1)
+      	{
+      		if(exact_plane == 0)
+      		{
+      			//zero degrees
+      			three_sixty_degrees_as_radians = 0.000000;
+      		}else if(exact_plane == 1)
+      		{
+      			//ninety degrees
+      			three_sixty_degrees_as_radians = 1.570796;
+      		}else if(exact_plane == 2)
+      		{
+      			//one hundred and eighty degrees
+      			three_sixty_degrees_as_radians = 3.141592;
+      		}else if(exact_plane == 3)
+      		{
+      			//two hundred and seventy degrees
+      			three_sixty_degrees_as_radians = 4.712388;
+      	  }
+      	}else if(quadrant != -1)
+      	{
+      		x_distance = Math.abs(source_x-target_x);
+      		
+      		let adjacent_squared = source_x-target_x;
+      		    adjacent_squared = Math.abs(adjacent_squared);
+      		    adjacent_squared = Math.pow(adjacent_squared,2);
+      		
+      		let opposite_squared = source_y-target_y;
+      		    opposite_squared = Math.abs(opposite_squared);
+      		    opposite_squared = Math.pow(opposite_squared,2);
+      		hypotenus = Math.sqrt(adjacent_squared+opposite_squared);
+      		
+      		if(quadrant == 0)
+      		{
+      			//zero to ninety, top right.
+      			three_sixty_degrees_as_radians = Math.acos(x_distance/hypotenus);
+      		}else if(quadrant == 1)
+      		{
+      			//ninety to one hundred and eighty, top left
+      			three_sixty_degrees_as_radians = 3.141592-Math.acos(x_distance/hypotenus);
+      		}else if(quadrant == 2)
+      		{
+      			//one hundred and eighty to two hundred and seventy, bottom left
+      			three_sixty_degrees_as_radians = 3.141592+Math.acos(x_distance/hypotenus);
+      		}else if(quadrant == 3)
+      		{
+      			// two hundred and seventy to three hundred and sixty bottom right
+      			three_sixty_degrees_as_radians = 3.141592+(3.141592-Math.acos(x_distance/hypotenus));
+      		}
+      	}
+      	/*console.log("x distance:"+x_distance);
+      	console.log("hypotenus:"+hypotenus);
+      	console.log("quad:"+quadrant);
+      	console.log("exact plane:"+exact_plane);*/
+      	angle_as_radians = three_sixty_degrees_as_radians;
+      	return angle_as_radians;
+      }
+      
+
+      
+      function rotate_z_axis(original_x, original_y, requested_angle_as_radians)
+      {
+        //function assumes the model is at zero, zero, zero rotation oriented.
+        //function assumes the center is zero, zero. move/translate the model accordingly as zero, zero if the rotation point of the model isnt satisfactory.
+        
+        let output = {
+                       "x": null,
+                       "y": null
+                     };
+        
+        //get hypotenues (chaining was not used in order to garuntee one to one usage of computation at the cpu transistor level, achieving consistant execution times)
+          //determine absolute(magnitude) of value original x
+          let hypotenus_contribution_abs_original_x = Math.abs(original_x);
+          //multiple absolute value of original x by it self two times.
+          let hypotenus_contribution_abs_and_power_of_two_original_x = Math.pow(hypotenus_contribution_abs_original_x, 2);
+        
+          //determine absolute(magnitude) of value original y
+          let hypotenus_contribution_abs_original_y = Math.abs(original_y);
+          //multiple absolute value of original y by it self two times.
+          let hypotenus_contribution_abs_and_power_of_two_original_y = Math.pow(hypotenus_contribution_abs_original_y, 2);
+        
+          //add "abs and power of two original x" and "abs and power of two original y" together.
+          let hypotenus_contribution_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y = hypotenus_contribution_abs_and_power_of_two_original_x + hypotenus_contribution_abs_and_power_of_two_original_y;
+        
+          //square root the sum of "abs and power of two original x" and "abs and power of two original y"
+          let hypotenus_contribution_square_root_of_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y = Math.sqrt(hypotenus_contribution_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y);
+       
+          //declare result
+          let hypotenus = hypotenus_contribution_square_root_of_sum_of_abs_and_power_of_two_original_x_and_abs_and_power_of_two_original_y;
+        
+        //get current angle as radians
+        let current_angle_as_radians = get_xy_angle_as_radians(0.000000, 0.000000, original_x, original_y);
+        
+        //determine new rotation difference
+        let new_angle_as_radians = current_angle_as_radians + requested_angle_as_radians;
+        
+        //determine rotated x and y
+        let new_x = hypotenus * Math.cos(new_angle_as_radians);
+        let new_y = hypotenus * Math.sin(new_angle_as_radians);
+        
+        //define output.
+        output["x"] = new_x;
+        output["y"] = new_y;
+        
+        return output;
+      }
+      
+      
+      function scale_x(original_x, scale_factor)
+      {
+        let output_scaled_x = null;
+        
+        let scaled_x = original_x * scale_factor;
+        output_scaled_x = scaled_x;
+        
+        return output_scaled_x;
+      }
+      
+      function scale_y(original_y, scale_factor)
+      {
+        let output_scaled_y = null;
+        
+        let scaled_y = original_y * scale_factor;
+        output_scaled_y = scaled_y;
+        
+        return output_scaled_y;
+      }
+
+      /* end of assistive math functions */
+      
+      /* canvas touch event functions */
+      canvas_touch_start = function(event_info)
+      {
+        let touches_index = 0;
+        while(touches_index < event_info.touches.length)
+        {
+          let touch_info = event_info.touches[touches_index];
+          
+          let touch_identifier = touch_info.identifier;
+         
+          let touch_history_record = {
+                                      "timestamp": Date.now(),
+                                      "x": touch_info.clientX,
+                                      "y": touch_info.clientY,
+                                      "type":"start"
+                                     };
+          
+          canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
+          canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
+        
+          //next touch info
+          touches_index = touches_index + 1;
+        }
+      }
+      
+      canvas_touch_move =function(event_info)
+      {
+      	let touches_index = 0;
+        while(touches_index < event_info.touches.length)
+        {
+          let touch_info = event_info.touches[touches_index];
+          
+          let touch_identifier = touch_info.identifier;
+         
+          let touch_history_record = {
+                                      "timestamp": Date.now(),
+                                      "x": touch_info.clientX,
+                                      "y": touch_info.clientY,
+                                      "type": "move"
+                                     };
+          
+          canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
+          canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
+          //next touch info
+          touches_index = touches_index + 1;
+        }
+      }
+      
+      canvas_touch_end = function(event_info)
+      {
+      	let touches_index = 0;
+        while(touches_index < event_info.touches.length)
+        {
+          let touch_info = event_info.touches[touches_index];
+          
+          let touch_identifier = touch_info.identifier;
+         
+          let touch_history_record = {
+                                      "timestamp": Date.now(),
+                                      "x": touch_info.clientX,
+                                      "y": touch_info.clientY,
+                                      "type": "end"
+                                     };
+          
+          canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
+          canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
+        
+          //next touch info
+          touches_index = touches_index + 1;
+        }
+      }
+      
+      canvas_touch_cancel = function(event_info)
+      {
+      	let touches_index = 0;
+        while(touches_index < event_info.touches.length)
+        {
+          let touch_info = event_info.touches[touches_index];
+          
+          let touch_identifier = touch_info.identifier;
+         
+          let touch_history_record = {
+                                      "timestamp": Date.now(),
+                                      "x": touch_info.clientX,
+                                      "y": touch_info.clientY,
+                                      "type": "cancel"
+                                     };
+          
+          canvas_touch.last_id_used = canvas_touch.last_id_used + 1;
+          canvas_touch["history"][canvas_touch.last_id_used] = touch_history_record;
+        
+          //next touch info
+          touches_index = touches_index + 1;
+        }
+        
+      }
+      /* end of canvas touch event functions */
+      
+      /* enable fullscreen */
+      function request_fullscreen()
+      {
+      	document.getElementById("canvas_for_opengles").requestFullscreen();
+      }
+      /* end of enable fullscreen */
+
+      /* generic rendering of models on scene functions */
+      function generic_render_clear_screen(clear_screen_options=null)
+      {
+        interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
+        interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
+        interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
+      }
+
+      function generic_render_two_dimensional_model(vertex_coordinate_and_texture_coordinate_data, shader_program, img_id_to_be_used_as_texture, total_point_coordinate_and_texture_coordinate_pairs)
+      {
+         /*The function assumes each model render options are compatible per each one usage
+          that is to say the developer must be aware of OpenGL ES drawing and shader rendering operations
+          within their own discrete and combination usage there of.
+          Any faults from using this function should indicate the creation of their own
+          Non generic rendering function or code block(s).
+         */
+          let output = {
+          							"vertex_buffer_handle":null,
+          							"texture_buffer_handle":null
+          			 			};
+         
+      		//upload to gpu
+     	    let triangle_and_texture_positions_vertex_buffer = interface_to_opengles_hardware.createBuffer();
+          //tell gpu at assembly transistor level to open memory/buffer.
+          interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
+          //transfer cpu instructions and memory to gpu memory/buffer.
+          interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, vertex_coordinate_and_texture_coordinate_data, interface_to_opengles_hardware.STATIC_DRAW);
+          
+          let float_size = vertex_coordinate_and_texture_coordinate_data.BYTES_PER_ELEMENT;
+          
+    
+          //define shader program' parameters.
+          let attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program, "a_Position");
+          interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
+          interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
+      
+      
+          let attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(shader_program, 'a_TexCoord');
+          interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
+          interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
+          
+          let gpu_image_handle = interface_to_opengles_hardware.createTexture();
+           
+           //flip image
+           interface_to_opengles_hardware.pixelStorei(interface_to_opengles_hardware.UNPACK_FLIP_Y_WEBGL, 1);
+           
+           //alert the gpu where to open and ready for unloading of texture data to gpu memory.
+           interface_to_opengles_hardware.activeTexture(interface_to_opengles_hardware.TEXTURE0);
+           
+           interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, gpu_image_handle);
+          
+           u_Sampler = interface_to_opengles_hardware.getUniformLocation(shader_program, 'u_Sampler');
+           //flag which sampler to use with uniform.
+           interface_to_opengles_hardware.uniform1i(u_Sampler, 0);
+           
+           interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
+            
+           //upload image data from motherboard ram to gpu ram through cpu instructions.
+           interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, document.getElementById(""+img_id_to_be_used_as_texture));
+        
+           
+           //tell gpu what vertex to draw now that the texture to draw with it has been activated.
+           interface_to_opengles_hardware.useProgram(shader_program);
+           interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLES, 0, total_point_coordinate_and_texture_coordinate_pairs);
+           
+           //output buffer handles to keep alive(prevent dangling pointers)
+           output["vertex_buffer_handle"] = triangle_and_texture_positions_vertex_buffer;
+           output["texture_buffer_handle"] = gpu_image_handle;
+          
+           return output;
+      }
+      /* end of generic rendering of models on scene functions */
+    </script>
+  </head>
+  <body onLoad="start_engine('canvas_for_opengles');">
+    <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
+    <a href="javascript:void(0);" id="fullscreenbutton" onMouseDown="request_fullscreen();" style="width:100px;height:50px;">Request Fullscreen</a>
+    <div id="reuseable_image_data">
+      <!--<img id="loaded_image" style="display:none;width:0px;height:0px;"></img>-->
+    </div>
+    <div id="shader_compilation_workbench">
+    	<div id="generic_one_by_one_square_vertex_shader" style="display:none;">
+
+    	</div>
+    	<div id="generic_one_by_one_square_fragment_shader" style="display:none;">
+varying highp vec2 v_TexCoord;
+attribute vec2 a_TexCoord;
+varying highp vec2 v_TexCoord;
+void main(void){
+gl_Position = a_Position;
+v_TexCoord = a_TexCoord;
+}
+    	</div>
+    </div>
+  </body>
+</html>
