@@ -718,6 +718,21 @@
             	//to do compile english and number shader(s), likely only one is needed due to uniformity of purpose.
             }
             
+            /*
+                to do, skip the rest of prestages
+                and lock into an error message stage.
+                (there are no automated decisions 
+                 to fix a shader compiler issue due 
+                 to their being a lack of developer 
+                 contributed assets relating to shaders
+                 and the users specific graphics hardware 
+                 require alternative shader specifications)
+            */
+            if(shader_link_failed == 1)
+            {
+            	//to do skip prestages and go to locked in error message.screen
+            }
+            
           }else if(major_scene_prestage == 2)
           {
               //load the loading screen image, vertex data, and texture coordinate data.
