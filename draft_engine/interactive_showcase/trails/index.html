@@ -75,8 +75,8 @@
         
         /* Tobe loaded via external mechanism */
         /* models */
-          /* placeholders for models (not all will be square) */
-          var model_placeholder_one_by_one_square = {
+          /* polymorph model type */
+          var polymorph_model_one_by_one_square = {
                                                       "vertex_coordinate_data": null,
                                                       "texture_coordinate_data": null,
                                                       "vertex_and_texture_coordinate_data": null,
@@ -86,6 +86,20 @@
                                                       "texture_coordinate_filelocation": "./texture_coordinates/one_by_one_square.opengl_xy_texture_coordinates"
                                                     };
           /* models */
+          var model_loading_message = {
+      	                                "vertex_coordinate_data": null,
+                             
+		                                    "image_filelocation": "./images/loading_message.png",
+		                                    "image_resource_id": "loading_message"
+          														};
+          														
+          var model_loading_progress_bar = {
+          	                                "vertex_coordinate_data": null,
+                                 
+				                                    "image_filelocation": "./images/loading_progress_bar.png",
+				                                    "image_resource_id": "loading_progress_bar"
+          																};
+          														
           var model_english_lowercase_a = {
           	                                "vertex_coordinate_data": null,
                                             "texture_coordinate_data": null,
@@ -477,37 +491,79 @@
 						          											 				  };
           
           var model_unitedstates_format_number_four = {
-										                                    "vertex_and_texture_coordinate_data": null, 
+						          	                                "vertex_coordinate_data": null,
+						                                            "texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data_loaded": false,
+						                                          
+						                                            "vertex_coordinate_filelocation": "./models/number/unitedstates_four.opengl_xy_coordinates", 
+						                                            "texture_coordinate_filelocation": "./texture_coordinates/number/unitedstates_four.opengl_xy_texture_coordinates",
+						                                 
 										                                    "image_filelocation": "./images/number/unitedstates_four.png",
 										                                    "image_resource_id": "number_unitedstates_four"
 						          											 				  };
           
           var model_unitedstates_format_number_five = {
-										                                    "vertex_and_texture_coordinate_data": null, 
+						          	                                "vertex_coordinate_data": null,
+						                                            "texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data_loaded": false,
+						                                          
+						                                            "vertex_coordinate_filelocation": "./models/number/unitedstates_five.opengl_xy_coordinates", 
+						                                            "texture_coordinate_filelocation": "./texture_coordinates/number/unitedstates_five.opengl_xy_texture_coordinates",
+						                                 
 										                                    "image_filelocation": "./images/number/unitedstates_five.png",
 										                                    "image_resource_id": "number_unitedstates_five"
 						          											 				  };
           
           var model_unitedstates_format_number_six = {
-										                                    "vertex_and_texture_coordinate_data": null, 
+						          	                                "vertex_coordinate_data": null,
+						                                            "texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data_loaded": false,
+						                                          
+						                                            "vertex_coordinate_filelocation": "./models/number/unitedstates_six.opengl_xy_coordinates", 
+						                                            "texture_coordinate_filelocation": "./texture_coordinates/number/unitedstates_six.opengl_xy_texture_coordinates",
+						                                 
 										                                    "image_filelocation": "./images/number/unitedstates_six.png",
 										                                    "image_resource_id": "number_unitedstates_six"
 						          											 				  };
           
           var model_unitedstates_format_number_seven = {
-										                                    "vertex_and_texture_coordinate_data": null, 
+						          	                                "vertex_coordinate_data": null,
+						                                            "texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data_loaded": false,
+						                                          
+						                                            "vertex_coordinate_filelocation": "./models/number/unitedstates_seven.opengl_xy_coordinates", 
+						                                            "texture_coordinate_filelocation": "./texture_coordinates/number/unitedstates_seven.opengl_xy_texture_coordinates",
+						                                 
 										                                    "image_filelocation": "./images/number/unitedstates_seven.png",
 										                                    "image_resource_id": "number_unitedstates_seven"
 						          											 				  };
           
           var model_unitedstates_format_number_eight = {
-										                                    "vertex_and_texture_coordinate_data": null, 
+						          	                                "vertex_coordinate_data": null,
+						                                            "texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data_loaded": false,
+						                                          
+						                                            "vertex_coordinate_filelocation": "./models/number/unitedstates_eight.opengl_xy_coordinates", 
+						                                            "texture_coordinate_filelocation": "./texture_coordinates/number/unitedstates_eight.opengl_xy_texture_coordinates",
+						                                 
 										                                    "image_filelocation": "./images/number/unitedstates_eight.png",
 										                                    "image_resource_id": "number_unitedstates_eight"
 						          											 				  };
           
           var model_unitedstates_format_number_nine = {
-										                                    "vertex_and_texture_coordinate_data": null, 
+						          	                                "vertex_coordinate_data": null,
+						                                            "texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data": null,
+						                                            "vertex_and_texture_coordinate_data_loaded": false,
+						                                          
+						                                            "vertex_coordinate_filelocation": "./models/number/unitedstates_nine.opengl_xy_coordinates", 
+						                                            "texture_coordinate_filelocation": "./texture_coordinates/number/unitedstates_nine.opengl_xy_texture_coordinates",
+						                                 
 										                                    "image_filelocation": "./images/number/unitedstates_nine.png",
 										                                    "image_resource_id": "number_unitedstates_nine"
 						          											 				  };
@@ -515,9 +571,7 @@
         /* end of models */
         
         /* list of shaders */
-          var generic_shader_for_two_dimensional_square_model = {
-                                                                  "compiled_shader_program": null
-          																											};
+          var generic_shader_for_two_dimensional_square_model = null;
         /* end list of shaders */
         
         /* reuseable handleable variable(s) for the drawing process */
@@ -527,6 +581,9 @@
         /* major scene states */
         var timestamp_last_frame_fully_rendered = null;
         var major_scene_one_states = {
+        	                               "micro_scene": {
+        	                               	                  
+        	                                              }
                                         /*"stars":{
                                 										"last_id_used": -1,
                                 										"list_of_stars": null
@@ -612,15 +669,76 @@
         if(major_scene == 1)
         {
           //initalize major scene
+            /* compile shaders first to prevent
+               unnessecary network useage in
+               the event that the shaders
+               (which are already loaded from 
+               the local html sheet for a multitude
+                of security purposes, defamation prevention
+                and destructive/injection gpu shader code(known or unbeknownst to the manufacturer))
+                fail to compile.
+            
+                compiling shaders are almost instant
+                (unless your working with a desktop GPU with thousands of shaders to load)
+                so no need to boot a loading message during this stage
+                and can probably compile all nessecary instantly.
+            */
+            let shader_link_failed = 0;
+            
+      		  let	texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
+            interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader_generic_one_by_one_square);
+            interface_to_opengles_hardware.compileShader(texture_vertex_shader);
+       
+            let texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
+            interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader_generic_one_by_one_square);
+            interface_to_opengles_hardware.compileShader(texture_fragment_shader);
+        
+            //generic_shader_for_two_dimensional_square_model.compiled_shader_program = interface_to_opengles_hardware.createProgram();
+            generic_shader_for_two_dimensional_square_model = interface_to_opengles_hardware.createProgram();
+            interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_vertex_shader);
+            interface_to_opengles_hardware.attachShader(generic_shader_for_two_dimensional_square_model, texture_fragment_shader);
+            interface_to_opengles_hardware.linkProgram(generic_shader_for_two_dimensional_square_model);
+            
+            //clear memory of shader now that they will no longer be used.
+            interface_to_opengles_hardware.deleteShader(texture_vertex_shader);
+            interface_to_opengles_hardware.deleteShader(texture_fragment_shader);
+            
+            //determine the status of success
+            if(!interface_to_opengles_hardware.getProgramParameter(generic_shader_for_two_dimensional_square_model, interface_to_opengles_hardware.LINK_STATUS))
+            {
+              console.log("shader link failed");
+              shader_link_failed = 1;
+            }
+            
+            if(shader_link_failed == 0)
+            {
+            	//to do compile english and number shader(s), likely only one is needed due to uniformity of purpose.
+            }
+            
           if(major_scene_prestage == 1)
           {
-              //begin showing loading screen
-
-              //assembly line for loading and compiling static components into interactive components.
+          	/* major scene prestage one
+               is to compile the generic
+               one by one square vertex shader source
+               and the one by one square fragment shader source
+               to produce the (binary) shader program.
+               
+               
+            */
+            
+            
+            
+          }else if(major_scene_prestage == 2)
+          {
+              //load the loading screen image, vertex data, and texture coordinate data.
               
           }else if(major_scene_prestage == 0)
           {
-            if(micro_scene == 1)
+          	
+          	if(micro_scene == 1)
+          	{
+          		
+          	}else if(micro_scene == 2)
             {
             
 		          //begin simulate motion physics
