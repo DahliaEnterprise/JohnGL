@@ -16,10 +16,16 @@
          fragment_shader = fragment_shader + "  gl_FragColor = texture2D(uniform_sampler, v_TexCoord); \n";
          fragment_shader = fragment_shader + "} \n";
          
+         interface_to_opengles_hardware = null;
+         
+         texture_vertex_shader = null;
+         texture_fragment_shader = null;
+         shader_program = null;
+         
      function test_webgl()
      {
           let canvas = document.getElementById("glcanvas");
-          let interface_to_opengles_hardware = canvas.getContext("webgl2");
+              interface_to_opengles_hardware = canvas.getContext("webgl2");
           let test_div = document.getElementById("testdiv");
           
           interface_to_opengles_hardware.viewportWidth = 500;
@@ -27,19 +33,19 @@
           
           interface_to_opengles_hardware.viewport(0, 0, 500, 500);
           
-          let texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
+              texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
                 interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader);
                 interface_to_opengles_hardware.compileShader(texture_vertex_shader);
            
-                let texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
+                    texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
                 interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader);
                 interface_to_opengles_hardware.compileShader(texture_fragment_shader);
             
             
             
-                let shader_program = interface_to_opengles_hardware.createProgram();
+                    shader_program = interface_to_opengles_hardware.createProgram();
                 interface_to_opengles_hardware.attachShader(shader_program, texture_vertex_shader);
-                interface_to_opengles_hardware.attachShader(compiled_shader_program, texture_fragment_shader);
+                interface_to_opengles_hardware.attachShader(shader_program, texture_fragment_shader);
                 interface_to_opengles_hardware.linkProgram(shader_program);
                 if(!interface_to_opengles_hardware.getProgramParameter(shader_program, interface_to_opengles_hardware.LINK_STATUS))
                 {
@@ -48,9 +54,10 @@
                 
                 }
                 
-                interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
+                interface_to_opengles_hardware.clearColor(0.5, 0.0, 0.0, 1.0);
         interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
-        interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
+
+      interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
         
                  let one_by_one_square_xyxy = new Float32Array((4*6));
                  
@@ -96,7 +103,7 @@
     <img src="./images/ship.png"></img>
     <div id="testdiv">
     </div>
-    <canvas id="glcanvas" width="500" height="500">
+    <canvas id="glcanvas" width="500" height="500" style="border: 1px solid #000000;">
     </canavas>
   </body>
 </html>
