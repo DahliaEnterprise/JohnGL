@@ -1,4 +1,3 @@
-
 <html>
   <head>
     <title>Test webgl</title>
@@ -10,6 +9,12 @@
          vertex_shader = vertex_shader + "gl_Position = a_Position; \n";
          vertex_shader = vertex_shader + "v_TexCoord = a_TexCoord; \n";
          vertex_shader = vertex_shader + "} \n";
+         
+                     var fragment_shader = "varying highp vec2 v_TexCoord; \n";
+         fragment_shader = fragment_shader + "uniform sampler2D uniform_sampler; \n";
+         fragment_shader = fragment_shader + "void main(void) { \n";
+         fragment_shader = fragment_shader + "  gl_FragColor = texture2D(uniform_sampler, v_TexCoord); \n";
+         fragment_shader = fragment_shader + "} \n";
          
      function test_webgl()
      {
