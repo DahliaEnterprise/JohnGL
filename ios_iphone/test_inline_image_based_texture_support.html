@@ -19,14 +19,81 @@
      function test_webgl()
      {
           let canvas = document.getElementById("glcanvas");
-          let gl = canvas.getContext("webgl");
+          let interface_to_opengles_hardware = canvas.getContext("webgl2");
           let test_div = document.getElementById("testdiv");
           
+          interface_to_opengles_hardware.viewportWidth = 500;
+          interface_to_opengles_hardware.viewportHeight = 500;
           
+          interface_to_opengles_hardware.viewport(0, 0, 500, 500);
+          
+          let texture_vertex_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.VERTEX_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_vertex_shader, vertex_shader);
+                interface_to_opengles_hardware.compileShader(texture_vertex_shader);
+           
+                let texture_fragment_shader = interface_to_opengles_hardware.createShader(interface_to_opengles_hardware.FRAGMENT_SHADER);
+                interface_to_opengles_hardware.shaderSource(texture_fragment_shader, fragment_shader);
+                interface_to_opengles_hardware.compileShader(texture_fragment_shader);
+            
+            
+            
+                let shader_program = interface_to_opengles_hardware.createProgram();
+                interface_to_opengles_hardware.attachShader(shader_program, texture_vertex_shader);
+                interface_to_opengles_hardware.attachShader(compiled_shader_program, texture_fragment_shader);
+                interface_to_opengles_hardware.linkProgram(shader_program);
+                if(!interface_to_opengles_hardware.getProgramParameter(shader_program, interface_to_opengles_hardware.LINK_STATUS))
+                {
+                  console.log("shader link failed");
+                }else{
+                
+                }
+                
+                interface_to_opengles_hardware.clearColor(0.0, 0.0, 0.0, 1.0);
+        interface_to_opengles_hardware.viewport(0, 0, interface_to_opengles_hardware.viewportWidth, interface_to_opengles_hardware.viewportHeight);
+        interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
+        
+                 let one_by_one_square_xyxy = new Float32Array((4*6));
+                 
+                 //first point
+                 one_by_one_square_xyxy[0] = -1.0;
+                 one_by_one_square_xyxy[1] = 1.0;
+                 one_by_one_square_xyxy[2] = 0.0;
+                 one_by_one_square_xyxy[3] = 1.0;
+                 
+                 //second point
+                 one_by_one_square_xyxy[4] = -1.0;
+                 one_by_one_square_xyxy[5] = -1.0;
+                 one_by_one_square_xyxy[6] = 0.0;
+                 one_by_one_square_xyxy[7] = 0.0;
+                 
+                 //third point
+                 one_by_one_square_xyxy[8] = 1.0;
+                 one_by_one_square_xyxy[9] = -1.0;
+                 one_by_one_square_xyxy[10] = 1.0;
+                 one_by_one_square_xyxy[11] = 1.0;
+                 
+                 //fourth point (second vertex)
+                 one_by_one_square_xyxy[12] = 1.0;
+                 one_by_one_square_xyxy[13] = 1.0;
+                 one_by_one_square_xyxy[14] = 1.0;
+                 one_by_one_square_xyxy[15] = 1.0;
+                 
+                 //fifth point
+                 one_by_one_square_xyxy[16] = -1.0;
+                 one_by_one_square_xyxy[17] = 1.0;
+                 one_by_one_square_xyxy[18] = 0.0;
+                 one_by_one_square_xyxy[19] = 1.0;
+                 
+                 //sixth point
+                 one_by_one_square_xyxy[20] = 1.0;
+                 one_by_one_square_xyxy[21] = -1.0;
+                 one_by_one_square_xyxy[22] = 1.0;
+                 one_by_one_square_xyxy[23] = 0.0;
      }
     </script>
   </head>
   <body onLoad="test_webgl();">
+    <img src="./images/ship.png"></img>
     <div id="testdiv">
     </div>
     <canvas id="glcanvas" width="500" height="500">
