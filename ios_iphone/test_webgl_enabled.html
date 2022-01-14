@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>Test webgl</title>
+    <script type="application/javascript">
+     function test_webgl()
+     {
+          let canvas = document.getElementById("glcanvas");
+          let gl = canvas.getContext("webgl");
+          let test_div = document.getElementById("testdiv");
+          if(glcanvas)
+          {
+            test_div.innerHTML = "yes";
+          }else{
+            test_div.innerHTML = "no";
+          }
+          
+          gl.viewport(0, 0, 500, 500);
+          gl.clearColor(0.0, 0.0, 0.5, 1.0);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+    </script>
+  </head>
+  <body onLoad="test_webgl();">
+    <div id="testdiv">
+    </div>
+    <canvas id="glcanvas" width="500" height="500">
+    </canavas>
+  </body>
+</html>
