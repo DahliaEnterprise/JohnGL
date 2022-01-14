@@ -1,1 +1,30 @@
 
+<html>
+  <head>
+    <title>Test webgl</title>
+    <script type="application/javascript">
+                     var vertex_shader = "attribute vec4 a_Position; \n";
+         vertex_shader = vertex_shader + "attribute vec2 a_TexCoord; \n";
+         vertex_shader = vertex_shader + "varying highp vec2 v_TexCoord; \n";
+         vertex_shader = vertex_shader + "void main(void) { \n";
+         vertex_shader = vertex_shader + "gl_Position = a_Position; \n";
+         vertex_shader = vertex_shader + "v_TexCoord = a_TexCoord; \n";
+         vertex_shader = vertex_shader + "} \n";
+         
+     function test_webgl()
+     {
+          let canvas = document.getElementById("glcanvas");
+          let gl = canvas.getContext("webgl");
+          let test_div = document.getElementById("testdiv");
+          
+          
+     }
+    </script>
+  </head>
+  <body onLoad="test_webgl();">
+    <div id="testdiv">
+    </div>
+    <canvas id="glcanvas" width="500" height="500">
+    </canavas>
+  </body>
+</html>
