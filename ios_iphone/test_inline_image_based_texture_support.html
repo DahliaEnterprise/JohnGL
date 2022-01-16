@@ -76,48 +76,48 @@
                                                                    1.0, -1.0, 1.0, 0.0
                                                                ]);
 
-                var triangle_and_texture_positions_vertex_buffer = opengles.createBuffer();
+                var triangle_and_texture_positions_vertex_buffer = interface_to_opengles_hardware.createBuffer();
             //tell gpu at assembly transistor level to open memory/buffer.
-            opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
+            interface_to_opengles_hardware.bindBuffer(interface_to_opengles_hardware.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
             //transfer cpu instructions and memory to gpu memory/buffer.
-            opengles.bufferData(opengles.ARRAY_BUFFER, one_by_one_square_xyxy, opengles.STATIC_DRAW);
+            interface_to_opengles_hardware.bufferData(interface_to_opengles_hardware.ARRAY_BUFFER, one_by_one_square_xyxy, interface_to_opengles_hardware.STATIC_DRAW);
             
             var float_size = triangle_and_texture_positions_vertex.BYTES_PER_ELEMENT;
             
             
             //define shader program' parameters.
-            var attribute_position_coordinates = opengles.getAttribLocation(texture_shader_program, "a_Position");
-            opengles.vertexAttribPointer(attribute_position_coordinates, 2, opengles.FLOAT, false, (float_size * 4), 0);
-            opengles.enableVertexAttribArray(attribute_position_coordinates);
+            var attribute_position_coordinates = interface_to_opengles_hardware.getAttribLocation(texture_shader_program, "a_Position");
+            interface_to_opengles_hardware.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), 0);
+            interface_to_opengles_hardware.enableVertexAttribArray(attribute_position_coordinates);
         
         
-            var attribute_texture_coordinates = opengles.getAttribLocation(texture_shader_program, 'a_TexCoord');
-            opengles.vertexAttribPointer(attribute_texture_coordinates , 2, opengles.FLOAT, false, (float_size * 4), (float_size * 2));
-            opengles.enableVertexAttribArray(attribute_texture_coordinates);
+            var attribute_texture_coordinates = interface_to_opengles_hardware.getAttribLocation(texture_shader_program, 'a_TexCoord');
+            interface_to_opengles_hardware.vertexAttribPointer(attribute_texture_coordinates , 2, interface_to_opengles_hardware.FLOAT, false, (float_size * 4), (float_size * 2));
+            interface_to_opengles_hardware.enableVertexAttribArray(attribute_texture_coordinates);
             
-           gpu_image_handle = opengles.createTexture();
+           gpu_image_handle = interface_to_opengles_hardware.createTexture();
              
              //flip image
-             opengles.pixelStorei(opengles.UNPACK_FLIP_Y_WEBGL, 1);
+             interface_to_opengles_hardware.pixelStorei(opengles.UNPACK_FLIP_Y_WEBGL, 1);
              
              //alert the gpu where to open and ready for unloading of texture data to gpu memory.
-             opengles.activeTexture(opengles.TEXTURE0);
+             interface_to_opengles_hardware.activeTexture(interface_to_opengles_hardware.TEXTURE0);
              
-             opengles.bindTexture(opengles.TEXTURE_2D, gpu_image_handle);
+             interface_to_opengles_hardware.bindTexture(interface_to_opengles_hardware.TEXTURE_2D, gpu_image_handle);
             
-             u_Sampler = opengles.getUniformLocation(texture_shader_program, 'u_Sampler');
+             u_Sampler = interface_to_opengles_hardware.getUniformLocation(texture_shader_program, 'u_Sampler');
              //flag which sampler to use with uniform.
-             opengles.uniform1i(u_Sampler, 0);
+             interface_to_opengles_hardware.uniform1i(u_Sampler, 0);
              
-             opengles.texParameteri(opengles.TEXTURE_2D, opengles.TEXTURE_MIN_FILTER, opengles.LINEAR);
+             interface_to_opengles_hardware.texParameteri(interface_to_opengles_hardware.TEXTURE_2D, interface_to_opengles_hardware.TEXTURE_MIN_FILTER, interface_to_opengles_hardware.LINEAR);
               
              //upload image data from motherboard ram to gpu ram through cpu instructions.
-             opengles.texImage2D(opengles.TEXTURE_2D, 0, opengles.RGB, opengles.RGB, opengles.UNSIGNED_BYTE, document.getElementById("ship"));
+             interface_to_opengles_hardware.texImage2D(interface_to_opengles_hardware.TEXTURE_2D, 0, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.RGB, interface_to_opengles_hardware.UNSIGNED_BYTE, document.getElementById("ship"));
           
              
              //tell gpu what vertex to draw now that the texture to draw with it has been activated.
-             opengles.useProgram(shader_program);
-             opengles.drawArrays(opengles.TRIANGLE_STRIP, 0, 4);
+             interface_to_opengles_hardware.useProgram(shader_program);
+             interface_to_opengles_hardware.drawArrays(interface_to_opengles_hardware.TRIANGLE_STRIP, 0, 4);
 
        
      }
