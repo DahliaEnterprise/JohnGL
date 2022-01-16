@@ -16,11 +16,18 @@
          fragment_shader = fragment_shader + "  gl_FragColor = texture2D(uniform_sampler, v_TexCoord); \n";
          fragment_shader = fragment_shader + "} \n";
          
-         interface_to_opengles_hardware = null;
+         var interface_to_opengles_hardware = null;
          
-         texture_vertex_shader = null;
-         texture_fragment_shader = null;
-         shader_program = null;
+         var texture_vertex_shader = null;
+         var texture_fragment_shader = null;
+         var shader_program = null;
+
+         var u_Sampler = null;
+
+      
+         var gpu_image_handler = null;
+
+      
          
      function test_webgl()
      {
@@ -59,20 +66,65 @@
 
                 interface_to_opengles_hardware.clear(interface_to_opengles_hardware.COLOR_BUFFER_BIT);
         
-                 let one_by_one_square_xyxy = new Float32Array([
+                let one_by_one_square_xyxy = new Float32Array([
                                                                   -1.0, 1.0, 0.0, 1.0,
                                                                   -1.0, -1.0, 0.0, 0.0,
                                                                    1.0, -1.0, 1.0, 1.0,
-                   
+                
                                                                    1.0, 1.0, 1.0, 1.0,
                                                                   -1.0, 1.0, 0.0, 1.0,
                                                                    1.0, -1.0, 1.0, 0.0
                                                                ]);
+
+                var triangle_and_texture_positions_vertex_buffer = opengles.createBuffer();
+            //tell gpu at assembly transistor level to open memory/buffer.
+            opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
+            //transfer cpu instructions and memory to gpu memory/buffer.
+            opengles.bufferData(opengles.ARRAY_BUFFER, one_by_one_square_xyxy, opengles.STATIC_DRAW);
+            
+            var float_size = triangle_and_texture_positions_vertex.BYTES_PER_ELEMENT;
+            
+            
+            //define shader program' parameters.
+            var attribute_position_coordinates = opengles.getAttribLocation(texture_shader_program, "a_Position");
+            opengles.vertexAttribPointer(attribute_position_coordinates, 2, opengles.FLOAT, false, (float_size * 4), 0);
+            opengles.enableVertexAttribArray(attribute_position_coordinates);
+        
+        
+            var attribute_texture_coordinates = opengles.getAttribLocation(texture_shader_program, 'a_TexCoord');
+            opengles.vertexAttribPointer(attribute_texture_coordinates , 2, opengles.FLOAT, false, (float_size * 4), (float_size * 2));
+            opengles.enableVertexAttribArray(attribute_texture_coordinates);
+            
+           gpu_image_handle = opengles.createTexture();
+             
+             //flip image
+             opengles.pixelStorei(opengles.UNPACK_FLIP_Y_WEBGL, 1);
+             
+             //alert the gpu where to open and ready for unloading of texture data to gpu memory.
+             opengles.activeTexture(opengles.TEXTURE0);
+             
+             opengles.bindTexture(opengles.TEXTURE_2D, gpu_image_handle);
+            
+             u_Sampler = opengles.getUniformLocation(texture_shader_program, 'u_Sampler');
+             //flag which sampler to use with uniform.
+             opengles.uniform1i(u_Sampler, 0);
+             
+             opengles.texParameteri(opengles.TEXTURE_2D, opengles.TEXTURE_MIN_FILTER, opengles.LINEAR);
+              
+             //upload image data from motherboard ram to gpu ram through cpu instructions.
+             opengles.texImage2D(opengles.TEXTURE_2D, 0, opengles.RGB, opengles.RGB, opengles.UNSIGNED_BYTE, document.getElementById("ship"));
+          
+             
+             //tell gpu what vertex to draw now that the texture to draw with it has been activated.
+             opengles.useProgram(shader_program);
+             opengles.drawArrays(opengles.TRIANGLE_STRIP, 0, 4);
+
+       
      }
     </script>
   </head>
   <body onLoad="test_webgl();">
-    <img src="./images/ship.png"/>
+    <img src="./images/ship.png" id="ship">
     <div id="testdiv">
     </div>
     <canvas id="glcanvas" width="500" height="500" style="border: 1px solid #000000;">
