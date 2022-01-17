@@ -18,10 +18,51 @@
         /* List of models */
         var list_of_models = null;
 
-    
+    /* Stage One, Initialize Handles */
+    function stage_one()
+    {
+      
+      canvas_for_opengl = document.getElementById("canvas_for_opengl");
+      interface_to_opengles = canvas_for_opengl.getContext("webgl2");
+      
+      list_of_shaders = {};
+      list_of_models = {};
+
+      
+    }
+
+    /* Stage Two, Define coordinate space, list of shaders and models */
+    function stage_two()
+    {
+      list_of_shaders["shader_generic_colorize_vertex"] = {
+                                                            
+                                                          }
+    }
   </script>
 </head>
 <body>
-  <canvas id="canvas_for_opengl"></canvas
-</body>
+  <canvas id="canvas_for_opengl"></canvas>
+
+  <div id="list_of_models">
+    <div id="alphabet_unitedstates_english_lowercase_a">
+      {
+        "coordinates":{
+                        
+                      }
+      }
+    </div>
+  </div>
+  <div id="list_of_shaders">
+    <div id="shader_generic_colorize_vertex">
+      attribute vec4 position_of_vertex_to_colorize; \n
+      attribute vec4 color_of_vertex_to_colorize; \n
+      varying vec4 varying_color_of_vertex_to_colorize; \n
+      void main() { \n
+      //colorize position
+      gl_Position = position_of_vertex_to_colorize; \n
+      varying_color_of_vertex_to_colorize = color_of_vertex_to_colorize;  \n
+      }\n
+    </div>
+  </div>                  
+  </body>
 </html>
