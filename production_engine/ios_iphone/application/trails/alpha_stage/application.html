@@ -37,21 +37,19 @@
     /* Stage Two, Define coordinate space, list of shaders and models */
     function stage_two()
     {
-      coordinated_space = {
-                            "synchronous_decimal_fraction_precision": 6,
-                            "coordinated_space":{
-                                                  "total_per_real_world_x_plane": 30.560000,
-                                                  "total_per_real_world_y_plane": 30.560000,
-                                                  "total_per_real_world_z_plane": 30.560000
-                                                },
-                            "real_world_space":{
-                            
-                                                 "real_world_scale_x_plane": 0.955000,
-                                                 "real_world_scale_y_plane": 0.955000,
-                                                 "real_world_scale_z_plane": 0.955000,
-                                                 "real_world_scale_unit_type": "inches",
-                                               }
-                          };
+      coordinated_space["synchronous_decimal_fraction_precision""] = 6;
+     
+      coordinated_space["coordinated_space"]["total_per_real_world_x_plane"] = 30.560000;
+      coordinated_space["coordinated_space"]["total_per_real_world_y_plane"] = 30.560000;
+      coordinated_space["coordinated_space"]["total_per_real_world_z_plane"] = 30.560000;
+
+      coordinated_space["real_world_space"]["real_world_scale_x_plane"] = 0.955000;
+      coordinated_space["real_world_space"]["real_world_scale_y_plane"] = 0.955000;
+      coordinated_space["real_world_space"]["real_world_scale_z_plane"] = 0.955000;
+
+      coordinated_space["real_world_space"]["real_world_scale_unit_type"] = "inches";
+                          
+                    
       
       list_of_shaders["shader_generic_colorize_vertex"] = {
                                                             
