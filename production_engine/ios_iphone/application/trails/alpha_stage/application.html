@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Trails</title>
-  <script type="application/javascript">
+  <script type="text/javascript">
     /* GLOBAL VARIABLES */
       /* Open GL ES */
         /* HTML Elements */
@@ -22,8 +22,7 @@
       var coordinated_space = null;
     
     /* Stage One, Initialize Handles */
-    function stage_one()
-    {
+    function stage_one(){
       
       canvas_for_opengl = document.getElementById("canvas_for_opengl");
       interface_to_opengles = canvas_for_opengl.getContext("webgl2");
@@ -37,11 +36,12 @@
     /* Stage Two, Define coordinate space, list of shaders and models */
     function stage_two()
     {
-      coordinated_space["synchronous_decimal_fraction_precision""] = 6;
+      //Coordinated Space
+      coordinated_space["synchronous_decimal_fraction_precision"] = 6;
      
-      coordinated_space["coordinated_space"]["total_per_real_world_x_plane"] = 30.560000;
-      coordinated_space["coordinated_space"]["total_per_real_world_y_plane"] = 30.560000;
-      coordinated_space["coordinated_space"]["total_per_real_world_z_plane"] = 30.560000;
+      coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_x_plane"] = 30.560000;
+      coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_y_plane"] = 30.560000;
+      coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_z_plane"] = 30.560000;
 
       coordinated_space["real_world_space"]["real_world_scale_x_plane"] = 0.955000;
       coordinated_space["real_world_space"]["real_world_scale_y_plane"] = 0.955000;
@@ -50,17 +50,46 @@
       coordinated_space["real_world_space"]["real_world_scale_unit_type"] = "inches";
                           
                     
+      /* List of Shaders */
+        /*
+           loop through each element
+           inside if list_of_shaders div
+           and append translated data
+           to the list of shaders Javascript Object Notation.
+        */
+      let list_of_shaders_div = document.getElementById("list_of_shaders");
+      for(let index = 0; index < list_of_shaders_div.children.length; index = index + 1)
+      {
+        list_of_shaders_div.children[index].tagName;
+      }
       
-      list_of_shaders["shader_generic_colorize_vertex"] = {
-                                                            
-                                                          }
+
+
+      /* List of Models */
+        /* 
+           loop through each element 
+           inside of list_of_models div
+           and append translated data
+           to the list of models Javascript Object Notation.
+        */
+      //list_of_models[""]
     }
+
+    /* Run startup stages */
+    function begin_startup()
+    {
+      stage_one();
+      stage_two();
+      
+      document.getElementById("test").innerHTML = "weee";
+    }
+   
   </script>
 </head>
-<body>
+<body onLoad="begin_startup()">
   <canvas id="canvas_for_opengl"></canvas>
-
-  <div id="list_of_models">
+  <div id="test">test</div>
+  <div id="list_of_models" style="display:none;">
     <div id="alphabet_unitedstates_english_lowercase_a">
       {
         "coordinates":{
@@ -69,7 +98,7 @@
       }
     </div>
   </div>
-  <div id="list_of_shaders">
+  <div id="list_of_shaders" style="display:none;">
     <div id="shader_generic_colorize_vertex">
       attribute vec4 position_of_vertex_to_colorize; \n
       attribute vec4 color_of_vertex_to_colorize; \n
