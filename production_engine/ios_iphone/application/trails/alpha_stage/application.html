@@ -5,6 +5,12 @@
   <title>Trails</title>
   <script type="text/javascript">
     /* GLOBAL VARIABLES */
+      /* Functions as variables */
+        /* Startup */
+        var begin_startup = null;
+        var stage_one = null;
+        var stage_two = null;
+    
       /* Open GL ES */
         /* HTML Elements */
         var canvas_for_opengl = null;
@@ -13,36 +19,37 @@
         var interface_to_opengles = null;
 
         /* Inline Shaders */
-        var list_of_shaders = null;
+        var list_of_shaders = {};
 
         /* List of models */
-        var list_of_models = null;
+        var list_of_models = {};
 
       /* Coordinated Space */
-      var coordinated_space = null;
+      var coordinated_space = {};
     
     /* Stage One, Initialize Handles */
-    function stage_one(){
+    stage_one = function()
+    {
       
       canvas_for_opengl = document.getElementById("canvas_for_opengl");
       interface_to_opengles = canvas_for_opengl.getContext("webgl2");
-      
-      list_of_shaders = {};
-      list_of_models = {};
-
-      coordinated_space = {};
+   
     }
 
     /* Stage Two, Define coordinate space, list of shaders and models */
-    function stage_two()
+    stage_two = function()
     {
       //Coordinated Space
       coordinated_space["synchronous_decimal_fraction_precision"] = 6;
-     
+
+      coordinated_space["coordinated_space"] = {};
+      
       coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_x_plane"] = 30.560000;
       coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_y_plane"] = 30.560000;
       coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_z_plane"] = 30.560000;
 
+      coordinated_space["real_world_space"] = {};
+      
       coordinated_space["real_world_space"]["real_world_scale_x_plane"] = 0.955000;
       coordinated_space["real_world_space"]["real_world_scale_y_plane"] = 0.955000;
       coordinated_space["real_world_space"]["real_world_scale_z_plane"] = 0.955000;
@@ -88,10 +95,11 @@
            to the list of models Javascript Object Notation.
         */
       //list_of_models[""]
+      
     }
 
     /* Run startup stages */
-    function begin_startup()
+    begin_startup = function()
     {
       stage_one();
       stage_two();
