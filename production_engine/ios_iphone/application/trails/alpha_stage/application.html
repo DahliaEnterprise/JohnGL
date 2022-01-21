@@ -10,6 +10,9 @@
         var begin_startup = null;
         var stage_one = null;
         var stage_two = null;
+
+      /* Synchronous Variables */
+      const var synchronous_decimal_fraction_precision = 6;
     
       /* Open GL ES */
         /* HTML Elements */
@@ -24,6 +27,9 @@
         /* List of models */
         var list_of_models = {};
 
+      /* Imperial Measurment */
+      var imperial_measurement = {};
+    
       /* Coordinated Space */
       var coordinated_space = {};
     
@@ -39,16 +45,35 @@
     /* Stage Two, Define coordinate space, list of shaders and models */
     stage_two = function()
     {
-      //Coordinated Space
-      coordinated_space["synchronous_decimal_fraction_precision"] = 6;
-
-      coordinated_space["coordinated_space"] = {};
+      /* Define Imperial Measurement */
+      imperial_measurement["unit_type"] = "inches";
       
-      coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_x_plane"] = 30.560000;
-      coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_y_plane"] = 30.560000;
-      coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_z_plane"] = 30.560000;
+      imperial_measurement["total_hatchmarks_per_one_inch"] = 32;
+      imperial_measurement["size_of_space_between_hatchmark"] = 0.031250;
+      
+      imperial_measurement["diameter_of_one_unitedstates_quarter"] = 0.955000;
+      imperial_measurement["length_of_one_mile"] = 63360.000000;
+
+      
+      /* Coordinated Space Definition */
+          /* Length of plane */
+          coordinated_space["length_of_x_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurment["total_hatchmarks_per_one_inch"]);
+          coordinated_space["length_of_y_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurment["total_hatchmarks_per_one_inch"]);
+          coordinated_space["length_of_z_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurment["total_hatchmarks_per_one_inch"]);
+      
+          /* Center of plane */
+          coordinated_space["center_of_x_plane_hatchmarks"] = Math.floor((coordinated_space["length_of_x_plane_hatchmarks"] / 2));
+          coordinated_space["center_of_y_plane_hatchmarks"] = Math.floor((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
+          coordinated_space["center_of_z_plane_hatchmarks"] = Math.floor((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
+
+      /*
+      coordinated_space["total_hatchmarks_per_real_world_x_plane"] = 30.560000;
+      coordinated_space["total_hatchmarks_per_real_world_y_plane"] = 30.560000;
+      coordinated_space["total_hatchmarks_per_real_world_z_plane"] = 30.560000;
 
       coordinated_space["real_world_space"] = {};
+
+      coordinated_space["real_world_space"]["real_world_scale_unit_type"] = "inches";
       
       coordinated_space["real_world_space"]["real_world_scale_x_plane"] = 0.955000;
       coordinated_space["real_world_space"]["real_world_scale_y_plane"] = 0.955000;
@@ -57,19 +82,19 @@
       let total_inches_per_one_imperial_mile = 63360;
       
       let total_real_world_x_plane_per_one_imperial_mile = total_inches_per_one_imperial_mile / coordinated_space["real_world_space"]["real_world_scale_x_plane"];  
-      let x_plane_length = coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_x_plane"] * total_real_world_x_plane_per_one_imperial_mile; 
-      coordinated_space["coordinated_space"]["x_plane_length"] = x_plane_length;
+      let x_plane_length = coordinated_space["total_hatchmarks_per_real_world_x_plane"] * total_real_world_x_plane_per_one_imperial_mile; 
+      coordinated_space["x_plane_length"] = x_plane_length;
 
       let total_real_world_y_plane_per_one_imperial_mile = total_inches_per_one_imperial_mile / coordinated_space["real_world_space"]["real_world_scale_y_plane"];
-      let y_plane_length = coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_y_plane"] * total_real_world_y_plane_per_one_imperial_mile;
-      coordinated_space["coordinated_space"]["y_plane_length"] = y_plane_length;
+      let y_plane_length = coordinated_space["total_hatchmarks_per_real_world_y_plane"] * total_real_world_y_plane_per_one_imperial_mile;
+      coordinated_space["y_plane_length"] = y_plane_length;
 
       let total_real_world_z_plane_per_one_imperial_mile = total_inches_per_one_imperial_mile / coordinated_space["real_world_space"]["real_world_scale_z_plane"];
-      let z_plane_length = coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_z_plane"] * total_real_world_z_plane_per_one_imperial_mile;
-      coordinated_space["coordinated_space"]["z_plane_length"] = z_plane_length;
+      let z_plane_length = coordinated_space["total_hatchmarks_per_real_world_z_plane"] * total_real_world_z_plane_per_one_imperial_mile;
+      coordinated_spac["z_plane_length"] = z_plane_length;
 
       
-      coordinated_space["real_world_space"]["real_world_scale_unit_type"] = "inches";
+      
                           
                     
       /* List of Shaders */
