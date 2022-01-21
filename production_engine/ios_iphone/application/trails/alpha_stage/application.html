@@ -52,14 +52,14 @@
       imperial_measurement["size_of_space_between_hatchmark"] = 0.031250;
       
       imperial_measurement["diameter_of_one_unitedstates_quarter"] = 0.955000;
-      imperial_measurement["length_of_one_mile"] = 63360.000000;
+      imperial_measurement["length_of_one_mile"] = 63360.000000; //one mile is 5280 feet, 5280 feet muliplied by 12 inches(one foot) is 63360 inches exactly.
 
       
       /* Coordinated Space Definition */
           /* Length of plane */
-          coordinated_space["length_of_x_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurment["total_hatchmarks_per_one_inch"]);
-          coordinated_space["length_of_y_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurment["total_hatchmarks_per_one_inch"]);
-          coordinated_space["length_of_z_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurment["total_hatchmarks_per_one_inch"]);
+          coordinated_space["length_of_x_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
+          coordinated_space["length_of_y_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
+          coordinated_space["length_of_z_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
       
           /* Center of plane */
           coordinated_space["center_of_x_plane_hatchmarks"] = Math.floor((coordinated_space["length_of_x_plane_hatchmarks"] / 2));
