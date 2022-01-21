@@ -47,6 +47,12 @@
       coordinated_space["real_world_space"]["real_world_scale_y_plane"] = 0.955000;
       coordinated_space["real_world_space"]["real_world_scale_z_plane"] = 0.955000;
 
+      let total_inches_per_one_imperial_mile = 63360;
+      let total_real_world_x_plane_per_one_imperial_mile = total_inches_per_one_imperial_mile / coordinated_space["real_world_space"]["real_world_scale_x_plane"];  
+      
+      let x_plane_length = coordinated_space["coordinated_space"]["total_hatchmarks_per_real_world_x_plane"] * (total_real_world_x_plane_per_one_imperial_mile); 
+      coordinated_space["coordinated_space"]["x_plane_length"] = x_plane_length;
+
       coordinated_space["real_world_space"]["real_world_scale_unit_type"] = "inches";
                           
                     
