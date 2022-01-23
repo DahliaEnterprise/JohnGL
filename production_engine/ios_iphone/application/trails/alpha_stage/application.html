@@ -74,10 +74,36 @@
            and append translated data
            to the list of shaders Javascript Object Notation.
         */
-      let list_of_shaders_div = document.getElementById("list_of_shaders");
-      for(let index = 0; index < list_of_shaders_div.children.length; index = index + 1)
+
+      let list_of_shaders_div_ids = ["shader_generic_colorize"]
+      for(let index = 0; index < list_of_shaders_div_ids.length; index = index + 1)
       {
-        list_of_shaders_div.children[index].tagName;
+        
+        //do compile shader
+          //do compile vertex shader
+          let vertex_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.VERTEX_SHADER);
+          let vertex_shader_div_id_to_sourcecode = list_of_shaders_div_ids[index]+"_vertex";
+          let vertex_shader_sourcecode = document.getElementById(vertex_shader_div_id_to_sourcecode).innerHTML;
+          
+          interface_to_opengles.shaderSource(vertex_shader_of_program, vertex_shader_sourcecode);
+          interface_to_opengles.compileShader(vertex_shader_of_program);
+
+          if(interface_to_opengles.getShaderParameter(vertex_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
+          {
+            console.log("vertex shader failed to compile ("+vertex_shader_div_id_to_sourcecode+")");
+          }
+
+          //do compile fragment shader
+          let fragment_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.FRAGMENT_SHADER);
+          let fragment_shader_sourcecode = document.getElementById(list_of_shaders_div_ids[index]+"_fragment").innerHTML;
+          interface_to_opengles.shaderSource(fragment_shader_of_program, fragment_shader_sourcecode);
+          interface_to_opengles.compileShader(fragment_shader_of_program);
+
+          if(interface_to_opengles.getShaderParameter(fragment_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
+          {
+            console.log("fragment shader failed to compile ("+list_of_shaders_div_ids[index]+"_fragment)");
+            
+          }
       }
       
 
@@ -99,7 +125,7 @@
       stage_one();
       stage_two();
       
-      document.getElementById("test").innerHTML = coordinated_space["center_of_x_plane_hatchmarks"];
+    
     }
    
   </script>
