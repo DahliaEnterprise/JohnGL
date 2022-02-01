@@ -40,9 +40,6 @@
         var stage_one = null;
         var stage_two = null;
 
-        /* Trim Multiple Lines */
-        var trim_multiple_lines = null;
-        
       /* Synchronous Variables */
       const synchronous_decimal_fraction_precision = 6;
     
@@ -98,8 +95,7 @@
           coordinated_space["center_of_y_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
           coordinated_space["center_of_z_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
                           
-                    console.log(trim_multiple_lines());
-										
+					
       /* List of Shaders */
         /*
            loop through each element
@@ -119,7 +115,7 @@
 
           if(interface_to_opengles.getShaderParameter(vertex_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
           {
-            console.log("vertex shader failed to compile (")");
+            console.log("vertex shader failed to compile ()");
           }
 
           //do compile fragment shader
