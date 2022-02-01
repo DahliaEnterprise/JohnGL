@@ -4,6 +4,35 @@
   <meta charset="UTF-8">
   <title>Trails</title>
   <script type="text/javascript">
+		/* SHADER SOURCE CODE */
+		var solid_color_vertex_shader_source_code = "";
+        solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 position_of_vertex_to_colorize; \n";
+        solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "attribute vec4 color_of_vertex_to_colorize; \n";
+        solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
+        solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "void main() { \n";
+        solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  //colorize position.  \n";
+        solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  gl_Position = position_of_vertex_to_colorize; \n";
+        solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "  varying_color_of_vertex_to_colorize = color_of_vertex_to_colorize;  \n";
+        solid_color_vertex_shader_source_code = solid_color_vertex_shader_source_code + "} \n";
+     
+		var solid_color_fragment_shader_source_code = "";
+				solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "precision mediump float;  \n";
+        solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "varying vec4 varying_color_of_vertex_to_colorize; \n";
+        solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "void main() { \n";
+        solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  //Define filter \n";
+        solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  gl_FragColor = varying_color_of_vertex_to_colorize; \n";
+        solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "} \n";
+										
+		 var list_of_shaders_names = ["solid_color_vertex"];//only useful for turning all on or turning all off(to be clear, freeing memory for scenes that only need a particular aset of shaders to be used).
+	   var list_of_shaders_jsonobjects = {
+			                                   "solid_color_vertex": {
+															                                   "vertex_sourcecode": solid_color_vertex_shader_source_code,
+																										             "fragment_sourcecode": solid_color_fragment_shader_source_code,
+																										             "program": null,
+																										             "program_is_available":false
+															                                  }
+			                                 };
+		
     /* GLOBAL VARIABLES */
       /* Functions as variables */
         /* Startup */
@@ -11,6 +40,9 @@
         var stage_one = null;
         var stage_two = null;
 
+        /* Trim Multiple Lines */
+        var trim_multiple_lines = null;
+        
       /* Synchronous Variables */
       const synchronous_decimal_fraction_precision = 6;
     
@@ -66,7 +98,8 @@
           coordinated_space["center_of_y_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
           coordinated_space["center_of_z_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
                           
-                    
+                    console.log(trim_multiple_lines());
+										
       /* List of Shaders */
         /*
            loop through each element
@@ -74,34 +107,30 @@
            and append translated data
            to the list of shaders Javascript Object Notation.
         */
-
-      let list_of_shaders_div_ids = ["shader_generic_colorize"]
-      for(let index = 0; index < list_of_shaders_div_ids.length; index = index + 1)
+      for(let index = 0; index < list_of_shaders_names.length; index = index + 1)
       {
         
         //do compile shader
           //do compile vertex shader
           let vertex_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.VERTEX_SHADER);
-          let vertex_shader_div_id_to_sourcecode = list_of_shaders_div_ids[index]+"_vertex";
-          let vertex_shader_sourcecode = document.getElementById(vertex_shader_div_id_to_sourcecode).innerHTML;
           
-          interface_to_opengles.shaderSource(vertex_shader_of_program, vertex_shader_sourcecode);
+          interface_to_opengles.shaderSource(vertex_shader_of_program, solid_color_vertex_shader_source_code);
           interface_to_opengles.compileShader(vertex_shader_of_program);
 
           if(interface_to_opengles.getShaderParameter(vertex_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
           {
-            console.log("vertex shader failed to compile ("+vertex_shader_div_id_to_sourcecode+")");
+            console.log("vertex shader failed to compile (")");
           }
 
           //do compile fragment shader
           let fragment_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.FRAGMENT_SHADER);
-          let fragment_shader_sourcecode = document.getElementById(list_of_shaders_div_ids[index]+"_fragment").innerHTML;
-          interface_to_opengles.shaderSource(fragment_shader_of_program, fragment_shader_sourcecode);
+          
+					interface_to_opengles.shaderSource(fragment_shader_of_program, solid_color_fragment_shader_source_code );
           interface_to_opengles.compileShader(fragment_shader_of_program);
 
           if(interface_to_opengles.getShaderParameter(fragment_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
           {
-            console.log("fragment shader failed to compile ("+list_of_shaders_div_ids[index]+"_fragment)");
+            console.log("fragment shader failed to compile (_fragment)");
             
           }
       }
@@ -118,8 +147,9 @@
       //list_of_models[""]
       
     }
-
-    /* Run startup stages */
+		
+		
+    /* Begin startup stages */
     begin_startup = function()
     {
       stage_one();
@@ -152,26 +182,6 @@
       }
     </div>
   </div>
-  <div id="list_of_shaders" style="display:none;">
-    <div id="shader_generic_colorize">
-      <div id="shader_generic_colorize_vertex">
-        attribute vec4 position_of_vertex_to_colorize; \n
-        attribute vec4 color_of_vertex_to_colorize; \n
-        varying vec4 varying_color_of_vertex_to_colorize; \n
-        void main() { \n
-        //colorize position
-        gl_Position = position_of_vertex_to_colorize; \n
-        varying_color_of_vertex_to_colorize = color_of_vertex_to_colorize;  \n
-        }\n
-      </div>
-      <div id="shader_generic_colorize_fragment">
-        precision mediump float;  \n
-        varying vec4 varying_color_of_vertex_to_colorize; \n
-        void main() { \n
-        gl_FragColor = varying_color_of_vertex_to_colorize; \n
-        }
-      </div>
-    </div>
   </div>                  
   </body>
 </html>
