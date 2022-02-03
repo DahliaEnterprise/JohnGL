@@ -51,6 +51,12 @@
 				/* Course of actions loop */
 			  var course_of_actions_loop = null;
 				
+				/* User Land Logic */
+				var userland_scene_majorscene = null;
+				var userland_scene_prestage_to_majorscene = null;
+				var userland_scene_microscene_of_majorscene = null;
+				var userland_course_of_actions_pulse = null;
+				
       /* Synchronous Variables */
       const synchronous_decimal_fraction_precision = 6;
     
@@ -76,13 +82,13 @@
     /* Stage One, Initialize Handles */
     stage_one = function()
     {
-      
+      //Initialize canvas handle and interface to opengl handle.
       canvas_for_opengl = document.getElementById("canvas_for_opengl");
       interface_to_opengles = canvas_for_opengl.getContext("webgl2");
    
     }
 
-    /* Stage Two, Define coordinated space, list of shaders and models */
+    /* Stage Two, Define coordinated space, list of shaders and models, User land states */
     stage_two = function()
     {
       /* Define Imperial Measurement */
@@ -106,7 +112,11 @@
           coordinated_space["center_of_y_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
           coordinated_space["center_of_z_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
 					
-					
+			/* User Land States */
+			userland_scene_majorscene = 1;
+			userland_scene_prestage_to_majorscene = 1;
+			userland_scene_microscene_of_majorscene = 1;
+			
 			//test polymorphic compile shader function
 			let nowhere = shader_compile_shader(solid_color_vertex_shader_source_code, solid_color_fragment_shader_source_code);
 			
@@ -157,6 +167,9 @@
 		/* Course of Actions Loop */
 		course_of_actions_loop = function()
 		{
+			//User Land Logic
+			user_land_course_of_actions_pulse();
+			
 			//render screen
 			drawscreenloop_render_screen();
 			
@@ -164,6 +177,45 @@
 			setTimeout(course_of_actions_loop, 1);
 		}
 		
+		/* User Land Logic */
+		user_land_course_of_actions_pulse = function()
+		{
+			/* 
+			   Guidelines of
+			   Prestage Scene, Major Scene, Minor Scene
+				 
+			   Every major scene has one successive
+				 prestage. Once all prestages have been satisfied
+				 then the microscenes will coordinate toggling
+				 on or off by switching microscenes based on
+				 events of the user or events within the application.
+				 Major scenes also switch based on user interactions or events
+				 from the application. 
+				 
+				 Although the prestage, microscene, and majorscene
+				 are clearly defined they are so defined as such
+				 to cooperate with the shader and model memory management
+				 model and is also in line with real world artist workflow
+				 with working with groups of flip books or video scenes;
+				 That being said, aslong as one does not have logic outside a major
+				 scene code block almost any rendering workflow within regards to
+				 logic can be accepted with out being disruptive to the
+				 operator of the application.
+			*/
+			if(userland_scene_majorscene == 1)
+			{
+				if(userland_scene_prestage_to_majorscene == 1)
+			  {
+					//begin coordinating the compilations of shaders and notifying the operator of the progress(loading bar)
+		    }else if(userland_scene_prestage_to_majorscene == 0)
+				{
+				  if(userland_scene_microscene_of_majorscene == 1)
+					{
+						//begin first user land interaction or animation here.
+					}
+				}
+			}
+		}
 		
     /* Begin startup stages */
     begin_startup = function()
