@@ -43,7 +43,14 @@
 				
 				/* Shader */
 				var shader_compile_shader = null;
+				var shader_freememory_and_load_relevant_shaders = null;
 
+				/* Draw Screen Loop */
+				var drawscreenloop_render_screen = null;
+				
+				/* Course of actions loop */
+			  var course_of_actions_loop = null;
+				
       /* Synchronous Variables */
       const synchronous_decimal_fraction_precision = 6;
     
@@ -102,6 +109,7 @@
 					
 			//test polymorphic compile shader function
 			let nowhere = shader_compile_shader(solid_color_vertex_shader_source_code, solid_color_fragment_shader_source_code);
+			
     }
 		
 		/* Shader */
@@ -135,14 +143,41 @@
 			return output;
 		}
 		
+		shader_freememory_and_load_relevant_shaders = function(list_of_shader_names_to_be_available)
+		{
+			
+		}
+		
+		/* Draw Screen Loop */
+	  drawscreenloop_render_screen = function()
+		{
+			//order of operations here.
+		}
+		
+		/* Course of Actions Loop */
+		course_of_actions_loop = function()
+		{
+			//render screen
+			drawscreenloop_render_screen();
+			
+			//envoke course of actions loop
+			setTimeout(course_of_actions_loop, 1);
+		}
+		
+		
     /* Begin startup stages */
     begin_startup = function()
     {
+			//start up
       stage_one();
       stage_two();
-      
-    
+      //end of starting up stages
+			
+			//begin course of actions loop
+			course_of_actions_loop();
     }
+		
+		
    
   </script>
 </head>
