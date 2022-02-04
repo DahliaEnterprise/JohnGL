@@ -209,6 +209,15 @@
 					//begin coordinating the compilations of shaders and notifying the operator of the progress(loading bar)
 		    }else if(userland_scene_prestage_to_majorscene == 0)
 				{
+					/* the major scene is now activate and prestage scene are not active, 
+					   this is where the microscenes can be toggled amongst each other
+						 based on user events or application events.
+						 The developer is free to design the touch screen
+						 events in any way desired within the microscene and
+						 between toggling of microscenes as long the developer
+						 and developers ensure a selected paradigm across
+						 microscenes that rely on eachother.
+					*/
 				  if(userland_scene_microscene_of_majorscene == 1)
 					{
 						//begin first user land interaction or animation here.
