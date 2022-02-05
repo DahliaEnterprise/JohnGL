@@ -48,15 +48,25 @@
 				/* Course of actions loop */
         var course_of_actions_synchronized_timestamp = null;
         var course_of_actions_synchronized_timepassed_since_last_run = null;
+        
+        var course_of_actions_target_loop_interval = null;
+        var course_of_actions_cooldown_time = null;
+        
 			  var course_of_actions_loop = null;
 				
 				/* User Land Logic */
 				var userland_scene_majorscene = null;
 				var userland_scene_prestage_to_majorscene = null;
 				var userland_scene_microscene_of_majorscene = null;
+        
+        var userland_scene_models = {};
+        
 				var userland_course_of_actions_pulse = null;
 				
         /* Draw Screen Loop */
+        var drawscreenloop_render_select_lastid_used = null;
+        var drawscreenloop_render_selection = {};
+        
 				var drawscreenloop_render_screen = null;
 				
         
@@ -120,14 +130,19 @@
           coordinated_space["center_of_y_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
           coordinated_space["center_of_z_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
 					
-      /* Course of actions syncronized timestamp */
+      /* Course of actions */
       course_of_actions_synchronized_timestamp = Date.now();
+      course_of_actions_target_loop_interval = (1000 / (30 * 10)); //60 ticks per second multiplied by ten(to keep up and or be ahead of any drift that may occur within motion or physics systems).
+      course_of_actions_cooldown_time = 1;
       
 			/* User Land States */
 			userland_scene_majorscene = 1;
 			userland_scene_prestage_to_majorscene = 1;
 			userland_scene_microscene_of_majorscene = 1;
 			
+      /* Draw screen loop */
+      drawscreenloop_render_select_lastid_used = 0;
+      
 			//test polymorphic compile shader function
 			let nowhere = shader_compile_shader(solid_color_vertex_shader_source_code, solid_color_fragment_shader_source_code);
 			
@@ -200,12 +215,9 @@
             //do change "program is available" flag to false.
             list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = false;
             
-            console.log(list_of_shaders_jsonobjects);
           }
         }
       }
-      
-      //compile shaders currently being requested
       
 		}
 		
@@ -225,7 +237,23 @@
       course_of_actions_synchronized_timestamp = Date.now();
 			
 			//envoke course of actions loop.
-			setTimeout(course_of_actions_loop, 1);
+      let milliseconds_from_now = 1;
+      if(course_of_actions_synchronized_timepassed_since_last_run > course_of_actions_target_loop_interval)
+      {
+        //set to timer to now plus cooldown time.
+        milliseconds_from_now = course_of_actions_cooldown_time;
+        
+      }else if(course_of_actions_synchronized_timepassed_since_last_run <= course_of_actions_target_loop_interval)
+      {
+        //set timer to remaining time of execution time minus "course of actions target loop interval"
+        milliseconds_from_now = course_of_actions_target_loop_interval - course_of_actions_synchronized_timepassed_since_last_run;
+        if(milliseconds_from_now < course_of_actions_cooldown_time)
+        {
+          milliseconds_from_now = course_of_actions_cooldown_time;
+        }
+      }
+    
+			setTimeout(course_of_actions_loop, milliseconds_from_now);
 		}
 		
 		/* User Land Logic */
