@@ -155,7 +155,45 @@
 		
 		shader_freememory_and_load_relevant_shaders = function(list_of_shader_names_to_be_available)
 		{
-			
+      //not a reentrant function.(single threaded application intended to be converted to multithreaded).
+      for(let list_of_shaders_jsonobject_key in list_of_shaders_jsonobjects)
+      {
+        //fault preventention
+        if(list_of_shaders_jsonobjects.hasOwnProperty(list_of_shaders_jsonobject_key) == true)
+        {
+          //free from memory or "compile and allocate into memory"?
+          let name_of_shader_within_list_of_shaders_jsonobject = list_of_shaders_jsonobject_key;
+          let exists_within_list_of_shaders_to_be_available = list_of_shader_names_to_be_available.includes(name_of_shader_within_list_of_shaders_jsonobject);
+          if(exists_within_list_of_shaders_to_be_available == true)
+          {
+            if(list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] == false)
+            {
+              //compile and allocate into memory if not already compiled and allocated into memory.
+              let vertex_sourcecode = list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["vertex_sourcecode"];
+              let fragment_sourcecode = list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["fragment_sourcecode"];
+                //do compile
+                let shader_program = shader_compile_shader(vertex_sourcecode, fragment_sourcecode);
+            
+                //do allocate shader program to list of shaders jsonobject memory
+                list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program"] = shader_program;
+                
+                //do change "program is available" flag to true.
+                list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = true;
+                console.log(list_of_shaders_jsonobjects);
+            }
+          }else if(exists_within_list_of_shaders_to_be_available == false)
+          {
+            //do free from memory it is currently not going to be used.
+            list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program"] = null;
+            
+            //do change "program is available" flag to false.
+            list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = false;
+          }
+        }
+      }
+      
+      //compile shaders currently being requested
+      
 		}
 		
 		/* Draw Screen Loop */
@@ -207,10 +245,12 @@
 				if(userland_scene_prestage_to_majorscene == 1)
 			  {
 					//begin coordinating the compilations of shaders and notifying the operator of the progress(loading bar)
+          shader_freememory_and_load_relevant_shaders(["solid_color_vertex"]);
+          userland_scene_prestage_to_majorscene = 0;
 		    }else if(userland_scene_prestage_to_majorscene == 0)
 				{
-					/* the major scene is now activate and prestage scene are not active, 
-					   this is where the microscenes can be toggled amongst each other
+					/* the major scene is now activated and prestage scene(s) are not active, 
+					   this is where the microscene(s) can be toggled amongst each other
 						 based on user events or application events.
 						 The developer is free to design the touch screen
 						 events in any way desired within the microscene and
