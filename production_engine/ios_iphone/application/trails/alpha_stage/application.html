@@ -45,10 +45,9 @@
 				var shader_compile_shader = null;
 				var shader_freememory_and_load_relevant_shaders = null;
 
-				/* Draw Screen Loop */
-				var drawscreenloop_render_screen = null;
-				
 				/* Course of actions loop */
+        var course_of_actions_synchronized_timestamp = null;
+        var course_of_actions_synchronized_timepassed_since_last_run = null;
 			  var course_of_actions_loop = null;
 				
 				/* User Land Logic */
@@ -57,6 +56,10 @@
 				var userland_scene_microscene_of_majorscene = null;
 				var userland_course_of_actions_pulse = null;
 				
+        /* Draw Screen Loop */
+				var drawscreenloop_render_screen = null;
+				
+        
       /* Synchronous Variables */
       const synchronous_decimal_fraction_precision = 6;
     
@@ -88,7 +91,12 @@
    
     }
 
-    /* Stage Two, Define coordinated space, list of shaders and models, User land states */
+    /* Stage Two, 
+         Define coordinated space, 
+         list of shaders and models, 
+         course of actions syncronized timestamp
+         User land states 
+    */
     stage_two = function()
     {
       /* Define Imperial Measurement */
@@ -112,6 +120,9 @@
           coordinated_space["center_of_y_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
           coordinated_space["center_of_z_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
 					
+      /* Course of actions syncronized timestamp */
+      course_of_actions_synchronized_timestamp = Date.now();
+      
 			/* User Land States */
 			userland_scene_majorscene = 1;
 			userland_scene_prestage_to_majorscene = 1;
@@ -179,7 +190,7 @@
                 
                 //do change "program is available" flag to true.
                 list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = true;
-                console.log(list_of_shaders_jsonobjects);
+                
             }
           }else if(exists_within_list_of_shaders_to_be_available == false)
           {
@@ -188,6 +199,8 @@
             
             //do change "program is available" flag to false.
             list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = false;
+            
+            console.log(list_of_shaders_jsonobjects);
           }
         }
       }
@@ -196,22 +209,22 @@
       
 		}
 		
-		/* Draw Screen Loop */
-	  drawscreenloop_render_screen = function()
-		{
-			//order of operations here.
-		}
-		
 		/* Course of Actions Loop */
 		course_of_actions_loop = function()
 		{
+      //Determine time passed since last course of actions ran.
+      course_of_actions_synchronized_timepassed_since_last_run = Date.now() - course_of_actions_synchronized_timestamp;
+      
 			//User Land Logic
 			user_land_course_of_actions_pulse();
 			
 			//render screen
 			drawscreenloop_render_screen();
+      
+      //course of actions is completed, set syncronized timestamp.
+      course_of_actions_synchronized_timestamp = Date.now();
 			
-			//envoke course of actions loop
+			//envoke course of actions loop.
 			setTimeout(course_of_actions_loop, 1);
 		}
 		
@@ -246,7 +259,17 @@
 			  {
 					//begin coordinating the compilations of shaders and notifying the operator of the progress(loading bar)
           shader_freememory_and_load_relevant_shaders(["solid_color_vertex"]);
-          userland_scene_prestage_to_majorscene = 0;
+          
+          //show loading screen, while asyncrounously compiling english and number models.
+          userland_scene_prestage_to_majorscene = 2;
+        }else if(userland_scene_prestage_to_majorscene == 2)
+        {
+          //append a loading screen image to drawscreen list.
+          
+          //append a loading bar image to drawscreen list.
+          
+          //no textual updates will occur here only loading animation bar.
+          
 		    }else if(userland_scene_prestage_to_majorscene == 0)
 				{
 					/* the major scene is now activated and prestage scene(s) are not active, 
@@ -264,6 +287,12 @@
 					}
 				}
 			}
+		}
+    
+    /* Draw Screen Loop */
+	  drawscreenloop_render_screen = function()
+		{
+			//order of operations here.
 		}
 		
     /* Begin startup stages */
