@@ -33,6 +33,12 @@
 															                                  }
 			                                 };
 		
+    /* MODELS SOURCE CODE */
+    var one_by_one_ratio_square_source_code = {
+                                                "coordinate_space_positions": "866304, 1014144, 1013760, 866304, 1013760, 1013760, 1013760, 1013760, 1013760",
+                                                "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0"
+                                              };
+                                       
     /* GLOBAL VARIABLES */
       /* Functions as variables */
 			/* Format: base identifier, specific purpose or subset identifer, purpose description(most function names may not be this long and or descriptive) */
@@ -137,7 +143,8 @@
           coordinated_space["center_of_x_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_x_plane_hatchmarks"] / 2));
           coordinated_space["center_of_y_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
           coordinated_space["center_of_z_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
-					
+					console.log(coordinated_space["center_of_z_plane_hatchmarks"]);
+          
       /* Course of actions */
       course_of_actions_synchronized_timestamp = Date.now();
       course_of_actions_ticks_per_second = 60;
@@ -244,9 +251,6 @@
 			//render screen
 			drawscreenloop_render_screen();
       
-      //course of actions is completed, set syncronized timestamp.
-      course_of_actions_synchronized_timestamp = Date.now();
-			
 			//envoke course of actions loop.
       let milliseconds_from_now = 1;
       if(course_of_actions_synchronized_timepassed_since_last_run > course_of_actions_target_loop_interval)
@@ -264,6 +268,10 @@
         }
       }
     
+      //course of actions is completed, set syncronized timestamp.
+      course_of_actions_synchronized_timestamp = Date.now();
+			
+      //envoke course of actions at the designated time.
 			setTimeout(course_of_actions_loop, milliseconds_from_now);
 		}
 		
