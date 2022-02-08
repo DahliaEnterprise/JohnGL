@@ -49,12 +49,17 @@
         var course_of_actions_synchronized_timestamp = null;
         var course_of_actions_synchronized_timepassed_since_last_run = null;
         
+        var course_of_actions_ticks_per_second = null;
+        
         var course_of_actions_target_loop_interval = null;
         var course_of_actions_cooldown_time = null;
         
 			  var course_of_actions_loop = null;
 				
 				/* User Land Logic */
+        var userland_syncronized_timestamp = null;
+        var userland_syncronized_timepassed_since_last_run = null;
+        
 				var userland_scene_majorscene = null;
 				var userland_scene_prestage_to_majorscene = null;
 				var userland_scene_microscene_of_majorscene = null;
@@ -64,6 +69,9 @@
 				var userland_course_of_actions_pulse = null;
 				
         /* Draw Screen Loop */
+        var drawscreenloop_render_syncronized_timestamp = null;
+        var drawscreenloop_render_syncronized_timepassed_since_last_run = null;
+        
         var drawscreenloop_render_select_lastid_used = null;
         var drawscreenloop_render_selection = {};
         
@@ -132,15 +140,18 @@
 					
       /* Course of actions */
       course_of_actions_synchronized_timestamp = Date.now();
-      course_of_actions_target_loop_interval = (1000 / (30 * 10)); //60 ticks per second multiplied by ten(to keep up and or be ahead of any drift that may occur within motion or physics systems).
+      course_of_actions_ticks_per_second = 60;
+      course_of_actions_target_loop_interval = (1000 / (60 * 10)); //60 ticks per second multiplied by ten(to keep up and or be ahead of any drift that may occur within motion or physics systems).
       course_of_actions_cooldown_time = 1;
       
 			/* User Land States */
+      userland_syncronized_timestamp = Date.now();
 			userland_scene_majorscene = 1;
 			userland_scene_prestage_to_majorscene = 1;
 			userland_scene_microscene_of_majorscene = 1;
 			
       /* Draw screen loop */
+      drawscreenloop_render_syncronized_timestamp = Date.now();
       drawscreenloop_render_select_lastid_used = 0;
       
 			//test polymorphic compile shader function
@@ -167,7 +178,7 @@
       let fragment_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.FRAGMENT_SHADER);
           
 		  interface_to_opengles.shaderSource(fragment_shader_of_program, fragment_shader_sourcecode );
-      interface_to_opengles.compileShader(fragment_shader_of_program);
+      interface_to_ropengles.compileShader(fragment_shader_of_program);
 
       if(interface_to_opengles.getShaderParameter(fragment_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
       {
@@ -257,8 +268,11 @@
 		}
 		
 		/* User Land Logic */
-		user_land_course_of_actions_pulse = function()
+		userland_course_of_actions_pulse = function()
 		{
+      //Determine time passed since last "user land course of actions pulse" ran.
+      userland_syncronized_timepassed_since_last_run = Date.now() - userland_syncronized_timestamp;
+      
 			/* 
 			   Guidelines of
 			   Prestage Scene, Major Scene, Minor Scene
@@ -315,12 +329,23 @@
 					}
 				}
 			}
+      
+      //User land set syncronized timestamp.
+      userland_syncronized_timestamp = Date.now();
 		}
     
     /* Draw Screen Loop */
 	  drawscreenloop_render_screen = function()
 		{
-			//order of operations here.
+      //Determine time passed since last "draw screen loop render screen" ran.
+      drawscreenloop_render_syncronized_timepassed_since_last_run = Date.now() - drawscreenloop_render_syncronized_timestamp;
+			
+      //order of operations here.
+      
+      
+      //Draw Screen Loop set syncronized timestamp.
+      drawscreenloop_render_syncronized_timestamp = Date.now();
+      
 		}
 		
     /* Begin startup stages */
