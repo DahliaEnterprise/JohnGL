@@ -34,8 +34,8 @@
 			                                 };
 		
     /* MODELS SOURCE CODE */
-    var one_by_one_ratio_square_source_code = {
-                                                "coordinate_space_positions": "866304, 1014144, 1013760, 866304, 1013760, 1013760, 1013760, 1013760, 1013760",
+    var one_by_one_ratio_square_model_source_code = {
+                                                "coordinated_space_positions": "866304, 1014144, 1013760, 866304, 1013760, 1013760, 1013760, 1013760, 1013760",
                                                 "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0"
                                               };
                                        
@@ -73,6 +73,7 @@
         var userland_scene_models = {};
         
 				var userland_course_of_actions_pulse = null;
+        var userland_scene_models_append_copy_of_model = null;
 				
         /* Draw Screen Loop */
         var drawscreenloop_render_syncronized_timestamp = null;
@@ -310,6 +311,9 @@
 					//begin coordinating the compilations of shaders and notifying the operator of the progress(loading bar)
           shader_freememory_and_load_relevant_shaders(["solid_color_vertex"]);
           
+          //copy the "one to one ratio square" model to be used in the userland scene models.
+          userland_scene_models_append_copy_of_model("loading_background_image_placeholder", one_by_one_ratio_square_model_source_code["coordinated_space_positions"], one_by_one_ratio_square_model_source_code["opengl_color_values"]);
+          
           //show loading screen, while asyncrounously compiling english and number models.
           userland_scene_prestage_to_majorscene = 2;
         }else if(userland_scene_prestage_to_majorscene == 2)
@@ -341,6 +345,11 @@
       //User land set syncronized timestamp.
       userland_syncronized_timestamp = Date.now();
 		}
+    
+    userland_scene_models_append_copy_of_model = function(name_of_model_to_be_listed_within_userland_scene_models, coordinated_space_positions, opengl_color_values)
+    {
+      
+    }
     
     /* Draw Screen Loop */
 	  drawscreenloop_render_screen = function()
