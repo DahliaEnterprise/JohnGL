@@ -178,7 +178,7 @@
       let fragment_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.FRAGMENT_SHADER);
           
 		  interface_to_opengles.shaderSource(fragment_shader_of_program, fragment_shader_sourcecode );
-      interface_to_ropengles.compileShader(fragment_shader_of_program);
+      interface_to_opengles.compileShader(fragment_shader_of_program);
 
       if(interface_to_opengles.getShaderParameter(fragment_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
       {
