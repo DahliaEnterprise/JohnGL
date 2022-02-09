@@ -351,8 +351,17 @@
       let userland_model = {};
       
       //copy model source code to userland model. (purpose: the source code can be reused to establish different formats and or have a zeroed rotation and position to copy from before translations(reduces drift).
-      userland_model["coordinated_space_positions"] = coordinated_space_positions;
-      userland_model["opengl_color_values"] = opengl_color_values;
+      userland_model["vertex"]["coordinated_space_positions"] = coordinated_space_positions;
+      userland_model["vertex"]["opengl_color_values"] = opengl_color_values;
+      
+      //initialize orientation of model within the coordinated space.
+      userland_model["coordinated_space"]["rotation_x"] = 0.000000;
+      userland_model["coordinated_space"]["rotation_y"] = 0.000000;
+      userland_model["coordinated_space"]["rotation_z"] = 0.000000;
+      userland_model["coordinated_space"]["position_x"] = coordinated_space["center_of_x_plane_hatchmarks"];
+      userland_model["coordinated_space"]["position_y"] = coordinated_space["center_of_y_plane_hatchmarks"];
+      userland_model["coordinated_space"]["position_z"] = coordinated_space["center_of_z_plane_hatchmarks"];
+      
       
       //copy to userland scene models.
       userland_scene_models[""+name_of_model_to_be_listed_within_userland_scene_models] = userland_model;
