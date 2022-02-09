@@ -247,7 +247,7 @@
       course_of_actions_synchronized_timepassed_since_last_run = Date.now() - course_of_actions_synchronized_timestamp;
       
 			//User Land Logic
-			user_land_course_of_actions_pulse();
+			userland_course_of_actions_pulse();
 			
 			//render screen
 			drawscreenloop_render_screen();
@@ -348,7 +348,15 @@
     
     userland_scene_models_append_copy_of_model = function(name_of_model_to_be_listed_within_userland_scene_models, coordinated_space_positions, opengl_color_values)
     {
+      let userland_model = {};
       
+      //copy model source code to userland model. (purpose: the source code can be reused to establish different formats and or have a zeroed rotation and position to copy from before translations(reduces drift).
+      userland_model["coordinated_space_positions"] = coordinated_space_positions;
+      userland_model["opengl_color_values"] = opengl_color_values;
+      
+      //copy to userland scene models.
+      userland_scene_models[""+name_of_model_to_be_listed_within_userland_scene_models] = userland_model;
+      console.log(userland_scene_models);
     }
     
     /* Draw Screen Loop */
