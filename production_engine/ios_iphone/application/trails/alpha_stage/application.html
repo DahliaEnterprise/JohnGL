@@ -80,7 +80,7 @@
         var drawscreenloop_render_syncronized_timepassed_since_last_run = null;
         
         var drawscreenloop_render_select_lastid_used = null;
-        var drawscreenloop_render_selection = {};
+        var drawscreenloop_render_selection = [];
         
 				var drawscreenloop_render_screen = null;
 				
@@ -237,7 +237,6 @@
           }
         }
       }
-      
 		}
 		
 		/* Course of Actions Loop */
@@ -319,6 +318,7 @@
         }else if(userland_scene_prestage_to_majorscene == 2)
         {
           //append a loading screen image to drawscreen list.
+          drawscreenloop_render_selection.push("loading_background_image_placeholder");
           
           //append a loading bar image to drawscreen list.
           
@@ -365,7 +365,6 @@
       
       //copy to userland scene models.
       userland_scene_models[""+name_of_model_to_be_listed_within_userland_scene_models] = userland_model;
-      console.log(userland_scene_models);
     }
     
     /* Draw Screen Loop */
@@ -375,7 +374,31 @@
       drawscreenloop_render_syncronized_timepassed_since_last_run = Date.now() - drawscreenloop_render_syncronized_timestamp;
 			
       //order of operations here.
+        //intrim array of OpenGL buffer(s).
+        let intrim_array_of_buffers = [];
+        
+        //render each model declared within the drawscreenloop render selection.
+        for(let index = 0; index < drawscreenloop_render_selection.length; index = index + 1)
+        {
+          //aquire handle.
+          let handle_of_model_within_userland_space = userland_scene_models[""+drawscreenloop_render_selection[index]];
+          
+          //compile vertex positions and color values into a block interlaced array(convert coordinated space to opengl positional values).
+          
+          
+          //buffer initalization
+            //create a buffer that will sustain during the drawing of frame.
+            let vertex_and_colorvalues_buffer = interface_to_opengles.createBuffer();
+            
+            //define buffer data interpretation type.
+            interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, vertex_and_colorvalues_buffer);
+            
+            //upload vertex and color values to buffer.
+            interface_to_opengles.bufferData(interfacr_to_opengles.ARRAY_BUFFER,
+        }
       
+      //clear list of models to render.
+      drawscreenloop_render_selection = [];
       
       //Draw Screen Loop set syncronized timestamp.
       drawscreenloop_render_syncronized_timestamp = Date.now();
