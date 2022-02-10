@@ -36,7 +36,8 @@
     /* MODELS SOURCE CODE */
     var one_by_one_ratio_square_model_source_code = {
                                                 "coordinated_space_positions": "866304, 1014144, 1013760, 866304, 1013760, 1013760, 1013760, 1013760, 1013760",
-                                                "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0"
+                                                "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0",
+                                                "shader_program": "solid_color_vertex"
                                               };
                                        
     /* GLOBAL VARIABLES */
@@ -313,7 +314,7 @@
           shader_freememory_and_load_relevant_shaders(["solid_color_vertex"]);
           
           //copy the "one to one ratio square" model to be used in the userland scene models.
-          userland_scene_models_append_copy_of_model("loading_background_image_placeholder", one_by_one_ratio_square_model_source_code["coordinated_space_positions"], one_by_one_ratio_square_model_source_code["opengl_color_values"]);
+          userland_scene_models_append_copy_of_model("loading_background_image_placeholder", one_by_one_ratio_square_model_source_code["coordinated_space_positions"], one_by_one_ratio_square_model_source_code["opengl_color_values"], one_by_one_ratio_square_model_source_code["shader_program"]);
           
           //show loading screen, while asyncrounously compiling english and number models.
           userland_scene_prestage_to_majorscene = 2;
@@ -348,10 +349,17 @@
       userland_syncronized_timestamp = Date.now();
 		}
     
-    userland_scene_models_append_copy_of_model = function(name_of_model_to_be_listed_within_userland_scene_models, coordinated_space_positions, opengl_color_values)
+    userland_scene_models_append_copy_of_model = function(name_of_model_to_be_listed_within_userland_scene_models, coordinated_space_positions, opengl_color_values, name_of_shader_program)
     {
+      //initialize userland model.
       let userland_model = {};
-      
+        //vertex
+        userland_model["vertex"] = {};
+        //orientation
+        userland_model["orientation"] = {};
+        //name of shader program
+        userland_model["name_of_shader_program"] = "";
+        
       //copy model source code to userland model. (purpose: the source code can be reused to establish different formats and or have a zeroed rotation and position to copy from before translations(reduces drift).
       userland_model["vertex"]["coordinated_space_positions"] = coordinated_space_positions;
       userland_model["vertex"]["opengl_color_values"] = opengl_color_values;
@@ -364,6 +372,8 @@
       userland_model["orientation"]["position_y"] = coordinated_space["center_of_y_plane_hatchmarks"];
       userland_model["orientation"]["position_z"] = coordinated_space["center_of_z_plane_hatchmarks"];
       
+      //define name of shader program to be used for this model.
+      userland_model["name_of_shader_program"] = name_of_shader_program;
       
       //copy to userland scene models.
       userland_scene_models[""+name_of_model_to_be_listed_within_userland_scene_models] = userland_model;
@@ -376,6 +386,12 @@
       drawscreenloop_render_syncronized_timepassed_since_last_run = Date.now() - drawscreenloop_render_syncronized_timestamp;
 			
       //order of operations here.
+        //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
+        interface_to_opengles.clearColor(0.0, 0.0, 0.0, 1.0);
+        interface_to_opengles.viewport(0, 0, interface_to_opengles.viewportWidth, interface_to_opengles.viewportHeight);
+        interface_to_opengles.clear(interface_to_opengles.COLOR_BUFFER_BIT);
+        
+      
         //intrim array of OpenGL buffer(s).
         drawscreenloop_intrim_array_of_buffers = [];
         
@@ -401,7 +417,7 @@
             //create empty float32array for integers of opengl color values.
             let vertex_color_values_float32array = new Float32Array(vertex_color_values_string_split.length);
             //fill integers(from string) into vertex color values float32array.
-            for(let vertex_color_values_split_index = 0; vertex_color_values_string_split_index < vertex_color_values_string_split.length; vertex_color_values_string_split_index = vertex_color_values_string_split_index + 1){ vertex_color_values_float32array[vertex_color_values_string_split_index] = parseInt(vertex_color_values_string_split[vertex_color_valued_string_split_index]); }
+            for(let vertex_color_values_string_split_index = 0; vertex_color_values_string_split_index < vertex_color_values_string_split.length; vertex_color_values_string_split_index = vertex_color_values_string_split_index + 1){ vertex_color_values_float32array[vertex_color_values_string_split_index] = parseInt(vertex_color_values_string_split[vertex_color_values_string_split_index]); }
             
             
           //compile vertex positions and color values into a block interlaced array(convert coordinated space to opengl positional values).
@@ -433,6 +449,13 @@
               vertex_and_colorvalues_data_index = vertex_and_colorvalues_data_index + 7;
               compile_vertex_index = compile_vertex_index + 3;
               compile_colorvalues_index = compile_colorvalues_index + 4;
+              
+              //stop loop?
+              if(vertex_and_colorvalues_data_index > vertex_and_colorvalues_data.length)
+              {
+                //stop
+                continue_compiling = 0;
+              }
             }
              
           //buffer initalization
@@ -446,7 +469,50 @@
             interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, vertex_and_colorvalues_buffer);
             
             //upload vertex and color values to buffer.
-            interface_to_opengles.bufferData(interfacr_to_opengles.ARRAY_BUFFER,
+            interface_to_opengles.bufferData(interface_to_opengles.ARRAY_BUFFER, vertex_and_colorvalues_data, interface_to_opengles.STATIC_DRAW);
+            
+            //Signal OpenGL hardware that this is position and color dara and their respective sizes.
+            vertex_and_colorvalues_buffer.positionSize = 3;
+            vertex_and_colorvalues_buffer.colorSize = 4;
+            
+            //Signal OpenGL hardware how many groups of XYZ RGBA there are.
+            vertex_and_colorvalues_buffer.numberOfItems = 3;
+            
+            //Bind buffer again to signal to opengl hardware that changes have been made to the ram/cpu variables pertaining this GPU buffer.
+            //this step was only needed some of the time during the creation of test scripts, to my point this bindbuffer may not be required.
+            interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, vertex_and_colorvalues_buffer);
+            
+          //Draw this model
+          //Set the shader program to use for the following vertex or vertices and its defineable attributes.
+            //Pop in a shader program to be used within the following order of operations.
+            // console.log(list_of_shaders_jsonobjects[handle_of_model_within_userland_space["name_of_shader_program"]]);
+            compile shader here since it will not live inside a json, create a collection array to store shader orograms instead later on in the development cycle.
+            let shader_program = list_of_shaders_jsonobjects[handle_of_model_within_userland_space["name_of_shader_program"]]["program"];
+            console.log(shader_program);
+            interface_to_opengles.useProgram(shader_program);
+           /*
+            //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+            solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
+          
+            //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
+            solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
+          
+           //tell the GPU data line to get ready to transfer position data.
+           interface_to_opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_vertex_opengles.positionSize, opengles.FLOAT, false, 28, 0);
+        
+           //tell the GPU data line to get ready to transfer color data.
+           interface_to_opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_vertex_opengles.colorSize, opengles.FLOAT, false, 28, 12);
+        
+           //tell the gpu you have decided what to transfer and that it is about to happen.
+           interface_to_opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
+      
+           //tell the gpu you have decided what to transfer and that it is about to happen.
+           interface_to_opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
+        
+           //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
+           interface_to_opengles.drawArrays(interface_to_opengles.TRIANGLES, 0, triangle_vertex_opengles.numberOfItems);
+        
+            */
         }
       
       //clear list of models to render.
