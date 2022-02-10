@@ -82,6 +82,8 @@
         var drawscreenloop_render_select_lastid_used = null;
         var drawscreenloop_render_selection = [];
         
+        var drawscreenloop_intrim_array_of_buffers = [];
+        
 				var drawscreenloop_render_screen = null;
 				
         
@@ -375,7 +377,7 @@
 			
       //order of operations here.
         //intrim array of OpenGL buffer(s).
-        let intrim_array_of_buffers = [];
+        drawscreenloop_intrim_array_of_buffers = [];
         
         //render each model declared within the drawscreenloop render selection.
         for(let index = 0; index < drawscreenloop_render_selection.length; index = index + 1)
@@ -383,9 +385,31 @@
           //aquire handle.
           let handle_of_model_within_userland_space = userland_scene_models[""+drawscreenloop_render_selection[index]];
           
+          //split string vertex coordinated positions into Float32Array.
+            //to do: keep this data as float32array(instead of string format) before it touches the draw function.
+            //split string per comma.
+            let vertex_coordinated_positions_string_split = handle_of_model_within_userland_space["vertex"]["coordinated_space_positions"].split(",");
+            //create empty float32array for integers of vertex coordinated positions.
+            let vertex_coordinated_positions_float32array = new Float32Array(vertex_coordinated_positions_string_split.length);
+            //fill integers(from string) into vertex coordinated positions float32array.
+            for(let vertex_coordinated_positions_string_split_index = 0; vertex_coordinated_positions_string_split_index < vertex_coordinated_positions_string_split.length; vertex_coordinated_positions_string_split_index = vertex_coordinated_positions_string_split_index + 1){ vertex_coordinated_positions_float32array[vertex_coordinated_positions_string_split_index] = parseInt(vertex_coordinated_positions_string_split[vertex_coordinated_positions_string_split_index]); }
+          
           //compile vertex positions and color values into a block interlaced array(convert coordinated space to opengl positional values).
+            //initialize Float32Array
+            let vertex_and_colorvalues_data = new Float32Array((handle_of_model_within_userland_space["vertex"]["coordinated_space_positions"].length+handle_of_model_within_userland_space["vertex"]["opengl_color_values"].length));
           
-          
+            //do compile.
+            let compile_vertex_index = 0;
+            let compile_colorvalues_index = 0;
+            let vertex_and_colorvalues_data_index = 0;
+            let continue_compiling = 1;
+            while(continue_compiling == 1)
+            {
+              //define next block of vertex values and color values.
+              //to do: convert coordinated space to rotated and translated opengl positions.
+              vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = handle_of_model_within_userland_space["vertex"]["coordinated_space_positions"]
+            }
+             
           //buffer initalization
             //create a buffer that will sustain during the drawing of frame.
             let vertex_and_colorvalues_buffer = interface_to_opengles.createBuffer();
