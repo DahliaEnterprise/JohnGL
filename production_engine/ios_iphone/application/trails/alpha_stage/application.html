@@ -28,7 +28,6 @@
 			                                   "solid_color_vertex": {
 															                                   "vertex_sourcecode": solid_color_vertex_shader_source_code,
 																										             "fragment_sourcecode": solid_color_fragment_shader_source_code,
-																										             "program": null,
 																										             "program_is_available":false
 															                                  }
 			                                 };
@@ -99,7 +98,7 @@
         var interface_to_opengles = null;
 
         /* Inline Shaders */
-        var list_of_shaders = {};
+        var list_of_shaders = [];
 
         /* List of models */
         var list_of_models = {};
@@ -223,7 +222,7 @@
                 let shader_program = shader_compile_shader(vertex_sourcecode, fragment_sourcecode);
             
                 //do allocate shader program to list of shaders jsonobject memory
-                list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program"] = shader_program;
+                list_of_shaders[""+name_of_shader_within_list_of_shaders_jsonobject] = shader_program;
                 
                 //do change "program is available" flag to true.
                 list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = true;
@@ -232,7 +231,8 @@
           }else if(exists_within_list_of_shaders_to_be_available == false)
           {
             //do free from memory it is currently not going to be used.
-            list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program"] = null;
+              //note: make null instead of splice as this will prevent a copying algorithm; doubly useful to keep null instead of delete for fast placement when the shader is needed again, reducing the need to envoke a copy algorithim.
+              list_of_shaders[""+name_of_shader_within_list_of_shaders_jsonobject] = null;
             
             //do change "program is available" flag to false.
             list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = false;
@@ -485,10 +485,7 @@
           //Draw this model
           //Set the shader program to use for the following vertex or vertices and its defineable attributes.
             //Pop in a shader program to be used within the following order of operations.
-            // console.log(list_of_shaders_jsonobjects[handle_of_model_within_userland_space["name_of_shader_program"]]);
-            compile shader here since it will not live inside a json, create a collection array to store shader orograms instead later on in the development cycle.
-            let shader_program = list_of_shaders_jsonobjects[handle_of_model_within_userland_space["name_of_shader_program"]]["program"];
-            console.log(shader_program);
+            let shader_program = list_of_shaders[handle_of_model_within_userland_space["name_of_shader_program"]]["program"];
             interface_to_opengles.useProgram(shader_program);
            /*
             //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
