@@ -446,7 +446,23 @@
              
              SCALE
              scale before positioning the objects vertices(points)
-             in order to 
+             in order to prevent interjection/events/hooks paradigms 
+             between scale and positioning at the only trade off vertice(points) placement 
+             during quantaization of the placement of scaled vertices(points) 
+             on the coordinated space(hatch marks).
+             This will envoke a sense of incentivization of less work by the developer/programmers
+             altering the object/model only after scale and positioning have completed,
+             there by resulting in physics,events,user interactions being placed within
+             a pipeline paradigm(predictable putcomes due to nonchanging order of operations)
+             and thus keeping the decision tree paradigm and making events
+             paradigm break are runtime of the program with out the need of monitoring program or human
+             to enforce the decision tree paradign and likewise enforce against the events paradigm.
+             
+             POSITION
+             position is last. positioning will succum to
+             quantized accuracies although will have the
+             maximized minimization of inaccuracies when rotation
+             and scale are applied as defined above.
           */
           //to-do: Apply rotation.
           //to-do: Apply scale.
