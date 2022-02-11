@@ -418,7 +418,39 @@
             let vertex_color_values_float32array = new Float32Array(vertex_color_values_string_split.length);
             //fill integers(from string) into vertex color values float32array.
             for(let vertex_color_values_string_split_index = 0; vertex_color_values_string_split_index < vertex_color_values_string_split.length; vertex_color_values_string_split_index = vertex_color_values_string_split_index + 1){ vertex_color_values_float32array[vertex_color_values_string_split_index] = parseInt(vertex_color_values_string_split[vertex_color_values_string_split_index]); }
-            
+          
+          /* order of operations is
+             rotate, scale, position.
+             
+             ROTATION
+             rotate before you position because its presumed that most times
+             your object will already be centered during initial model (down)load,
+             if not positioned, the center-point rotation can be applied to
+             a known(capable with precision) custom defined center point
+             with out complex logic to determine how to deal with the 
+             result, had the rotation been applied with out a precisly
+             known custom defined center point(the object is tight or 
+             loose within a scene due to game events or user interaction)
+             (the possibilities are easy on the mind to be inline with any
+              programmers mind set).
+             
+             rotate before you scale because although the 
+             rotation computations are equal in
+             speed (and difficulty) regardless of 
+             the scale of the objects vertices(and points), the placement of
+             points will be more accurate when rotated vertices(points) 
+             are quantized to the digital grid(coordinated space resolution) when applied
+             at the moddlers/developers inputted original size(placement of points),
+             as it is presumed the object will be modeled at its largest size during (down)load
+             from the artists/moddler/developers inputted vertices(positions).
+             
+             SCALE
+             scale before positioning the objects vertices(points)
+             in order to 
+          */
+          //to-do: Apply rotation.
+          //to-do: Apply scale.
+          //to-do: Apply position.
             
           //compile vertex positions and color values into a block interlaced array(convert coordinated space to opengl positional values).
             //initialize Float32Array
@@ -458,9 +490,10 @@
               }
             }
              
+            
           //buffer initalization
             //create a buffer that will sustain during the drawing of frame.
-            let vertex_and_colorvalues_buffer = interface_to_opengles.createBuffer();
+            let vertex_and_colorvalues_buffer = null; //interface_to_opengles.createBuffer();
             
             //keep buffer alive within the GPU by keeping the handle available to be used within the CPU.
             drawscreenloop_intrim_array_of_buffers.push(vertex_and_colorvalues_buffer);
@@ -485,31 +518,30 @@
           //Draw this model
           //Set the shader program to use for the following vertex or vertices and its defineable attributes.
             //Pop in a shader program to be used within the following order of operations.
-            let shader_program = list_of_shaders[handle_of_model_within_userland_space["name_of_shader_program"]]["program"];
+            let shader_program = list_of_shaders[handle_of_model_within_userland_space["name_of_shader_program"]];
             interface_to_opengles.useProgram(shader_program);
-           /*
+           
             //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
-            solid_color_shader_program.vertexPositionAttribute = opengles.getAttribLocation(solid_color_shader_program, "position_of_vertex_to_colorize");
+            shader_program.vertexPositionAttribute = interface_to_opengles.getAttribLocation(shader_program, "position_of_vertex_to_colorize");
           
             //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
-            solid_color_shader_program.vertexColorAttribute = opengles.getAttribLocation(solid_color_shader_program, "color_of_vertex_to_colorize");
+            shader_program.vertexColorAttribute = interface_to_opengles.getAttribLocation(shader_program, "color_of_vertex_to_colorize");
           
            //tell the GPU data line to get ready to transfer position data.
-           interface_to_opengles.vertexAttribPointer(solid_color_shader_program.vertexPositionAttribute,  triangle_vertex_opengles.positionSize, opengles.FLOAT, false, 28, 0);
+           interface_to_opengles.vertexAttribPointer(shader_program.vertexPositionAttribute,  vertex_and_colorvalues_buffer.positionSize, interface_to_opengles.FLOAT, false, 28, 0);
         
            //tell the GPU data line to get ready to transfer color data.
-           interface_to_opengles.vertexAttribPointer(solid_color_shader_program.vertexColorAttribute,  triangle_vertex_opengles.colorSize, opengles.FLOAT, false, 28, 12);
+           interface_to_opengles.vertexAttribPointer(shader_program.vertexColorAttribute,  vertex_and_colorvalues_buffer.colorSize, interface_to_opengles.FLOAT, false, 28, 12);
         
            //tell the gpu you have decided what to transfer and that it is about to happen.
-           interface_to_opengles.enableVertexAttribArray(solid_color_shader_program.vertexPositionAttribute);
+           interface_to_opengles.enableVertexAttribArray(shader_program.vertexPositionAttribute);
       
            //tell the gpu you have decided what to transfer and that it is about to happen.
-           interface_to_opengles.enableVertexAttribArray(solid_color_shader_program.vertexColorAttribute);
+           interface_to_opengles.enableVertexAttribArray(shader_program.vertexColorAttribute);
         
            //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
-           interface_to_opengles.drawArrays(interface_to_opengles.TRIANGLES, 0, triangle_vertex_opengles.numberOfItems);
-        
-            */
+           interface_to_opengles.drawArrays(interface_to_opengles.TRIANGLES, 0, vertex_and_colorvalues_buffer.numberOfItems);
+      
         }
       
       //clear list of models to render.
