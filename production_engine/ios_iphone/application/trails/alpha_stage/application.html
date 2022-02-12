@@ -424,15 +424,17 @@
              
              ROTATION
              rotate before you position because its presumed that most times
-             your object will already be centered during initial model (down)load,
-             if not positioned, the center-point rotation can be applied to
-             a known(capable with precision) custom defined center point
-             with out complex logic to determine how to deal with the 
-             result, had the rotation been applied with out a precisly
+             your object will already be centered during initial model (down)load.
+             if not positioned at the center-point of the (universally defined)
+             center point of vertex coordinated space(which is the same parameters
+             as object/model/world coordinated space) rotation can be applied to
+             a known(within context of "capable with precision") custom defined center point
+             with out the need for complex logic(which can result in chaos and that is against the mission)
+             to determine how to deal with the result, had the rotation been applied with out a precisly
              known custom defined center point(the object is tight or 
              loose within a scene due to game events or user interaction)
-             (the possibilities are easy on the mind to be inline with any
-              programmers mind set).
+             (making the possibilities easier on the mind (in retrospect) to be inline with any
+             programmers mind set).
              
              rotate before you scale because although the 
              rotation computations are equal in
@@ -443,20 +445,34 @@
              at the moddlers/developers inputted original size(placement of points),
              as it is presumed the object will be modeled at its largest size during (down)load
              from the artists/moddler/developers inputted vertices(positions).
+             to be clear, large is not the defining attribute, as any
+             small vertices(on a scale of coordinated space and a quarter dollar)
+             can be scaled large, its when a model is inputted by the artist/moddler/developer
+             at large or extremly large sizes for example a dollar bill is inputted/moddeled
+             at the size of one mile length ways(the maximum size in a universally defined world coordinated space)
+             and then the scale size(seen in the next step) is set to produce the most precise
+             scaling calculations as it is given a higher resolution to work with to produce
+             a scaled down or scaled up version of actual real world size in side the digital world.
+             Excerpt: this is the digital model implementation of scanning a highest resolution paper photo
+                      for the purposes of scaling down or scaling up; experience would determine that 
+                      scanning a low resolution photo and scaling down makes it blury(although smaller)
+                      where as scanning a high resolution photo and scaling down makes it as clear
+                      and legiable as possible while achieving the smaller size.
+             
              
              SCALE
              scale before positioning the objects vertices(points)
              in order to prevent interjection/events/hooks paradigms 
-             between scale and positioning at the only trade off vertice(points) placement 
+             between scale and positioning at the only negative trade off being vertice(points) placement 
              during quantaization of the placement of scaled vertices(points) 
-             on the coordinated space(hatch marks).
+             on the coordinated space(hatch marks) with (probably unoticable, one more or less hatchmark) inaccuraccies.
              This will envoke a sense of incentivization of less work by the developer/programmers
              altering the object/model only after scale and positioning have completed,
              there by resulting in physics,events,user interactions being placed within
              a pipeline paradigm(predictable putcomes due to nonchanging order of operations)
-             and thus keeping the decision tree paradigm and making events
-             paradigm break are runtime of the program with out the need of monitoring program or human
-             to enforce the decision tree paradign and likewise enforce against the events paradigm.
+             and thus keeping the "events by decision tree" paradigm and making "events by triggering mechenism"
+             paradigm (more than likely apparentness)break at runtime of the program with out the need of a monitoring program or human
+             to enforce the events by decision tree paradign and likewise enforce against the events by triggerung mechinisms paradigm.
              
              POSITION
              position is last. positioning will succum to
@@ -480,7 +496,7 @@
             while(continue_compiling == 1)
             {
               //define next block of vertex values and color values.
-              //to do: convert coordinated space to rotated and translated opengl positions.
+              //to do: convert coordinated space to opengl positions.
                 //coordinated space
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = vertex_coordinated_positions_float32array[compile_vertex_index];
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] = vertex_coordinated_positions_float32array[compile_vertex_index+1];
