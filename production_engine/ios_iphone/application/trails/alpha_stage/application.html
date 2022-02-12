@@ -108,6 +108,8 @@
     
       /* Coordinated Space */
       var coordinated_space = {};
+      
+      var coordinated_space_convert_xyz_to_opengl_viewport_xyz = null;
     
     /* Stage One, Initialize Handles */
     stage_one = function()
@@ -141,13 +143,13 @@
           coordinated_space["length_of_x_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
           coordinated_space["length_of_y_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
           coordinated_space["length_of_z_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
-      
+          console.log(coordinated_space["length_of_x_plane_hatchmarks"]);
+          
           /* Center of plane */
           coordinated_space["center_of_x_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_x_plane_hatchmarks"] / 2));
           coordinated_space["center_of_y_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
           coordinated_space["center_of_z_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
-					console.log(coordinated_space["center_of_z_plane_hatchmarks"]);
-          
+					
       /* Course of actions */
       course_of_actions_synchronized_timestamp = Date.now();
       course_of_actions_ticks_per_second = 60;
@@ -173,30 +175,42 @@
 		shader_compile_shader = function(vertex_shader_sourcecode, fragment_shader_sourcecode)
 		{
 			let output = null;
-			
-			let vertex_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.VERTEX_SHADER);
+			  
+        //compile vertex shader source code
+		  	let vertex_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.VERTEX_SHADER);
           
-      interface_to_opengles.shaderSource(vertex_shader_of_program, vertex_shader_sourcecode);
-      interface_to_opengles.compileShader(vertex_shader_of_program);
+        interface_to_opengles.shaderSource(vertex_shader_of_program, vertex_shader_sourcecode);
+        interface_to_opengles.compileShader(vertex_shader_of_program);
 
-      if(interface_to_opengles.getShaderParameter(vertex_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
-      {
-        console.log("vertex shader failed to compile ()");
-      }
+        if(interface_to_opengles.getShaderParameter(vertex_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
+        {
+          console.log("vertex shader failed to compile ()");
+        }
 
-      //do compile fragment shader
-      let fragment_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.FRAGMENT_SHADER);
+        //compile fragment shader source code
+        let fragment_shader_of_program = interface_to_opengles.createShader(interface_to_opengles.FRAGMENT_SHADER);
           
-		  interface_to_opengles.shaderSource(fragment_shader_of_program, fragment_shader_sourcecode );
-      interface_to_opengles.compileShader(fragment_shader_of_program);
+	  	  interface_to_opengles.shaderSource(fragment_shader_of_program, fragment_shader_sourcecode );
+        interface_to_opengles.compileShader(fragment_shader_of_program);
 
-      if(interface_to_opengles.getShaderParameter(fragment_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
-      {
-       console.log("fragment shader failed to compile (_fragment)");
+        if(interface_to_opengles.getShaderParameter(fragment_shader_of_program, interface_to_opengles.COMPILE_STATUS) == false)
+        {
+         console.log("fragment shader failed to compile (_fragment)");
             
-      }
+        }
 			
-			output = vertex_shader_of_program;
+        //link vertex shader and fragment shader to a shader program.
+        let linked_shader_program = interface_to_opengles.createProgram();
+        interface_to_opengles.attachShader(linked_shader_program, vertex_shader_of_program);
+        interface_to_opengles.attachShader(linked_shader_program, fragment_shader_of_program);
+        interface_to_opengles.linkProgram(linked_shader_program);
+        
+        if(!interface_to_opengles.getProgramParameter(linked_shader_program, interface_to_opengles.LINK_STATUS))
+        {
+          console.log("shader link process failed.");
+        }
+        
+	  		output = linked_shader_program;
 			return output;
 		}
 		
@@ -480,8 +494,15 @@
              maximized minimization of inaccuracies when rotation
              and scale are applied as defined above.
           */
-          //to-do: Apply rotation.
+          //Apply rotation
+            //Rotation Z
+              //determine if rotation should be applied(strictly a cpu time saver).
+               if((handle_of_model_within_userland_space["orientation"]["rotation_z"]*1000000) != 0)
+               {
+                 //do apply rotation.
+               }
           //to-do: Apply scale.
+          
           //to-do: Apply position.
             
           //compile vertex positions and color values into a block interlaced array(convert coordinated space to opengl positional values).
@@ -496,7 +517,9 @@
             while(continue_compiling == 1)
             {
               //define next block of vertex values and color values.
-              //to do: convert coordinated space to opengl positions.
+                //convert coordinated space to opengl positions(assume there is no camera other than the default opengl window/viewport for now).
+                
+                
                 //coordinated space
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = vertex_coordinated_positions_float32array[compile_vertex_index];
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] = vertex_coordinated_positions_float32array[compile_vertex_index+1];
@@ -525,7 +548,7 @@
             
           //buffer initalization
             //create a buffer that will sustain during the drawing of frame.
-            let vertex_and_colorvalues_buffer = null; //interface_to_opengles.createBuffer();
+            let vertex_and_colorvalues_buffer = interface_to_opengles.createBuffer();
             
             //keep buffer alive within the GPU by keeping the handle available to be used within the CPU.
             drawscreenloop_intrim_array_of_buffers.push(vertex_and_colorvalues_buffer);
@@ -550,7 +573,9 @@
           //Draw this model
           //Set the shader program to use for the following vertex or vertices and its defineable attributes.
             //Pop in a shader program to be used within the following order of operations.
-            let shader_program = list_of_shaders[handle_of_model_within_userland_space["name_of_shader_program"]];
+            //let shader_program = list_of_shaders[handle_of_model_within_userland_space["name_of_shader_program"]];
+            shader_program = shader_compile_shader(solid_color_vertex_shader_source_code, solid_color_fragment_shader_source_code);
+            
             interface_to_opengles.useProgram(shader_program);
            
             //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
@@ -584,6 +609,24 @@
       
 		}
 		
+    /* Coordinated Space */
+    coordinated_space_convert_xyz_to_opengl_viewport_xyz = function(coordinated_space_x, coordinated_space_y, coordinated_space_z)
+    {
+      let output = {};
+          output["x"] = 0.000000;
+          output["y"] = 0.000000;
+          output["z"] = 0.000000;
+          
+      //convert coordinated space x to opengl viewport x.
+      let opengl_viewport_x = 0.000000;
+      if(coordinated_space_x > coordinated_space["center_of_x_plane_hatchmarks"])
+      {
+        
+      }
+          
+      return output;
+    }
+    
     /* Begin startup stages */
     begin_startup = function()
     {
