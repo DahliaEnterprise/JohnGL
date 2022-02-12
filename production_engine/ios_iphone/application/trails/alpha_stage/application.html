@@ -518,12 +518,12 @@
             {
               //define next block of vertex values and color values.
                 //convert coordinated space to opengl positions(assume there is no camera other than the default opengl window/viewport for now).
-                
+                let opengl_positions = coordinated_space_convert_xyz_to_opengl_viewport_xyz(vertex_coordinated_positions_float32array[compile_vertex_index], vertex_coordinated_positions_float32array[compile_vertex_index+1], vertex_coordinated_positions_float32array[compile_vertex_index+2]);
                 
                 //coordinated space
-                vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = vertex_coordinated_positions_float32array[compile_vertex_index];
-                vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] = vertex_coordinated_positions_float32array[compile_vertex_index+1];
-                vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+2] = vertex_coordinated_positions_float32array[compile_vertex_index+2];
+                vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = opengl_positions["x"];
+                vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] = opengl_positions["y"];
+                vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+2] = opengl_positions["z"];
                 
                 //color values
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+3] = vertex_color_values_float32array[compile_colorvalues_index];
@@ -617,11 +617,46 @@
           output["y"] = 0.000000;
           output["z"] = 0.000000;
           
-      //convert coordinated space x to opengl viewport x.
-      let opengl_viewport_x = 0.000000;
+      //convert coordinated space x to opengl viewport x
       if(coordinated_space_x > coordinated_space["center_of_x_plane_hatchmarks"])
       {
-        
+        let coordinated_space_x_to_opengl_x = (coordinated_space_x - coordinated_space["center_of_x_plane_hatchmarks"]);
+        output["x"] = coordinated_space_x_to_opengl_x;
+      }else if(coordinated_space_x < coordinated_space["center_of_x_plane_hatchmarks"])
+      {
+        let coordinated_space_x_to_opengl_x =  (0 - (coordinated_space["center_of_x_plane_hatchmarks"] - coordinated_space_x));
+        output["x"] = coordinated_space_x_to_opengl_x;
+      }else if(coordinated_space_x == coordinated_space["center_of_x_plane_hatchmarks"])
+      {
+        output["x"] = 0;
+      }
+    
+      //convert coordinated space y to opengl viewport y.
+      if(coordinated_space_y > coordinated_space["center_of_y_plane_hatchmarks"])
+      {
+        let coordinated_space_y_to_opengl_y = (coordinated_space_y - coordinated_space["center_of_y_plane_hatchmarks"]);
+        output["y"] = coordinated_space_y_to_opengl_y;
+      }else if(coordinated_space_y < coordinated_space["center_of_y_plane_hatchmarks"])
+      {
+        let coordinated_space_y_to_opengl_y =  (0 - (coordinated_space["center_of_y_plane_hatchmarks"] - coordinated_space_y));
+        output["y"] = coordinated_space_y_to_opengl_y;
+      }else if(coordinated_space_y == coordinated_space["center_of_y_plane_hatchmarks"])
+      {
+        output["y"] = 0;
+      }
+      
+      //convert coordinated space z to opengl viewport z.
+      if(coordinated_space_z > coordinated_space["center_of_z_plane_hatchmarks"])
+      {
+        let coordinated_space_z_to_opengl_z = (coordinated_space_z - coordinated_space["center_of_z_plane_hatchmarks"]);
+        output["z"] = coordinated_space_z_to_opengl_z;
+      }else if(coordinated_space_z < coordinated_space["center_of_z_plane_hatchmarks"])
+      {
+        let coordinated_space_z_to_opengl_z =  (0 - (coordinated_space["center_of_z_plane_hatchmarks"] - coordinated_space_z));
+        output["z"] = coordinated_space_z_to_opengl_z;
+      }else if(coordinated_space_z == coordinated_space["center_of_z_plane_hatchmarks"])
+      {
+        output["z"] = 0;
       }
           
       return output;
