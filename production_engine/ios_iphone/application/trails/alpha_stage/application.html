@@ -117,6 +117,15 @@
       //Initialize canvas handle and interface to opengl handle.
       canvas_for_opengl = document.getElementById("canvas_for_opengl");
       interface_to_opengles = canvas_for_opengl.getContext("webgl2");
+      
+      //Set width and height of canvas intended for OpenGL rendering.
+      canvas_for_opengl.style.width = "500px";
+      canvas_for_opengl.style.height = "500px";
+      
+      //notify opengles hardware the size of the canvas by setting the viewport.
+      interface_to_opengles.viewportWidth = canvas_for_opengl.width;
+      interface_to_opengles.viewportHeight = canvas_for_opengl.height;
+        
    
     }
 
@@ -520,6 +529,8 @@
                 //convert coordinated space to opengl positions(assume there is no camera other than the default opengl window/viewport for now).
                 let opengl_positions = coordinated_space_convert_xyz_to_opengl_viewport_xyz(vertex_coordinated_positions_float32array[compile_vertex_index], vertex_coordinated_positions_float32array[compile_vertex_index+1], vertex_coordinated_positions_float32array[compile_vertex_index+2]);
                 
+                //temporary apply scale so we can determine the render/draw code thus far is operating as intended.
+                
                 //coordinated space
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = opengl_positions["x"];
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] = opengl_positions["y"];
@@ -544,6 +555,14 @@
                 continue_compiling = 0;
               }
             }
+            
+          //temporary
+          let triangle_and_color_vertex = new Float32Array([
+                                  0.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
+                                  -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0,
+                                  0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
+                                  ]);
+          //end of temporary
              
             
           //buffer initalization
@@ -557,7 +576,7 @@
             interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, vertex_and_colorvalues_buffer);
             
             //upload vertex and color values to buffer.
-            interface_to_opengles.bufferData(interface_to_opengles.ARRAY_BUFFER, vertex_and_colorvalues_data, interface_to_opengles.STATIC_DRAW);
+            interface_to_opengles.bufferData(interface_to_opengles.ARRAY_BUFFER, triangle_and_color_vertex, interface_to_opengles.STATIC_DRAW);
             
             //Signal OpenGL hardware that this is position and color dara and their respective sizes.
             vertex_and_colorvalues_buffer.positionSize = 3;
