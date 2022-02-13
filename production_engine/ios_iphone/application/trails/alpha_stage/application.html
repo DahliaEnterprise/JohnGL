@@ -34,7 +34,7 @@
 		
     /* MODELS SOURCE CODE */
     var one_by_one_ratio_square_model_source_code = {
-                                                "coordinated_space_positions": "866304, 1014144, 1013760, 866304, 1013760, 1013760, 1013760, 1013760, 1013760",
+                                                "coordinated_space_positions": "1013760, 1013761, 1013760, 1013759, 1013761, 1013760, 1013759, 1013760, 1013760",
                                                 "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0",
                                                 "shader_program": "solid_color_vertex"
                                               };
@@ -141,9 +141,9 @@
       imperial_measurement["unit_type"] = "inches";
       
       imperial_measurement["total_hatchmarks_per_one_inch"] = 32;
-      imperial_measurement["size_of_space_between_hatchmark"] = 0.031250;
+      imperial_measurement["size_of_space_between_hatchmark"] = 0.031250;//inches.
       
-      imperial_measurement["diameter_of_one_unitedstates_quarter"] = 0.955000;
+      imperial_measurement["diameter_of_one_unitedstates_quarter"] = 0.955000;//inches.
       imperial_measurement["length_of_one_mile"] = 63360.000000; //one mile is 5280 feet, 5280 feet muliplied by 12 inches(one foot) is 63360 inches exactly.
 
       
@@ -152,13 +152,13 @@
           coordinated_space["length_of_x_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
           coordinated_space["length_of_y_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
           coordinated_space["length_of_z_plane_hatchmarks"] = (imperial_measurement["length_of_one_mile"] * imperial_measurement["total_hatchmarks_per_one_inch"]);
-          console.log(coordinated_space["length_of_x_plane_hatchmarks"]);
           
           /* Center of plane */
           coordinated_space["center_of_x_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_x_plane_hatchmarks"] / 2));
           coordinated_space["center_of_y_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_y_plane_hatchmarks"] / 2));
           coordinated_space["center_of_z_plane_hatchmarks"] = Math.trunc((coordinated_space["length_of_z_plane_hatchmarks"] / 2));
-					
+					console.log(coordinated_space["center_of_x_plane_hatchmarks"]);
+          
       /* Course of actions */
       course_of_actions_synchronized_timestamp = Date.now();
       course_of_actions_ticks_per_second = 60;
@@ -441,7 +441,7 @@
             let vertex_color_values_float32array = new Float32Array(vertex_color_values_string_split.length);
             //fill integers(from string) into vertex color values float32array.
             for(let vertex_color_values_string_split_index = 0; vertex_color_values_string_split_index < vertex_color_values_string_split.length; vertex_color_values_string_split_index = vertex_color_values_string_split_index + 1){ vertex_color_values_float32array[vertex_color_values_string_split_index] = parseInt(vertex_color_values_string_split[vertex_color_values_string_split_index]); }
-          
+            
           /* order of operations is
              rotate, scale, position.
              
@@ -517,7 +517,7 @@
           //compile vertex positions and color values into a block interlaced array(convert coordinated space to opengl positional values).
             //initialize Float32Array
             let vertex_and_colorvalues_data = new Float32Array((vertex_coordinated_positions_float32array.length+vertex_color_values_float32array.length));
-          
+            //console.log(vertex_and_colorvalues_data);
             //do compile.
             let compile_vertex_index = 0;
             let compile_colorvalues_index = 0;
@@ -555,6 +555,7 @@
                 continue_compiling = 0;
               }
             }
+          //  console.log(vertex_and_colorvalues_data);
             
           //temporary
           let triangle_and_color_vertex = new Float32Array([
@@ -576,7 +577,7 @@
             interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, vertex_and_colorvalues_buffer);
             
             //upload vertex and color values to buffer.
-            interface_to_opengles.bufferData(interface_to_opengles.ARRAY_BUFFER, triangle_and_color_vertex, interface_to_opengles.STATIC_DRAW);
+            interface_to_opengles.bufferData(interface_to_opengles.ARRAY_BUFFER, vertex_and_colorvalues_data, interface_to_opengles.STATIC_DRAW);
             
             //Signal OpenGL hardware that this is position and color dara and their respective sizes.
             vertex_and_colorvalues_buffer.positionSize = 3;
