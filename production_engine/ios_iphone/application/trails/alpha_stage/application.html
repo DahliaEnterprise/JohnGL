@@ -513,6 +513,7 @@
              and scale are applied as defined above.
           */
           //Apply rotation
+            //to-do: make rotation applied by pointing each axis to a point this will prevent an erractic rotations during animation and will not need to switch orders of rotation in order to prevent erratic rotation and prevent rotation inaccuracies(to be clear: this will enforce reproduceable rotations).
             //Rotation Z
               //determine if rotation should be applied(strictly a cpu time saver).
                if((handle_of_model_within_userland_space["orientation"]["rotation_z"]*1000000) != 0)
