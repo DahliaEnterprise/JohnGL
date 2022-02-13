@@ -592,8 +592,7 @@
           //Draw this model
           //Set the shader program to use for the following vertex or vertices and its defineable attributes.
             //Pop in a shader program to be used within the following order of operations.
-            //let shader_program = list_of_shaders[handle_of_model_within_userland_space["name_of_shader_program"]];
-            shader_program = shader_compile_shader(solid_color_vertex_shader_source_code, solid_color_fragment_shader_source_code);
+            let shader_program = list_of_shaders[handle_of_model_within_userland_space["name_of_shader_program"]];
             
             interface_to_opengles.useProgram(shader_program);
            
