@@ -422,8 +422,17 @@
          to the artists and or developers comprehension of the
          real world model.
       */
-         
-      userland_model["scale"] 
+      
+      /* one exactly is the size of the artists 
+         and or moddlers and or developers inputted
+         vertices positions, smaller than one will shrink
+         the model(this will likely occur often), while
+         a number larger than one will expand the model.
+      */
+      userland_model["scale"]["x"] = 1.000000;
+      userland_model["scale"]["y"] = 1.000000;
+      userland_model["scale"]["z"] = 1.000000;
+      
       
       //define name of shader program to be used for this model.
       userland_model["name_of_shader_program"] = name_of_shader_program;
