@@ -539,8 +539,6 @@
                 //convert coordinated space to opengl positions(assume there is no camera other than the default opengl window/viewport for now).
                 let opengl_positions = coordinated_space_convert_xyz_to_opengl_viewport_xyz(vertex_coordinated_positions_float32array[compile_vertex_index], vertex_coordinated_positions_float32array[compile_vertex_index+1], vertex_coordinated_positions_float32array[compile_vertex_index+2]);
                 
-                //temporary apply scale so we can determine the render/draw code thus far is operating as intended.
-                
                 //coordinated space
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = opengl_positions["x"];
                 vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] = opengl_positions["y"];
@@ -565,16 +563,7 @@
                 continue_compiling = 0;
               }
             }
-          //  console.log(vertex_and_colorvalues_data);
-            
-          //temporary
-          let triangle_and_color_vertex = new Float32Array([
-                                  0.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
-                                  -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0,
-                                  0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0
-                                  ]);
-          //end of temporary
-             
+          //  console.log(vertex_and_colorvalues_data)
             
           //buffer initalization
             //create a buffer that will sustain during the drawing of frame.
@@ -731,4 +720,4 @@
   </div>
   </div>                  
   </body>
-</html>
+	</html>
