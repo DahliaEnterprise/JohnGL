@@ -387,6 +387,8 @@
         userland_model["vertex"] = {};
         //orientation
         userland_model["orientation"] = {};
+        //scale
+        userland_model["scale"] = {};
         //name of shader program
         userland_model["name_of_shader_program"] = "";
         
@@ -401,6 +403,27 @@
       userland_model["orientation"]["position_x"] = coordinated_space["center_of_x_plane_hatchmarks"];
       userland_model["orientation"]["position_y"] = coordinated_space["center_of_y_plane_hatchmarks"];
       userland_model["orientation"]["position_z"] = coordinated_space["center_of_z_plane_hatchmarks"];
+      
+      //initialize scale of model
+      /* since the model paradigms are intended only 
+         to be complex when interconnected in any way 
+         shape or form with other models, a "super model",
+         the scale is not given any complex parameters
+         in order to achieve granular control per model
+         defined by the artist and or developer(s). 
+         An example of its common useage would be to
+         scale down the largest available size of the original
+         model data during the development process.
+         the artist and or developers would alter the 
+         userland model scale parameters until the x,y,z
+         scales are within their intended real world sizes
+         using the hatchmarks measurements to determine those
+         sizes have been achieved digitally within relationship
+         to the artists and or developers comprehension of the
+         real world model.
+      */
+         
+      userland_model["scale"] 
       
       //define name of shader program to be used for this model.
       userland_model["name_of_shader_program"] = name_of_shader_program;
@@ -520,7 +543,8 @@
                {
                  //do apply rotation.
                }
-          //to-do: Apply scale.
+          //Apply scale.
+          
           
           //to-do: Apply position.
             
@@ -720,4 +744,4 @@
   </div>
   </div>                  
   </body>
-	</html>
+</html>
