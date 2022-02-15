@@ -346,6 +346,9 @@
           //copy the "one to one ratio square" model to be used in the userland scene models.
           userland_scene_models_append_copy_of_model("loading_background_image_placeholder", one_by_one_ratio_square_model_source_code["coordinated_space_positions"], one_by_one_ratio_square_model_source_code["opengl_color_values"], one_by_one_ratio_square_model_source_code["shader_program"]);
           
+          //temporarily activate scaling algorithm.
+          userland_scene_models["loading_background_image_placeholder"]["scale"]["x"] = 0.5;
+          
           //show loading screen, while asyncrounously compiling english and number models.
           userland_scene_prestage_to_majorscene = 2;
         }else if(userland_scene_prestage_to_majorscene == 2)
@@ -524,7 +527,7 @@
               compile_colorvalues_index = compile_colorvalues_index + 4;
               
               //stop loop?
-              if(vertex_and_colorvalues_data_index > vertex_and_colorvalues_data.length)
+              if(vertex_and_colorvalues_data_index >= vertex_and_colorvalues_data.length)
               {
                 //stop
                 continue_compiling = 0;
@@ -603,10 +606,61 @@
                }
           //Apply scale.
             //use a scaling algorithm that is the likeness of square transformations as opposed to the alternative, circle area transformations.
-          
-          
-          //to-do: Apply position.
+            //determine if scaling should be applied(strictly a cpu time saver).
+            let is_scale_not_one_to_one_ratio = 0;
+            if((handle_of_model_within_userland_space["scale"]["x"]*1000000) != 1000000)
+            {
+             is_scale_not_one_to_one_ratio = 1;
+            }else if((handle_of_model_within_userland_space["scale"]["y"]*1000000) != 1000000)
+            {
+             is_scale_not_one_to_one_ratio = 1;
+            }else if((handle_of_model_within_userland_space["scale"]["z"]*1000000) != 1000000)
+            {
+             is_scale_not_one_to_one_ratio = 1;
+            }
             
+            if(is_scale_not_one_to_one_ratio == 1)
+            {
+              //do apply scale.
+              vertex_and_colorvalues_data_index = 0;
+              let continue_applying_scale = 1;
+              while(continue_applying_scale == 1)
+              {
+                //apply x scale.
+                let x_scale = 1.000000;
+                let prevent_loss_of_precision_during_useage_of_zero = 0;
+                if((handle_of_model_within_userland_space["scale"]["x"]*1000000) == 0)
+                {
+                 prevent_loss_of_precision_during_useage_of_zero = 1;
+                }
+                
+                if(prevent_loss_of_precision_during_useage_of_zero == 1)
+                {
+                  //ensures data loss of positive or negative position on x planer is not lost.
+                  x_scale = 0.000001;
+                }else if(prevent_loss_of_precision_during_useage_of_zero == 0)
+                {
+                  x_scale = handle_of_model_within_userland_space["scale"]["x"];
+                }
+                
+              
+                vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = (vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] * x_scale);
+                
+                //iterate to next starting section of block.
+                vertex_and_colorvalues_data_index = vertex_and_colorvalues_data_index + 7;
+               
+                //stop loop?
+                if(vertex_and_colorvalues_data_index >= vertex_and_colorvalues_data.length)
+                {
+                  //stop
+                  continue_applying_scale = 0;
+                }
+              }
+            }
+            
+          
+          //Apply position.
+            //
             
           //buffer initalization
             //create a buffer that will sustain during the drawing of frame.
@@ -741,26 +795,5 @@
 </head>
 <body onLoad="begin_startup()">
   <canvas id="canvas_for_opengl"></canvas>
-  <div id="test">test</div>
-  <div id="list_of_models" style="display:none;">
-    <div id="test_model">
-      {
-        "coordinates":{
-                        "positions":"866304, 1014144,
-                                     866304, 1013760,
-                                     1013760, 1013760
-                                    "
-                      }
-      }
-    </div>
-    <div id="alphabet_unitedstates_english_lowercase_a">
-      {
-        "coordinates":{
-                        
-                      }
-      }
-    </div>
-  </div>
-  </div>                  
-  </body>
+</body>
 </html>
