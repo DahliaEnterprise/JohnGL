@@ -34,8 +34,8 @@
 		
     /* MODELS SOURCE CODE */
     var one_by_one_ratio_square_model_source_code = {
-                                                "coordinated_space_positions": "1013760, 1013761, 1013760, 1013759, 1013761, 1013760, 1013759, 1013760, 1013760",
-                                                "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0",
+                                                "coordinated_space_positions": "1013761, 1013761, 1013760, 1013759, 1013761, 1013760, 1013759, 1013759, 1013760, 1013759, 1013759, 1013760, 1013761, 1013759, 1013760, 1013761, 1013761, 1013760",
+                                                "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0",
                                                 "shader_program": "solid_color_vertex"
                                               };
                                        
@@ -345,12 +345,6 @@
           
           //copy the "one to one ratio square" model to be used in the userland scene models.
           userland_scene_models_append_copy_of_model("loading_background_image_placeholder", one_by_one_ratio_square_model_source_code["coordinated_space_positions"], one_by_one_ratio_square_model_source_code["opengl_color_values"], one_by_one_ratio_square_model_source_code["shader_program"]);
-          
-          //temporarily activate scaling algorithm.
-          userland_scene_models["loading_background_image_placeholder"]["scale"]["x"] = 0.5;
-          userland_scene_models["loading_background_image_placeholder"]["scale"]["y"] = 0.5;
-          userland_scene_models["loading_background_image_placeholder"]["scale"]["z"] = 0.5;
-          
           
           //show loading screen, while asyncrounously compiling english and number models.
           userland_scene_prestage_to_majorscene = 2;
@@ -727,7 +721,7 @@
             vertex_and_colorvalues_buffer.colorSize = 4;
             
             //Signal OpenGL hardware how many groups of XYZ RGBA there are.
-            vertex_and_colorvalues_buffer.numberOfItems = 3;
+            vertex_and_colorvalues_buffer.numberOfItems = 6;
             
             //Bind buffer again to signal to opengl hardware that changes have been made to the ram/cpu variables pertaining this GPU buffer.
             //this step was only needed some of the time during the creation of test scripts, to my point this bindbuffer may not be required.
