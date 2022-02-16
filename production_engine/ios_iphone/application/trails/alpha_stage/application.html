@@ -348,6 +348,8 @@
           
           //temporarily activate scaling algorithm.
           userland_scene_models["loading_background_image_placeholder"]["scale"]["x"] = 0.5;
+          userland_scene_models["loading_background_image_placeholder"]["scale"]["y"] = 0.5;
+          
           
           //show loading screen, while asyncrounously compiling english and number models.
           userland_scene_prestage_to_majorscene = 2;
@@ -604,6 +606,7 @@
                {
                  //do apply rotation.
                }
+               
           //Apply scale.
             //use a scaling algorithm that is the likeness of square transformations as opposed to the alternative, circle area transformations.
             //determine if scaling should be applied(strictly a cpu time saver).
@@ -638,13 +641,35 @@
                 {
                   //ensures data loss of positive or negative position on x planer is not lost.
                   x_scale = 0.000001;
+                  
+                  vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = (vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] * x_scale);
                 }else if(prevent_loss_of_precision_during_useage_of_zero == 0)
                 {
                   x_scale = handle_of_model_within_userland_space["scale"]["x"];
+                  
+                  vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = (vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] * x_scale)
                 }
                 
-              
-                vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] = (vertex_and_colorvalues_data[vertex_and_colorvalues_data_index] * x_scale);
+                //apply y scale.
+                let y_scale = 1.000000;
+                prevent_loss_of_precision_during_useage_of_zero = 0;
+                if((handle_of_model_within_userland_space["scale"]["y"]*1000000) == 0)
+                {
+                 prevent_loss_of_precision_during_useage_of_zero = 1;
+                }
+                
+                if(prevent_loss_of_precision_during_useage_of_zero == 1)
+                {
+                  //ensures data loss of positive or negative position on y planer is not lost.
+                  y_scale = 0.000001;
+                  
+                  vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] = (vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] * y_scale);
+                }else if(prevent_loss_of_precision_during_useage_of_zero == 0)
+                {
+                  y_scale = handle_of_model_within_userland_space["scale"]["y"];
+                  
+                  vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] = (vertex_and_colorvalues_data[vertex_and_colorvalues_data_index+1] * y_scale);
+                }
                 
                 //iterate to next starting section of block.
                 vertex_and_colorvalues_data_index = vertex_and_colorvalues_data_index + 7;
