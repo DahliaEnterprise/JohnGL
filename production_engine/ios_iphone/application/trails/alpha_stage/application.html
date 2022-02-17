@@ -23,21 +23,51 @@
         solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "  gl_FragColor = varying_color_of_vertex_to_colorize; \n";
         solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "} \n";
 										
-		 var list_of_shaders_names = ["solid_color_vertex"];//only useful for turning all on or turning all off(to be clear, freeing memory for scenes that only need a particular aset of shaders to be used).
+		var textured_vertex_shader_source_code = "";
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "attribute vec4 a_Position; \n";
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "attribute vec2 a_TexCoord; \n";
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "varying highp vec2 v_TexCoord; \n";
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "void main(void) { \n";
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "  gl_Position = a_Position; \n"; 
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "  v_TexCoord = a_TexCoord; \n"; 
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "} \n";
+        
+       
+    var textured_fragment_shader_source_code = "";
+        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "varying highp vec2 v_TexCoord; \n";
+        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "uniform sampler2D u_Sampler; \n";
+        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "void main(void){ \n";
+        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "  gl_FragColor = texture2D(u_Sampler, v_TexCoord); \n";
+        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "} \n";
+        
+										
+										
+		 var list_of_shaders_names = ["solid_color_vertex", "textured_vertex"];//only useful for turning all on or turning all off(to be clear, freeing memory for scenes that only need a particular aset of shaders to be used).
 	   var list_of_shaders_jsonobjects = {
 			                                   "solid_color_vertex": {
 															                                   "vertex_sourcecode": solid_color_vertex_shader_source_code,
 																										             "fragment_sourcecode": solid_color_fragment_shader_source_code,
-																										             "program_is_available":false
-															                                  }
+																										             "program_is_available": false
+															                                  },
+															           "textured_vertex": {
+															                                "vertex_sourcecode": textured_vertex_shader_source_code,
+															                                "fragment_sourcecode": textured_fragment_shader_source_code,
+															                                "program_is_available": false
+															                              }
 			                                 };
 		
     /* MODELS SOURCE CODE */
-    var one_by_one_ratio_square_model_source_code = {
-                                                "coordinated_space_positions": "1013761, 1013761, 1013760, 1013759, 1013761, 1013760, 1013759, 1013759, 1013760, 1013759, 1013759, 1013760, 1013761, 1013759, 1013760, 1013761, 1013761, 1013760",
-                                                "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0",
-                                                "shader_program": "solid_color_vertex"
-                                              };
+    var one_by_one_ratio_square_colored_model_source_code = {
+                                                              "coordinated_space_positions": "1013761, 1013761, 1013760, 1013759, 1013761, 1013760, 1013759, 1013759, 1013760, 1013759, 1013759, 1013760, 1013761, 1013759, 1013760, 1013761, 1013761, 1013760",
+                                                              "opengl_color_values": "1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0",
+                                                              "shader_program": "solid_color_vertex"
+                                                            };
+                                       
+    var one_by_one_ratio_square_textured_model_source_code = {
+                                                               "coordinated_space_positions": "1013761, 1013761, 1013760, 1013759, 1013761, 1013760, 1013759, 1013759, 1013760, 1013759, 1013759, 1013760, 1013761, 1013759, 1013760, 1013761, 1013761, 1013760",
+                                                               "opengl_texture_coordinates": "",
+                                                               "shader_program": "textured_vertex"
+                                                             };
                                        
     /* GLOBAL VARIABLES */
       /* Functions as variables */
@@ -341,8 +371,10 @@
 					//begin coordinating the compilations of shaders and notifying the operator of the progress(loading bar)
           shader_freememory_and_load_relevant_shaders(["solid_color_vertex"]);
           
+          console.log(list_of_shaders_jsonobjects);
+          
           //copy the "one to one ratio square" model to be used in the userland scene models.
-          userland_scene_models_append_copy_of_model("loading_background_image_placeholder", one_by_one_ratio_square_model_source_code["coordinated_space_positions"], one_by_one_ratio_square_model_source_code["opengl_color_values"], one_by_one_ratio_square_model_source_code["shader_program"]);
+          userland_scene_models_append_copy_of_model("loading_background_image_placeholder", one_by_one_ratio_square_colored_model_source_code["coordinated_space_positions"], one_by_one_ratio_square_colored_model_source_code["opengl_color_values"], one_by_one_ratio_square_colored_model_source_code["shader_program"]);
           
           //show loading screen, while asyncrounously compiling english and number models.
           userland_scene_prestage_to_majorscene = 2;
