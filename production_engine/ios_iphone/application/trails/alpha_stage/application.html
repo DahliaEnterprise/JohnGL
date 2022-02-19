@@ -24,35 +24,40 @@
         solid_color_fragment_shader_source_code = solid_color_fragment_shader_source_code + "} \n";
 										
 		var textured_vertex_shader_source_code = "";
-        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "attribute vec4 position_of_vertex; \n";
-        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "attribute vec2 texture_coordinate; \n";
-        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "varying highp vec2 varying_texture_coordinate; \n";
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "attribute vec4 a_Position; \n";
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "attribute vec2 a_TexCoord; \n";
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "varying highp vec2 v_TexCoord; \n";
         textured_vertex_shader_source_code = textured_vertex_shader_source_code + "void main(void) { \n";
-        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "  gl_Position = position_of_vertex; \n"; 
-        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "  varying_texture_coordinate = texture_coordinate; \n"; 
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "  gl_Position = a_Position; \n"; 
+        textured_vertex_shader_source_code = textured_vertex_shader_source_code + "  v_TexCoord = a_TexCoord; \n"; 
         textured_vertex_shader_source_code = textured_vertex_shader_source_code + "} \n";
         
        
     var textured_fragment_shader_source_code = "";
-        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "varying highp vec2 varying_texture_coordinate; \n";
+        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "varying highp vec2 v_TexCoord; \n";
         textured_fragment_shader_source_code = textured_fragment_shader_source_code + "uniform sampler2D u_Sampler; \n";
         textured_fragment_shader_source_code = textured_fragment_shader_source_code + "void main(void){ \n";
-        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "  gl_FragColor = texture2D(u_Sampler, varying_texture_coordinate); \n";
+        textured_fragment_shader_source_code = textured_fragment_shader_source_code + "  gl_FragColor = texture2D(u_Sampler, v_TexCoord); \n";
         textured_fragment_shader_source_code = textured_fragment_shader_source_code + "} \n";
         
-										
-										
+		 /* Force global shader variable holders */
+		 //var shader_solid_color_vertex = null;
+		 //var shader_textured_vertex = null;
+		 
+		 /* Shader Information */
 		 var list_of_shaders_names = ["solid_color_vertex", "textured_vertex"];//only useful for turning all on or turning all off(to be clear, freeing memory for scenes that only need a particular aset of shaders to be used).
 	   var list_of_shaders_jsonobjects = {
 			                                   "solid_color_vertex": {
 															                                   "vertex_sourcecode": solid_color_vertex_shader_source_code,
 																										             "fragment_sourcecode": solid_color_fragment_shader_source_code,
-																										             "program_is_available": false
+																										             "program_is_available": false,
+																										             "get_shader_program": null
 															                                  },
 															           "textured_vertex": {
 															                                "vertex_sourcecode": textured_vertex_shader_source_code,
 															                                "fragment_sourcecode": textured_fragment_shader_source_code,
-															                                "program_is_available": false
+															                                "program_is_available": false,
+															                                "get_shader_program": null
 															                              }
 			                                 };
 		
@@ -131,7 +136,7 @@
         var interface_to_opengles = null;
 
         /* Inline Shaders */
-        var list_of_shaders = [];
+        //var list_of_shaders = [];
 
         /* List of models */
         var list_of_models = {};
@@ -216,6 +221,8 @@
       drawscreenloop_render_select_lastid_used = 0;
     }
 		
+		var global_shader_program = null;
+		
 		/* Shader */
 		shader_compile_shader = function(vertex_shader_sourcecode, fragment_shader_sourcecode)
 		{
@@ -256,6 +263,7 @@
         }
         
 	  		output = linked_shader_program;
+	  		
 			return output;
 		}
 		
@@ -280,21 +288,49 @@
                 //do compile
                 let shader_program = shader_compile_shader(vertex_sourcecode, fragment_sourcecode);
             
+                
+            
                 //do allocate shader program to list of shaders jsonobject memory
-                list_of_shaders[""+name_of_shader_within_list_of_shaders_jsonobject] = shader_program;
+                /*list_of_shaders[""+name_of_shader_within_list_of_shaders_jsonobject] = shader_program;
+                
+                if(name_of_shader_within_list_of_shaders_jsonobject == "solid_color_vertex")
+                {
+                    shader_solid_color_vertex  = shader_program;
+                    
+                }else if(name_of_shader_within_list_of_shaders_jsonobject == "textured_vertex")
+                {
+                    shader_textured_vertex = shader_program;
+                }
+                */
                 
                 //do change "program is available" flag to true.
                 list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = true;
+                
+                //set "getter" for dynamic look up
+                list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["get_shader_program"] = shader_program;
                 
             }
           }else if(exists_within_list_of_shaders_to_be_available == false)
           {
             //do free from memory it is currently not going to be used.
-              //note: make null instead of splice as this will prevent a copying algorithm; doubly useful to keep null instead of delete for fast placement when the shader is needed again, reducing the need to envoke a copy algorithim.
+              //note: always make null instead of splice as this will prevent a copying algorithm; doubly useful to keep null instead of delete for fast placement when the shader is needed again, reducing the need to envoke a copy algorithim.
               list_of_shaders[""+name_of_shader_within_list_of_shaders_jsonobject] = null;
             
             //do change "program is available" flag to false.
             list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["program_is_available"] = false;
+            
+            //set "getter" to null.
+            list_of_shaders_jsonobjects[""+name_of_shader_within_list_of_shaders_jsonobject]["get_shader_program"] = null;
+            
+            /*
+            if(name_of_shader_within_list_of_shaders_jsonobject == "solid_color_vertex")
+            {
+              shader_solid_color_vertex  = null;
+                    
+             }else if(name_of_shader_within_list_of_shaders_jsonobject == "textured_vertex")
+             {
+               shader_textured_vertex = null;
+             }*/
             
           }
         }
@@ -334,7 +370,8 @@
       course_of_actions_synchronized_timestamp = Date.now();
 			
       //envoke course of actions at the designated time.
-			setTimeout(course_of_actions_loop, milliseconds_from_now);
+      milliseconds_from_now = 1000;
+		  setTimeout(course_of_actions_loop, milliseconds_from_now);
 		}
 		
 		/* User Land Logic */
@@ -371,8 +408,6 @@
 			  {
 					//begin coordinating the compilations of shaders and notifying the operator of the progress(loading bar)
           shader_freememory_and_load_relevant_shaders(["solid_color_vertex", "textured_vertex"]);
-          
-          console.log(list_of_shaders_jsonobjects);
           
           //copy the "one to one ratio square" model with textured positions to be used in the userland scene models.
           userland_scene_models_append_copy_of_model_associated_with_textured_values("loading_background_image_placeholder", one_by_one_ratio_square_textured_model_source_code["coordinated_space_positions"], one_by_one_ratio_square_textured_model_source_code["opengl_texture_positions"], one_by_one_ratio_square_colored_model_source_code["shader_program"], "trails_textured_image");
@@ -475,6 +510,8 @@
       userland_scene_models[""+name_of_model_to_be_listed_within_userland_scene_models] = userland_model;
     }
     
+    var img_data = new Image();
+    
     userland_scene_models_append_copy_of_model_associated_with_textured_values = function(name_of_model_to_be_listed_within_userland_scene_models, coordinated_space_positions, opengl_texture_positions, name_of_shader_program, id_of_img_html_element)
     {
       //initialize userland model.
@@ -536,13 +573,16 @@
       
       //define the name of shader program to be used for this model.
       userland_model["name_of_shader_program"] = name_of_shader_program;
-      
+    
       //copy to userland scene models.
       userland_scene_models[""+name_of_model_to_be_listed_within_userland_scene_models] = userland_model;
     }
-    
-    let u_Sampler = null;
-    let gpu_image_handle = null;
+    var triangle_and_texture_positions_vertex = null;
+    var triangle_and_texture_positions_vertex_buffer = null;
+    var attribute_position_coordinates = null;
+    var attribute_texture_coordinates = null;
+    var u_Sampler = null;
+    var gpu_image_handle = null;
     
     /* Draw Screen Loop */
 	  drawscreenloop_render_screen = function()
@@ -910,10 +950,76 @@
            interface_to_opengles.enableVertexAttribArray(shader_program.vertexColorAttribute);
         */
         
+        //let shader_program = list_of_shaders[handle_of_model_within_userland_space["name_of_shader_program"]];
+            
+       
+        triangle_and_texture_positions_vertex = new Float32Array([
+                                 /* x,y vertex coordinates, x,y texture coordinate s */
+                                 -0.5, 0.5, 0.0, 0.5,
+                                 -0.5, -0.5, 0.0, 0.0,
+                                 
+                                 0.5, 0.5, 1.0, 1.0,
+                                 0.5, -0.5, 1.0, 0.0
+                                 
+                                ]);
+                                
+          //temporary triangle strip drawing
+          global_shader_program = list_of_shaders_jsonobjects[handle_of_model_within_userland_space["name_of_shader_program"]]["get_shader_program"];
+          //upload to gpu
+          triangle_and_texture_positions_vertex_buffer = interface_to_opengles.createBuffer();
+            //tell gpu at assembly transistor level to open memory/buffer.
+            interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
+            //transfer cpu instructions and memory to gpu memory/buffer.
+            interface_to_opengles.bufferData(interface_to_opengles.ARRAY_BUFFER, triangle_and_texture_positions_vertex, interface_to_opengles.STATIC_DRAW);
+            
+            let float_size = triangle_and_texture_positions_vertex.BYTES_PER_ELEMENT;
+            
+            
+            //define shader program' parameters.
+            attribute_position_coordinates = interface_to_opengles.getAttribLocation(global_shader_program, "a_Position");
+            interface_to_opengles.vertexAttribPointer(attribute_position_coordinates, 2, interface_to_opengles.FLOAT, false, (float_size * 4), 0);
+            interface_to_opengles.enableVertexAttribArray(attribute_position_coordinates);
+        
+        
+            attribute_texture_coordinates = interface_to_opengles.getAttribLocation(global_shader_program, "a_TexCoord");
+            interface_to_opengles.vertexAttribPointer(attribute_texture_coordinates , 2, interface_to_opengles.FLOAT, false, (float_size * 4), (float_size * 2));
+            interface_to_opengles.enableVertexAttribArray(attribute_texture_coordinates);
+            
+           
+            img_data.onload = function()
+            {
+               gpu_image_handle = interface_to_opengles.createTexture();
+             
+               //flip image
+               interface_to_opengles.pixelStorei(interface_to_opengles.UNPACK_FLIP_Y_WEBGL, 1);
+             
+               //alert the gpu where to open and ready for unloading of texture data to gpu memory.
+               interface_to_opengles.activeTexture(interface_to_opengles.TEXTURE0);
+             
+               interface_to_opengles.bindTexture(interface_to_opengles.TEXTURE_2D, gpu_image_handle);
+            
+               u_Sampler = interface_to_opengles.getUniformLocation(global_shader_program, 'u_Sampler');
+               //flag which sampler to use with uniform.
+               interface_to_opengles.uniform1i(u_Sampler, 0);
+             
+               interface_to_opengles.texParameteri(interface_to_opengles.TEXTURE_2D, interface_to_opengles.TEXTURE_MIN_FILTER, interface_to_opengles.LINEAR);
+              
+               //upload image data from motherboard ram to gpu ram through cpu instructions.
+               interface_to_opengles.texImage2D(interface_to_opengles.TEXTURE_2D, 0, interface_to_opengles.RGB, interface_to_opengles.RGB, interface_to_opengles.UNSIGNED_BYTE, img_data);
+          
+             
+               //tell gpu what vertex to draw now that the texture to draw with it has been activated.
+               interface_to_opengles.useProgram(global_shader_program);
+               interface_to_opengles.drawArrays(interface_to_opengles.TRIANGLE_STRIP, 0, 4);
+           }
+           
+           img_data.src  = "./trails_textured_image.png";
+             
+           
         }
       
       //clear list of models to render.
-      drawscreenloop_render_selection = [];
+     // drawscreenloop_render_selection = [];
       
       //Draw Screen Loop set syncronized timestamp.
       drawscreenloop_render_syncronized_timestamp = Date.now();
@@ -977,7 +1083,14 @@
     begin_startup = function()
     {
 			//start up
+			//img = new Image();
+			//img.onload = function()
+			//{
       stage_one();
+      //}
+      
+      //img.src = "./trails_textured_image.png";
+      
       stage_two();
       //end of starting up stages
 			
@@ -991,7 +1104,7 @@
 </head>
 <body onLoad="">
   <canvas id="canvas_for_opengl"></canvas>
-  <img src="./trails_textured_image.png" style="display:none;" id="trails_textured_image"/>
+  <img src="./trails_textured_image.png" style="" id="trails_textured_image"/>
   <a href="javascript:begin_startup();">start</a>
 </body>
 </html>
