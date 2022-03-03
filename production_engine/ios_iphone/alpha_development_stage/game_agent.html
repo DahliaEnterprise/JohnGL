@@ -68,6 +68,7 @@
 				var userland_space_pulse = null;
 				
 				//Render World Space.
+				var render_worldspace_list_of_opengl_buffers = [];
 				var render_worldspace_list_of_models = [];
 				var render_worldspace = null;
 				
@@ -170,13 +171,14 @@
 				{
 					//Define english letter in OpenGl Coordinate Space
 					game_service_language_letter["lowercase_a"] = {
-						                                              "opengl_vertex_positions": [ -0.875,1.0,0.0, -0.875,0.875,0.0, -0.75,0.875,0.0
-																													                             
+						                                              "opengl_vertex_positions": [ -0.875,1.0,0.0, -0.875,0.875,0.0, -0.75,0.875,0.0,
+																													                             -0.75,1.0,0.0, -0.875,1.0,0.0, -0.75,0.875,0.0
 																													                           ],
-																													"opengl_color_values": [ 1.0,0.0,0.0,1.0, 1.0,0.0,0.0,1.0, 1.0,0.0,0.0,1.0
+																													"opengl_color_values": [ 1.0,0.0,0.0,1.0, 1.0,0.0,0.0,1.0, 1.0,0.0,0.0,1.0,
+																													                         1.0,0.0,0.0,1.0, 1.0,0.0,0.0,1.0, 1.0,0.0,0.0,1.0
 																													
 																													                       ],
-																													"opengl_total_points": 3
+																													"opengl_total_points": 6
 					                                              };
 				};
 				
@@ -193,6 +195,25 @@
 				//Render Worldspace.
 				render_worldspace = function()
 				{
+					//delete opengl buffers
+					let list_of_opengl_buffers_index = 0;
+					while(list_of_opengl_buffers_index < render_worldspace_list_of_opengl_buffers.length)
+					{
+						interface_to_opengles.deleteBuffer(render_worldspace_list_of_opengl_buffers[list_of_opengl_buffers_index]);
+						
+						//next buffer to delete
+						list_of_opengl_buffers_index = list_of_opengl_buffers_index + 1;
+					}
+		      //define list of opengl buffers as empty array.
+					render_worldspace_list_of_opengl_buffers = [];
+					
+					
+					//Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
+          interface_to_opengles.clearColor(0.0, 0.0, 0.0, 1.0);
+          interface_to_opengles.viewport(0, 0, interface_to_opengles.viewportWidth, interface_to_opengles.viewportHeight);
+          interface_to_opengles.clear(interface_to_opengles.COLOR_BUFFER_BIT);
+        
+					//Compile unaltered model positions, into block interlaced positions(block) and color values(block).
 					let index = 0;
 					while(index < render_worldspace_list_of_models.length)
 					{
@@ -235,68 +256,54 @@
 							vertex_and_color_values_rgba_index = vertex_and_color_values_rgba_index + 4;
 						}
 						
-						console.log(vertex_and_color_values);
-						
 						//commit to render of model.
 						
             //Allocate C structure within the Open GL ES engine.
-            var triangle_vertex_opengles = interface_to_opengles.createBuffer();
-        
+            let triangle_vertex_opengles = interface_to_opengles.createBuffer();
+            
+						//allow buffer to be deleteable for gpu memory management purposes.
+						render_worldspace_list_of_opengl_buffers.push(triangle_vertex_opengles);
+						
             //Alert Open GL ES engine on how to interpret and utilize the following data about to be uploaded to the GPU ram(as it wont always be vertex or vertices arrays).
             interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, triangle_vertex_opengles);
             
             //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
             interface_to_opengles.bufferData(interface_to_opengles.ARRAY_BUFFER, vertex_and_color_values, interface_to_opengles.STATIC_DRAW);
              
-            //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram.
-          /*  triangle_vertex_opengles.positionSize = position_size;
-            triangle_vertex_opengles.colorSize = color_size;
-            
-            //Alert Open GL ES engine how many groups of three there is. With out this precount it will not work but most importantly if Open GL ES engine counted for you it could stall an entire graphics application by the magnitude of seconds with only a few obiects on screen.
-            triangle_vertex_opengles.numberOfItems = total_items;
-*/
-            //update changes by binding buffer again
-            interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, triangle_vertex_opengles);
-            
 						
 						
-        //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
-        interface_to_opengles.clearColor(0.0, 0.0, 0.0, 1.0);
-        interface_to_opengles.viewport(0, 0, interface_to_opengles.viewportWidth, interface_to_opengles.viewportHeight);
-        interface_to_opengles.clear(interface_to_opengles.COLOR_BUFFER_BIT);
+            //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
+              //Set the shader program to use for the following vertex or vertices and its defineable attributes.
+                //Pop in a shader program to be used within the following order of operations.
+                interface_to_opengles.useProgram(multi_color_shader_program);
         
-        //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
-        //Set the shader program to use for the following vertex or vertices and its defineable attributes.
-          //Pop in a shader program to be used within the following order of operations.
-          interface_to_opengles.useProgram(multi_color_shader_program);
-        
-          //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
-          multi_color_shader_program.vertexPositionAttribute = interface_to_opengles.getAttribLocation(multi_color_shader_program, "position_of_vertex_to_colorize");
+              //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
+              multi_color_shader_program.vertexPositionAttribute = interface_to_opengles.getAttribLocation(multi_color_shader_program, "position_of_vertex_to_colorize");
          
-          //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
-          multi_color_shader_program.vertexColorAttribute = interface_to_opengles.getAttribLocation(multi_color_shader_program, "color_of_vertex_to_colorize");
+              //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
+              multi_color_shader_program.vertexColorAttribute = interface_to_opengles.getAttribLocation(multi_color_shader_program, "color_of_vertex_to_colorize");
           
-					var position_size = 3; //X,Y,Z
-            var color_size = 4; //Red,Green,Blue,Alpha
+					    let position_size = 3; //X,Y,Z
+              let color_size = 4; //Red,Green,Blue,Alpha
             
 					
-        //tell the GPU data line to get ready to transfer position data.
-        var vertex_position_attribute_pointer_stride = ((position_size + color_size) * Float32Array.BYTES_PER_ELEMENT);
-        interface_to_opengles.vertexAttribPointer(multi_color_shader_program.vertexPositionAttribute,  position_size/*triangle_vertex_opengles.positionSize*/, interface_to_opengles.FLOAT, false, vertex_position_attribute_pointer_stride, 0);
+              //tell the GPU data line to get ready to transfer position data.
+              let vertex_position_attribute_pointer_stride = ((position_size + color_size) * Float32Array.BYTES_PER_ELEMENT);
+              interface_to_opengles.vertexAttribPointer(multi_color_shader_program.vertexPositionAttribute,  position_size/*triangle_vertex_opengles.positionSize*/, interface_to_opengles.FLOAT, false, vertex_position_attribute_pointer_stride, 0);
         
-        //tell the GPU data line to get ready to transfer color data.
-        var vertex_color_attribute_pointer_stride = ((position_size + color_size) * Float32Array.BYTES_PER_ELEMENT);
-        var vertex_color_attribute_pointer_offset = ((position_size) * Float32Array.BYTES_PER_ELEMENT); //skip position to index zero of color starting point position.
-        interface_to_opengles.vertexAttribPointer(multi_color_shader_program.vertexColorAttribute, color_size /*triangle_vertex_opengles.colorSize*/, interface_to_opengles.FLOAT, false, vertex_color_attribute_pointer_stride, vertex_color_attribute_pointer_offset);
+              //tell the GPU data line to get ready to transfer color data.
+              let vertex_color_attribute_pointer_stride = ((position_size + color_size) * Float32Array.BYTES_PER_ELEMENT);
+              let vertex_color_attribute_pointer_offset = ((position_size) * Float32Array.BYTES_PER_ELEMENT); //skip position to index zero of color starting point position.
+              interface_to_opengles.vertexAttribPointer(multi_color_shader_program.vertexColorAttribute, color_size /*triangle_vertex_opengles.colorSize*/, interface_to_opengles.FLOAT, false, vertex_color_attribute_pointer_stride, vertex_color_attribute_pointer_offset);
         
-        //tell the gpu you have decided what to transfer and that it is about to happen.
-        interface_to_opengles.enableVertexAttribArray(multi_color_shader_program.vertexPositionAttribute);
+              //tell the gpu you have decided what to transfer and that it is about to happen.
+              interface_to_opengles.enableVertexAttribArray(multi_color_shader_program.vertexPositionAttribute);
       
-        //tell the gpu you have decided what to transfer and that it is about to happen.
-        interface_to_opengles.enableVertexAttribArray(multi_color_shader_program.vertexColorAttribute);
+              //tell the gpu you have decided what to transfer and that it is about to happen.
+              interface_to_opengles.enableVertexAttribArray(multi_color_shader_program.vertexColorAttribute);
         
-        //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
-        interface_to_opengles.drawArrays(interface_to_opengles.TRIANGLES, 0, handle_of_model["opengl_total_points"]/*triangle_vertex_opengles.numberOfItems*/);
+              //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
+              interface_to_opengles.drawArrays(interface_to_opengles.TRIANGLES, 0, handle_of_model["opengl_total_points"]/*triangle_vertex_opengles.numberOfItems*/);
         
 						
 						
@@ -312,149 +319,6 @@
 				
 			/* End of Proverbial C Language Definitions */
 			
-      function start_adventure_game()
-      {
-				/*
-        //make the dom elememt canvas handled by a useable variable.
-        var canvas_handle = document.getElementById("canvas_for_opengles");
-        
-        //Apply OpenGL ES engine to the canvas and make that engine handled by a useable variable.
-        var opengles = canvas_handle.getContext("webgl2");
-        opengles.viewportWidth = canvas_handle.width;
-        opengles.viewportHeight = canvas_handle.height;
-        */
-        /* 
-           It does not matter which order the 
-           vertex(or vertices) or shader programs
-           are defined and uploaded to the Open GL ES engine.
-           as long as the order of operations per
-           major goal(vertex data or shader program) is
-           adhered to with out interlacing other non related
-           Open GL ES commands, actions or major goals
-        */
-        
-        //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
-          //Define vertex data into motherboard' ram.
-          //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
-          var triangle_and_color_vertex = new Float32Array([
-                                  0.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,
-                                  -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0,
-                                  0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 1.0,
-                                  
-                                  0.5, -0.5, 0.0, 0.5, 0.0, 0.0, 1.0,
-                                  -0.5, -0.5, 0.0, 0.0, 0.5, 0.0, 1.0,
-                                  0.0, -0.9, 0.0, 0.0, 0.0, 0.5, 1.0,
-                                  
-                                  0.9, 0.5, 0.0, 0.5, 0.0, 0.0, 1.0,
-                                  0.0, 0.5, 0.0, 0.0, 0.5, 0.0, 1.0,
-                                  0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 1.0,
-                                  
-                                  0.0, 0.5, 0.0, 0.5, 0.0, 0.0, 1.0,
-                                  -0.9, 0.5, 0.0, 0.0, 0.5, 0.0, 1.0,
-                                  -0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 1.0
-                                ]);
-        
-          //Transfer vertex data from motherboard' ram to GPU(Open GL ES accessable) ram using the CPU as a transfer mechanism.
-            //Motherboard' ram constant for vertex metadata.
-            var position_size = 3; //X,Y,Z
-            var color_size = 4; //Red,Green,Blue,Alpha
-            var total_items = 12; //total groups of x,y,z,red,green,blue,alpha
-            
-            
-            //Allocate C structure within the Open GL ES engine.
-            var triangle_vertex_opengles = interface_to_opengles.createBuffer();
-        
-            //Alert Open GL ES engine on how to interpret and utilize the following data about to be uploaded to the GPU ram(as it wont always be vertex or vertices arrays).
-            interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, triangle_vertex_opengles);
-            
-            //Alert Open GL ES engine with how big of a memory size to be ready to accept during the upcoming (complex but made simple) data transfer.
-            interface_to_opengles.bufferData(interface_to_opengles.ARRAY_BUFFER, triangle_and_color_vertex, interface_to_opengles.STATIC_DRAW);
-             
-            //Alert Open GL ES engine the item size is three indicating to interpret the data as X,Y,Z per every three floats(decimals) uploaded to the GPU ram.
-            triangle_vertex_opengles.positionSize = position_size;
-            triangle_vertex_opengles.colorSize = color_size;
-            
-            //Alert Open GL ES engine how many groups of three there is. With out this precount it will not work but most importantly if Open GL ES engine counted for you it could stall an entire graphics application by the magnitude of seconds with only a few obiects on screen.
-            triangle_vertex_opengles.numberOfItems = total_items;
-
-            //update changes by binding buffer again
-            interface_to_opengles.bindBuffer(interface_to_opengles.ARRAY_BUFFER, triangle_vertex_opengles);
-            
-
-        //Solid Color Shader (useable for more than one vertex(or vertices)).
-          //Allocate vertex shader within the Open GL ES engine and allow that vertex shader to be handled by a useable variable.
-          var multi_color_vertex_shader = interface_to_opengles.createShader(interface_to_opengles.VERTEX_SHADER);
-            //Define how each vertex is colorized by defining a color to each point.
-						
-              //Transfer C source code to the Open GL ES engine and associate that transfer with the a handleable variable named multi_color_vertex_shader.
-              interface_to_opengles.shaderSource(multi_color_vertex_shader , multi_color_vertex_shader_source_code);
-              
-              //Trigger the Open GL ES engine to compile the C source code that is associated with the multi_color_vertex_shader variable.
-              interface_to_opengles.compileShader(multi_color_vertex_shader);
-              
-          //Allocate fragment shader within the opengl engine and make that fragment shader handled by a useable variable.
-          var multi_color_fragment_shader = interface_to_opengles.createShader(interface_to_opengles.FRAGMENT_SHADER);
-              //Define how fragments of the vertex or vertices are filitered.
-              
-              //Transfer C source code to the Open GL ES engine and associate that transfer with the multi_color_fragement_shader handle.
-              interface_to_opengles.shaderSource(multi_color_fragment_shader, multi_color_fragment_shader_source_code);
-                
-              //Trigger the Open GL ES engine to compile the C source code that is associated with the multi_color_fragement_shader handle.
-              interface_to_opengles.compileShader(multi_color_fragment_shader);
-                
-          //Allocate one Shader Program(C structure of memory allocated within Open GL ES memory hardware.) within the Open GL ES engine and make that shader program handled by a useable variable.
-          var multi_color_shader_program = interface_to_opengles.createProgram();
-            //Append intended shaders to the shader program(not sure if this is infinite appendable or the strict definitions of vertex and fragment shaders).
-              //Flag vertex shader to be apart of the shader program intended to be recognized during the link process.
-              interface_to_opengles.attachShader(multi_color_shader_program, multi_color_vertex_shader);
-          
-              //Flag fragement shader to be apart of the shader program intended to be recognized during the link process.
-              interface_to_opengles.attachShader(multi_color_shader_program, multi_color_fragment_shader);
-              
-            //Link vertex shader and fragment shader which results into a handlable solid color opengl binary shader program.
-            interface_to_opengles.linkProgram(multi_color_shader_program);
-      
-            //Due to the order of operations paradigm, checking if the linkage was succesfful must be determined immediately after or more precisely before an Open GL engine operation not assocated with shader program link or compliation process.
-            if(!interface_to_opengles.getProgramParameter(multi_color_shader_program, interface_to_opengles.LINK_STATUS))
-            {
-              alert("shader link process failed.");
-            }
-        
-        //Clear the viewport(screen) before drawing a new frame. (you will always do it this way, the only rare times you will add on to an already drawn frame is maybe an Operating System window(or UI) that goes on top of everything else and usually only when there is no alpha or moving objects).
-        interface_to_opengles.clearColor(0.0, 0.0, 0.0, 1.0);
-        interface_to_opengles.viewport(0, 0, interface_to_opengles.viewportWidth, interface_to_opengles.viewportHeight);
-        interface_to_opengles.clear(interface_to_opengles.COLOR_BUFFER_BIT);
-        
-        //vertex, color, and shader data should be uploaded before the major goal of drawing is invoked 
-        //Set the shader program to use for the following vertex or vertices and its defineable attributes.
-          //Pop in a shader program to be used within the following order of operations.
-          interface_to_opengles.useProgram(multi_color_shader_program);
-        
-          //Define the assembly level GPU data transfer and processing line of "vertex position attribute" to be associated with the defined logical programming set within the result of position_of_vertex_to_colorize of the shader program.
-          multi_color_shader_program.vertexPositionAttribute = interface_to_opengles.getAttribLocation(multi_color_shader_program, "position_of_vertex_to_colorize");
-         
-          //Define the assembly level GPU data transfer and processing line of "vertex color attribute" to be associated with the defined logical programming set within the result of color_of_vertex_to_colorize of the shader program.
-          multi_color_shader_program.vertexColorAttribute = interface_to_opengles.getAttribLocation(multi_color_shader_program, "color_of_vertex_to_colorize");
-          
-        //tell the GPU data line to get ready to transfer position data.
-        var vertex_position_attribute_pointer_stride = ((position_size + color_size) * Float32Array.BYTES_PER_ELEMENT);
-        interface_to_opengles.vertexAttribPointer(multi_color_shader_program.vertexPositionAttribute,  triangle_vertex_opengles.positionSize, interface_to_opengles.FLOAT, false, vertex_position_attribute_pointer_stride, 0);
-        
-        //tell the GPU data line to get ready to transfer color data.
-        var vertex_color_attribute_pointer_stride = ((position_size + color_size) * Float32Array.BYTES_PER_ELEMENT);
-        var vertex_color_attribute_pointer_offset = ((position_size) * Float32Array.BYTES_PER_ELEMENT); //skip position to index zero of color starting point position.
-        interface_to_opengles.vertexAttribPointer(multi_color_shader_program.vertexColorAttribute,  triangle_vertex_opengles.colorSize, interface_to_opengles.FLOAT, false, vertex_color_attribute_pointer_stride, vertex_color_attribute_pointer_offset);
-        
-        //tell the gpu you have decided what to transfer and that it is about to happen.
-        interface_to_opengles.enableVertexAttribArray(multi_color_shader_program.vertexPositionAttribute);
-      
-        //tell the gpu you have decided what to transfer and that it is about to happen.
-        interface_to_opengles.enableVertexAttribArray(multi_color_shader_program.vertexColorAttribute);
-        
-        //tell the gpu to start the transfer which also trigger the draw after the transfer has completed.
-        interface_to_opengles.drawArrays(interface_to_opengles.TRIANGLES, 0, triangle_vertex_opengles.numberOfItems);
-        
-      }
     </script>
   </head>
   <body onLoad="start_game_agent();">
