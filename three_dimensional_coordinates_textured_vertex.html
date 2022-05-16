@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Adventure Game</title>
+    <script type="text/javascript">
+      /* Venmo: Shane-Betz1990 */
+      
+      //global varables
+      var canvas_handle = null;
+      var opengles = null;
+      var texture_shader_program = null;
+      var u_Sampler = null;
+      
+      var image_data = new Image();
+      var gpu_image_handle = null;
+
+      function start_adventure_game()
+      {
+        //make the dom elememt canvas handled by a useable variable.
+        canvas_handle = document.getElementById("canvas_for_opengles");
+        
+        //Apply OpenGL ES engine to the canvas and make that engine handled by a useable variable.
+        opengles = canvas_handle.getContext("webgl2");
+        opengles.viewportWidth = canvas_handle.width;
+        opengles.viewportHeight = canvas_handle.height;
+        
+        /* 
+           It does not matter which order the 
+           vertex(or vertices) or shader programs
+           are defined and uploaded to the Open GL ES engine.
+           as long as the order of operations per
+           major goal(vertex data or shader program) is
+           adhered to with out interlacing other non related
+           Open GL ES commands, actions or major goals
+        */
+        
+        //compile vertex and fragment shader source.
+        
+        var vertex_shader_source = "";
+            vertex_shader_source = vertex_shader_source + "attribute vec4 a_Position; \n";
+            vertex_shader_source = vertex_shader_source + "attribute vec2 a_TexCoord; \n";
+            vertex_shader_source = vertex_shader_source + "varying highp vec2 v_TexCoord; \n";
+            vertex_shader_source = vertex_shader_source + "void main(void) { \n";
+            vertex_shader_source = vertex_shader_source + "  gl_Position = a_Position; \n"; 
+            vertex_shader_source = vertex_shader_source + "  v_TexCoord = a_TexCoord; \n"; 
+            vertex_shader_source = vertex_shader_source + "} \n";
+        
+       
+        var fragment_shader_source = "";
+            fragment_shader_source = fragment_shader_source + "varying highp vec2 v_TexCoord; \n";
+            fragment_shader_source = fragment_shader_source + "uniform sampler2D u_Sampler; \n";
+            fragment_shader_source = fragment_shader_source + "void main(void){ \n";
+            fragment_shader_source = fragment_shader_source + "  gl_FragColor = texture2D(u_Sampler, v_TexCoord); \n";
+            fragment_shader_source = fragment_shader_source + "} \n";
+        
+        
+        var texture_vertex_shader = opengles.createShader(opengles.VERTEX_SHADER);
+            opengles.shaderSource(texture_vertex_shader, vertex_shader_source);
+            opengles.compileShader(texture_vertex_shader);
+       
+        var texture_fragment_shader = opengles.createShader(opengles.FRAGMENT_SHADER);
+            opengles.shaderSource(texture_fragment_shader, fragment_shader_source);
+            opengles.compileShader(texture_fragment_shader);
+        
+        texture_shader_program = opengles.createProgram();
+            opengles.attachShader(texture_shader_program, texture_vertex_shader);
+            opengles.attachShader(texture_shader_program, texture_fragment_shader);
+            opengles.linkProgram(texture_shader_program);
+            if(!opengles.getProgramParameter(texture_shader_program, opengles.LINK_STATUS))
+            {
+              alert("shader link failed");
+            }
+        
+        //Define vertex data within the CPU and ram paradigm then upload that information into a useable variable.
+          //Define vertex data into motherboard' ram.
+          //Format selected is Float(decimals) for X,Y,Z and Unsigned Byte for Red,Green,Blue.,Alpha
+          var triangle_and_texture_positions_vertex = new Float32Array([
+                                 /* x,y vertex coordinates, x,y texture coordinate s */
+                                 -0.5, 0.5, 0.0, 0.5, 1.0,
+                                 -0.5, -0.5, 0.0, 0.3, 0.5,
+                                 0.5, 0.5, 0.0, 0.5, 0.5
+                                 
+                                 
+                                ]);
+                                
+          //temporary triangle strip drawing
+
+          //upload to gpu
+          var triangle_and_texture_positions_vertex_buffer = opengles.createBuffer();
+            //tell gpu at assembly transistor level to open memory/buffer.
+            opengles.bindBuffer(opengles.ARRAY_BUFFER, triangle_and_texture_positions_vertex_buffer);
+            //transfer cpu instructions and memory to gpu memory/buffer.
+            opengles.bufferData(opengles.ARRAY_BUFFER, triangle_and_texture_positions_vertex, opengles.STATIC_DRAW);
+            
+            var float_size = triangle_and_texture_positions_vertex.BYTES_PER_ELEMENT;
+            
+            
+            //define shader program' parameters.
+            var attribute_position_coordinates = opengles.getAttribLocation(texture_shader_program, "a_Position");
+            opengles.vertexAttribPointer(attribute_position_coordinates, 3, opengles.FLOAT, false, (float_size * 5), 0);
+            opengles.enableVertexAttribArray(attribute_position_coordinates);
+        
+        
+            var attribute_texture_coordinates = opengles.getAttribLocation(texture_shader_program, 'a_TexCoord');
+            opengles.vertexAttribPointer(attribute_texture_coordinates , 2, opengles.FLOAT, false, (float_size * 5), (float_size * 3));
+            opengles.enableVertexAttribArray(attribute_texture_coordinates);
+            
+           
+           image_data.onload = function()
+           {
+             gpu_image_handle = opengles.createTexture();
+             
+             //flip image
+             opengles.pixelStorei(opengles.UNPACK_FLIP_Y_WEBGL, 1);
+             
+             //alert the gpu where to open and ready for unloading of texture data to gpu memory.
+             opengles.activeTexture(opengles.TEXTURE0);
+             
+             opengles.bindTexture(opengles.TEXTURE_2D, gpu_image_handle);
+            
+             u_Sampler = opengles.getUniformLocation(texture_shader_program, 'u_Sampler');
+             //flag which sampler to use with uniform.
+             opengles.uniform1i(u_Sampler, 0);
+             
+             opengles.texParameteri(opengles.TEXTURE_2D, opengles.TEXTURE_MIN_FILTER, opengles.LINEAR);
+              
+             //upload image data from motherboard ram to gpu ram through cpu instructions.
+             opengles.texImage2D(opengles.TEXTURE_2D, 0, opengles.RGB, opengles.RGB, opengles.UNSIGNED_BYTE, image_data);
+          
+             
+             //tell gpu what vertex to draw now that the texture to draw with it has been activated.
+             opengles.useProgram(texture_shader_program);
+             opengles.drawArrays(opengles.TRIANGLES, 0, 3);;
+           }
+           
+           image_data.src = "/webgl/gradient.png";
+      }
+      
+    </script>
+  </head>
+  <body onLoad="start_adventure_game();">
+    <canvas id="canvas_for_opengles" width="500" height="500"></canvas>
+  </body>
+	</html>
